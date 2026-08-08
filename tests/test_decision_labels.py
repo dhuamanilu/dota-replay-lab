@@ -1,7 +1,7 @@
 import csv
 
 from dota_replay_lab.build_dataset import write_dataset
-from dota_replay_lab.decision_labels import iter_decision_rows, label_decision
+from dota_replay_lab.decision_labels import decision_features, iter_decision_rows, label_decision
 
 
 def _player(**overrides):
@@ -85,3 +85,11 @@ def test_previous_signals_only_describe_completed_interval() -> None:
     assert rows[0]["label"] == "fight"
     assert rows[0]["previous_fight"] == 0
     assert rows[1]["previous_fight"] == 1
+
+
+def test_inference_features_ignore_events_after_checkpoint() -> None:
+    player = _player(kills_log=[{"time": 75}])
+    match = {"match_id": 42, "players": [player]}
+    row = decision_features(match, player, 0, 1, {1: "Anti-Mage"})
+    assert row["previous_fight"] == 0
+    assert row["decision_minute"] == 2

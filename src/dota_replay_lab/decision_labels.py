@@ -89,12 +89,38 @@ def label_decision(
     return label, signals
 
 
+def decision_features(
+    match: Mapping[str, Any],
+    player: Mapping[str, Any],
+    player_index: int,
+    state_minute: int,
+    hero_names: Mapping[int, str],
+) -> dict[str, Any]:
+    """Build features available at a checkpoint without reading its future interval."""
+
+    state = state_at_minute(match, player, state_minute, hero_names)
+    previous_signals = decision_signals(match, player, player_index, state_minute)
+    row = asdict(state)
+    row["state_minute"] = row.pop("minute")
+    row.update(
+        {
+            "match_id": int(match.get("match_id", 0)),
+            "player_slot": int(player.get("player_slot", -1)),
+            "hero_id": int(player.get("hero_id", 0)),
+            "decision_minute": state_minute + 1,
+            "previous_fight": int("fight" in previous_signals),
+            "previous_push": int("push" in previous_signals),
+            "previous_farm": int("farm" in previous_signals),
+        }
+    )
+    return row
+
+
 def iter_decision_rows(
     match: Mapping[str, Any], hero_names: Mapping[int, str]
 ) -> Iterable[dict[str, Any]]:
     """Yield one learning row for every hero and available whole minute."""
 
-    match_id = int(match.get("match_id", 0))
     for player_index, player in enumerate(match.get("players", []) or []):
         series_lengths = [
             len(player.get(key, []) or [])
@@ -104,20 +130,10 @@ def iter_decision_rows(
         if not series_lengths:
             continue
         for decision_minute in range(1, max(series_lengths)):
-            state = state_at_minute(match, player, decision_minute - 1, hero_names)
             label, signals = label_decision(match, player, player_index, decision_minute)
-            previous_signals = decision_signals(match, player, player_index, decision_minute - 1)
-            row = asdict(state)
-            row["state_minute"] = row.pop("minute")
+            row = decision_features(match, player, player_index, decision_minute - 1, hero_names)
             row.update(
                 {
-                    "match_id": match_id,
-                    "player_slot": int(player.get("player_slot", -1)),
-                    "hero_id": int(player.get("hero_id", 0)),
-                    "decision_minute": decision_minute,
-                    "previous_fight": int("fight" in previous_signals),
-                    "previous_push": int("push" in previous_signals),
-                    "previous_farm": int("farm" in previous_signals),
                     "label": label,
                     "signals": "+".join(signals) if signals else "none",
                     "rules_version": LABEL_RULES_VERSION,

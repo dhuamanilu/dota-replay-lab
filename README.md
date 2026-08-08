@@ -72,3 +72,9 @@ python -m dota_replay_lab.train_policy --device auto
 ```
 
 El entrenamiento compara mayoría, regresión logística y XGBoost. Selecciona por macro-F1 en validación y evalúa una sola vez sobre partidas de test completamente separadas.
+
+Para ejecutar la política en el estado de un héroe y obtener probabilidades para el minuto siguiente:
+
+```powershell
+python -m dota_replay_lab.predict_policy 8934279386 --minute 12 --player-slot 0
+```
