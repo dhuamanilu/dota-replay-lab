@@ -27,7 +27,10 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
           return unit
         end
 
-        mockBot = { creeps = {}, heroes = {}, towers = {}, health = 1000, max_health = 1000 }
+        mockBot = {
+          creeps = {}, allied_creeps = {}, heroes = {}, towers = {},
+          health = 1000, max_health = 1000
+        }
         function mockBot:IsAlive() return true end
         function mockBot:GetHealth() return self.health end
         function mockBot:GetMaxHealth() return self.max_health end
@@ -42,7 +45,10 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:GetCurrentActionType() return BOT_ACTION_TYPE_IDLE end
         function mockBot:GetUnitName() return "npc_dota_hero_life_stealer" end
         function mockBot:GetAssignedLane() return 2 end
-        function mockBot:GetNearbyLaneCreeps(radius, enemies) return self.creeps end
+        function mockBot:GetNearbyLaneCreeps(radius, enemies)
+          if enemies then return self.creeps end
+          return self.allied_creeps
+        end
         function mockBot:GetNearbyHeroes(radius, enemies, mode) return self.heroes end
         function mockBot:GetNearbyTowers(radius, enemies) return self.towers end
         function mockBot:Action_AttackUnit(target, once)
@@ -227,6 +233,31 @@ def test_low_health_with_nearby_enemy_retreats_before_policy_order() -> None:
     ]
     assert any('"target":"ancient"' in message for message in messages)
     assert any('"fallback":"low_health"' in message for message in messages)
+
+
+def test_safe_tower_opportunity_overrides_farm_with_allied_creep_cover() -> None:
+    lua = build_runtime("farm")
+    lua.execute(
+        """
+        mockBot.towers = { makeUnit("npc_dota_badguys_tower1_mid", 1600) }
+        mockBot.allied_creeps = { makeUnit("npc_dota_creep_goodguys_melee", 500) }
+        """
+    )
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "attack"
+    assert lua.globals().mockBot.last_target == "npc_dota_badguys_tower1_mid"
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    assert any('"fallback":"safe_push_opportunity"' in message for message in messages)
+
+
+def test_tower_opportunity_requires_allied_creep_cover() -> None:
+    lua = build_runtime("farm")
+    lua.execute('mockBot.towers = { makeUnit("npc_dota_badguys_tower1_mid", 1600) }')
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "move"
 
 
 def test_policy_error_degrades_to_unknown_and_emits_structured_telemetry() -> None:

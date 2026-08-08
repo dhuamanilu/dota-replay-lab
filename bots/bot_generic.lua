@@ -334,6 +334,21 @@ local function push()
   return farm("push_no_tower")
 end
 
+local function safe_push_opportunity()
+  local towers_ok, towers = pcall(function() return bot:GetNearbyTowers(900, true) end)
+  if not towers_ok or towers == nil or #towers == 0 then return false end
+  local mode = BOT_MODE_NONE or 0
+  local enemies_ok, enemies = pcall(function() return bot:GetNearbyHeroes(1200, true, mode) end)
+  if not enemies_ok or enemies == nil or #enemies > 0 then return false end
+  local creeps_ok, allied_creeps = pcall(function()
+    return bot:GetNearbyLaneCreeps(900, false)
+  end)
+  if not creeps_ok or allied_creeps == nil or #allied_creeps == 0 then return false end
+  if not attack(weakest(towers), "safe_push_opportunity") then return false end
+  observed.push = 1
+  return true
+end
+
 local function move_to_ancient(fallback)
   local ancient_ok, ancient = pcall(function() return GetAncient(bot:GetTeam()) end)
   if not ancient_ok or ancient == nil then
@@ -414,6 +429,7 @@ function Think()
   if retreat_for_survival() then return end
   local minute = game_minute()
   if minute ~= tracker.minute then selected_action = choose_action() end
+  if selected_action ~= "fight" and safe_push_opportunity() then return end
   if selected_action == "fight" then
     if fight() then return end
     if farm("fight_no_target") then return end
