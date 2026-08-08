@@ -19,6 +19,8 @@ local tracker = {
 local selected_action = "unknown"
 local last_order = { name = "", target = "", time = -100 }
 local activity = { last_sample = nil, idle_seconds = 0, observed_seconds = 0 }
+local observed = { fight = 0, push = 0, farm = 0 }
+local previous_observed = { fight = 0, push = 0, farm = 0 }
 
 local function safe_number(callback, fallback)
   local ok, value = pcall(callback)
@@ -54,6 +56,7 @@ local telemetry_keys = {
   "player_id", "team_id", "hero_name", "action", "fallback", "order", "target",
   "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
   "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+  "previous_fight", "previous_push", "previous_farm",
   "action_type", "idle", "idle_seconds", "activity_seconds",
   "features_available", "missing_features", "error",
 }
@@ -154,7 +157,13 @@ local function checkpoint_state()
       tracker.experience_change = counters.experience - tracker.experience
       tracker.last_hit_change = counters.last_hits - tracker.last_hits
       tracker.kills_last_minute = counters.kills - tracker.kills
+      previous_observed.fight = observed.fight
+      previous_observed.push = observed.push
+      previous_observed.farm = observed.farm
     end
+    observed.fight = 0
+    observed.push = 0
+    observed.farm = 0
     tracker.minute = minute
     tracker.gold = counters.gold
     tracker.experience = counters.experience
@@ -183,9 +192,9 @@ local function checkpoint_state()
   append(counters.kills_ok and counters.available or counters.missing, "kills_last_minute")
   append(counters.missing, "team_gold_advantage")
   append(counters.missing, "team_experience_advantage")
-  append(counters.missing, "previous_fight")
-  append(counters.missing, "previous_push")
-  append(counters.missing, "previous_farm")
+  append(counters.available, "previous_fight")
+  append(counters.available, "previous_push")
+  append(counters.available, "previous_farm")
 
   return {
     hero_id = hero_id,
@@ -204,9 +213,9 @@ local function checkpoint_state()
     team_gold_advantage = 0,
     team_experience_advantage = 0,
     kills_last_minute = tracker.kills_last_minute,
-    previous_fight = 0,
-    previous_push = 0,
-    previous_farm = 0,
+    previous_fight = previous_observed.fight,
+    previous_push = previous_observed.push,
+    previous_farm = previous_observed.farm,
   }, table.concat(counters.available, ","), table.concat(counters.missing, ",")
 end
 
@@ -214,6 +223,7 @@ local function add_state_fields(fields, state)
   for _, key in ipairs({
     "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
     "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+    "previous_fight", "previous_push", "previous_farm",
   }) do
     fields[key] = state[key]
   end
@@ -290,8 +300,13 @@ local function farm(fallback)
     telemetry("query_error", { action = "farm", fallback = fallback, error = creeps })
     return false
   end
-  if attack(weakest(creeps), fallback) then return true end
-  return move_to_lane(fallback or "farm_no_creep")
+  if attack(weakest(creeps), fallback) then
+    observed.farm = 1
+    return true
+  end
+  local moved = move_to_lane(fallback or "farm_no_creep")
+  if moved then observed.farm = 1 end
+  return moved
 end
 
 local function fight()
@@ -301,7 +316,9 @@ local function fight()
     telemetry("query_error", { action = "fight", error = heroes })
     return false
   end
-  return attack(weakest(heroes), nil)
+  local attacked = attack(weakest(heroes), nil)
+  if attacked then observed.fight = 1 end
+  return attacked
 end
 
 local function push()
@@ -310,7 +327,10 @@ local function push()
     telemetry("query_error", { action = "push", error = towers })
     return farm("push_tower_query_error")
   end
-  if attack(weakest(towers), nil) then return true end
+  if attack(weakest(towers), nil) then
+    observed.push = 1
+    return true
+  end
   return farm("push_no_tower")
 end
 

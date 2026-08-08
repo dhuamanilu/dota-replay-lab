@@ -125,6 +125,27 @@ def test_valve_adapter_measures_idle_alive_time() -> None:
     assert activity[-1]["activity_seconds"] == 5
 
 
+def test_completed_minute_orders_become_previous_observed_features() -> None:
+    lua = build_runtime("farm")
+    lua.globals().Think()
+    lua.execute("CURRENT_TIME = 60")
+    lua.globals().Think()
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    decisions = [
+        json.loads(message.removeprefix("DRL_TELEMETRY "))
+        for message in messages
+        if '"event":"decision"' in message
+    ]
+    assert decisions[-1]["previous_farm"] == 1
+    assert decisions[-1]["previous_fight"] == 0
+    assert decisions[-1]["previous_push"] == 0
+    missing = decisions[-1]["missing_features"].split(",")
+    assert "previous_farm" not in missing
+
+
 def test_generated_policy_executes_through_the_valve_adapter() -> None:
     lua = build_runtime(None)
     lua.execute(
