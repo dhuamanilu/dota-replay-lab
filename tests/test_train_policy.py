@@ -1,4 +1,11 @@
-from dota_replay_lab.train_policy import FEATURES, XGB_TRIALS, match_folds, split_match_ids
+from dota_replay_lab.train_policy import (
+    FEATURES,
+    XGB_TRIALS,
+    apply_probability_biases,
+    match_folds,
+    optimize_probability_biases,
+    split_match_ids,
+)
 
 
 def test_match_splits_are_disjoint_and_complete() -> None:
@@ -30,3 +37,18 @@ def test_match_folds_are_disjoint_and_cover_development_matches() -> None:
     flattened = [match_id for fold in folds for match_id in fold]
     assert len(flattened) == len(set(flattened))
     assert set(flattened) == set(range(20))
+
+
+def test_probability_bias_optimizer_can_suppress_noisy_push_predictions() -> None:
+    probabilities = [
+        [0.40, 0.10, 0.45, 0.05],
+        [0.10, 0.40, 0.45, 0.05],
+        [0.10, 0.10, 0.70, 0.10],
+        [0.10, 0.10, 0.10, 0.70],
+    ]
+    true_indices = [0, 1, 2, 3]
+    biases, score = optimize_probability_biases(probabilities, true_indices)
+    predictions = apply_probability_biases(probabilities, biases)
+    assert list(predictions) == true_indices
+    assert score == 1.0
+    assert biases[2] < 1.0

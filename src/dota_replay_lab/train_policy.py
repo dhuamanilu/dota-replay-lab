@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
 import time
 from pathlib import Path
@@ -34,6 +35,31 @@ XGB_TRIALS = {
     "xgboost_d6_w100": {"max_depth": 6, "n_estimators": 750, "learning_rate": 0.04, "weight_power": 1.00},
     "xgboost_d8_w075": {"max_depth": 8, "n_estimators": 600, "learning_rate": 0.05, "weight_power": 0.75},
 }
+
+
+def apply_probability_biases(probabilities: Any, biases: list[float]) -> Any:
+    """Return class indices after applying fixed multiplicative decision biases."""
+
+    import numpy as np
+
+    adjusted = np.asarray(probabilities) * np.asarray(biases)
+    return adjusted.argmax(axis=1)
+
+
+def optimize_probability_biases(probabilities: Any, true_indices: Any) -> tuple[list[float], float]:
+    """Tune small class biases on out-of-fold predictions using macro-F1."""
+
+    from sklearn.metrics import f1_score
+
+    best_biases = [1.0] * len(LABELS)
+    best_score = float(f1_score(true_indices, apply_probability_biases(probabilities, best_biases), average="macro"))
+    grids = ([1.0], [0.75, 1.0, 1.25], [0.25, 0.5, 0.75, 1.0], [0.75, 1.0, 1.25])
+    for candidate in itertools.product(*grids):
+        score = float(f1_score(true_indices, apply_probability_biases(probabilities, list(candidate)), average="macro"))
+        if score > best_score:
+            best_score = score
+            best_biases = list(candidate)
+    return best_biases, best_score
 
 
 def split_match_ids(match_ids: list[int], seed: int = 42) -> dict[str, list[int]]:
@@ -155,6 +181,22 @@ def train_and_evaluate(
     fold_results: dict[str, list[dict[str, Any]]] = {
         name: [] for name in [*candidates, *XGB_TRIALS]
     }
+    oof_probabilities = {
+        name: np.zeros((len(development), len(LABELS)), dtype=float)
+        for name in [*candidates, *XGB_TRIALS]
+    }
+
+    def aligned_probabilities(model: Any, values: Any) -> Any:
+        aligned = np.zeros((values.shape[0], len(LABELS)), dtype=float)
+        for column, raw_class in enumerate(model.classes_):
+            label_index = (
+                int(raw_class)
+                if isinstance(raw_class, (int, np.integer))
+                else label_to_index[str(raw_class)]
+            )
+            aligned[:, label_index] = values[:, column]
+        return aligned
+
     for fold_number, validation_ids in enumerate(fold_ids, start=1):
         validation_mask = development["match_id"].isin(validation_ids).to_numpy()
         fit_frame = development[~validation_mask]
@@ -172,6 +214,9 @@ def train_and_evaluate(
             started = time.perf_counter()
             model.fit(fit_x, fit_y_text)
             metrics = _metrics(validation_y_text, model.predict(validation_x))
+            oof_probabilities[name][validation_mask] = aligned_probabilities(
+                model, model.predict_proba(validation_x)
+            )
             metrics.update({"fold": fold_number, "train_seconds": time.perf_counter() - started, "device": "cpu"})
             fold_results[name].append(metrics)
 
@@ -201,6 +246,9 @@ def train_and_evaluate(
                     verbose=False,
                 )
             predictions = np.array([LABELS[index] for index in model.predict(validation_x).astype(int)])
+            oof_probabilities[name][validation_mask] = aligned_probabilities(
+                model, model.predict_proba(validation_x)
+            )
             metrics = _metrics(validation_y_text, predictions)
             metrics.update(
                 {
@@ -223,6 +271,10 @@ def train_and_evaluate(
             "folds": results,
         }
     chosen = max(cross_validation, key=lambda name: cross_validation[name]["macro_f1_mean"])
+    development_y_index = np.array([label_to_index[value] for value in development["label"]])
+    class_biases, calibrated_oof_macro_f1 = optimize_probability_biases(
+        oof_probabilities[chosen], development_y_index
+    )
 
     final_preprocessor = _preprocessor()
     development_x = final_preprocessor.fit_transform(development[FEATURES])
@@ -244,11 +296,10 @@ def train_and_evaluate(
         chosen_model = clone(candidates[chosen])
         chosen_model.fit(development_x, development["label"].to_numpy())
     final_train_seconds = time.perf_counter() - started
-    raw_test_predictions = chosen_model.predict(test_x)
-    if chosen.startswith("xgboost"):
-        test_predictions = np.array([LABELS[index] for index in raw_test_predictions.astype(int)])
-    else:
-        test_predictions = raw_test_predictions
+    test_probabilities = aligned_probabilities(chosen_model, chosen_model.predict_proba(test_x))
+    test_predictions = np.array(
+        [LABELS[index] for index in apply_probability_biases(test_probabilities, class_biases)]
+    )
     test_metrics = _metrics(test["label"].to_numpy(), test_predictions)
 
     result = {
@@ -261,6 +312,8 @@ def train_and_evaluate(
         "cross_validation": cross_validation,
         "cv_folds": fold_ids,
         "chosen_model": chosen,
+        "class_biases": {label: class_biases[index] for index, label in enumerate(LABELS)},
+        "calibrated_oof_macro_f1": calibrated_oof_macro_f1,
         "final_train_seconds": final_train_seconds,
         "test": test_metrics,
     }
@@ -272,6 +325,7 @@ def train_and_evaluate(
             "model_name": chosen,
             "features": FEATURES,
             "labels": LABELS,
+            "class_biases": class_biases,
         },
         output_dir / "decision-policy-v1.joblib",
     )
