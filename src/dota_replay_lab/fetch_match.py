@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from .opendota import OpenDotaError, get_match, latest_pro_match_id
+from .opendota import OpenDotaError, get_hero_names, get_match, latest_pro_match_id
 from .summary import render_match_summary
 
 
@@ -35,6 +35,7 @@ def main() -> int:
     try:
         match_id = latest_pro_match_id() if args.latest_pro else args.match_id
         match = get_match(match_id)
+        hero_names = get_hero_names()
     except OpenDotaError as error:
         raise SystemExit(f"Download failed: {error}") from error
 
@@ -42,7 +43,7 @@ def main() -> int:
     raw_path = args.output_dir / f"{match_id}.json"
     report_path = args.output_dir / f"{match_id}.md"
     raw_path.write_text(json.dumps(match, indent=2, ensure_ascii=False), encoding="utf-8")
-    report_path.write_text(render_match_summary(match), encoding="utf-8")
+    report_path.write_text(render_match_summary(match, hero_names), encoding="utf-8")
     print(f"Saved raw data: {raw_path}")
     print(f"Saved report: {report_path}")
     return 0

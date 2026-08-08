@@ -50,3 +50,23 @@ def get_match(match_id: int) -> dict[str, Any]:
     if not isinstance(payload, dict) or int(payload.get("match_id", 0)) != match_id:
         raise OpenDotaError(f"OpenDota returned no usable details for match {match_id}.")
     return payload
+
+
+def get_hero_names() -> dict[int, str]:
+    """Return OpenDota's numeric hero-id to display-name lookup table."""
+
+    payload = get_json("constants/heroes")
+    if not isinstance(payload, dict):
+        raise OpenDotaError("OpenDota's hero catalogue had an unexpected format.")
+
+    names: dict[int, str] = {}
+    for key, hero in payload.items():
+        if not isinstance(hero, dict):
+            continue
+        hero_id = hero.get("id", key)
+        localized_name = hero.get("localized_name")
+        if localized_name:
+            names[int(hero_id)] = str(localized_name)
+    if not names:
+        raise OpenDotaError("OpenDota's hero catalogue was empty.")
+    return names

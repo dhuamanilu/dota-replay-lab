@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Mapping
 
 
 def _duration(seconds: Any) -> str:
@@ -22,7 +22,7 @@ def _team_name(match: dict[str, Any], side: str) -> str:
     return str(match.get(key) or side)
 
 
-def render_match_summary(match: dict[str, Any]) -> str:
+def render_match_summary(match: dict[str, Any], hero_names: Mapping[int, str] | None = None) -> str:
     """Render stable Markdown from the useful high-level match fields."""
 
     radiant = _team_name(match, "Radiant")
@@ -30,7 +30,13 @@ def render_match_summary(match: dict[str, Any]) -> str:
     winner = radiant if match.get("radiant_win") else dire
     rows: list[str] = []
     for player in match.get("players", []):
-        hero = player.get("hero_name", "unknown hero").removeprefix("npc_dota_hero_").replace("_", " ")
+        hero = player.get("hero_name")
+        if hero:
+            hero = str(hero).removeprefix("npc_dota_hero_").replace("_", " ")
+        elif hero_names:
+            hero = hero_names.get(int(player.get("hero_id", 0)), "unknown hero")
+        else:
+            hero = f"hero id {player.get('hero_id', 'unknown')}"
         name = player.get("personaname") or player.get("name") or "anonymous"
         side = "Radiant" if player.get("isRadiant") else "Dire"
         rows.append(

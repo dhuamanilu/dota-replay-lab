@@ -12,7 +12,7 @@ def test_render_match_summary_includes_match_result_and_players() -> None:
         "players": [
             {
                 "isRadiant": True,
-                "hero_name": "npc_dota_hero_axe",
+                "hero_id": 1,
                 "personaname": "tester",
                 "kills": 4,
                 "deaths": 2,
@@ -23,9 +23,9 @@ def test_render_match_summary_includes_match_result_and_players() -> None:
         ],
     }
 
-    report = render_match_summary(match)
+    report = render_match_summary(match, {1: "Anti-Mage"})
 
     assert "# Match 42" in report
     assert "Radiant Team ganó" in report
-    assert "axe" in report
+    assert "Anti-Mage" in report
     assert "tester" in report
