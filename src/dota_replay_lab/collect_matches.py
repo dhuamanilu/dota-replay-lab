@@ -15,6 +15,32 @@ from .opendota import OpenDotaError, get_hero_names, get_json, get_match
 CORPUS_VERSION = "v1"
 
 
+def paginated_pro_match_ids(
+    candidate_limit: int, fetch_json: Callable[[str], Any] = get_json
+) -> list[int]:
+    """Walk the professional feed backwards without duplicating match IDs."""
+
+    match_ids: list[int] = []
+    seen: set[int] = set()
+    cutoff: int | None = None
+    while len(match_ids) < candidate_limit:
+        path = "proMatches" if cutoff is None else f"proMatches?less_than_match_id={cutoff}"
+        payload = fetch_json(path)
+        if not isinstance(payload, list) or not payload:
+            break
+        batch = [int(item["match_id"]) for item in payload if isinstance(item, dict) and "match_id" in item]
+        new_ids = [match_id for match_id in batch if match_id not in seen]
+        if not new_ids:
+            break
+        match_ids.extend(new_ids)
+        seen.update(new_ids)
+        next_cutoff = min(batch)
+        if cutoff is not None and next_cutoff >= cutoff:
+            break
+        cutoff = next_cutoff
+    return match_ids[:candidate_limit]
+
+
 def has_minute_series(match: Mapping[str, Any]) -> bool:
     """Return whether a match has enough parsed data for hero-minute rows."""
 
@@ -90,7 +116,9 @@ def write_manifest(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect parsed pro matches and freeze their IDs in a manifest.")
     parser.add_argument("--count", type=int, default=25, help="Number of usable matches to collect")
-    parser.add_argument("--candidate-limit", type=int, default=100)
+    parser.add_argument(
+        "--candidate-limit", type=int, help="Maximum feed IDs to inspect; defaults to twice --count"
+    )
     parser.add_argument("--delay", type=float, default=1.1, help="Seconds between uncached API requests")
     parser.add_argument("--matches-dir", type=Path, default=Path("artifacts/matches"))
     parser.add_argument(
@@ -103,8 +131,8 @@ def main() -> int:
     args = parse_args()
     if args.count < 2:
         raise SystemExit("--count must be at least 2 for a match-level train/test split.")
-    feed = get_json("proMatches")
-    candidate_ids = [int(item["match_id"]) for item in feed[: args.candidate_limit] if "match_id" in item]
+    candidate_limit = args.candidate_limit or max(args.count * 2, 100)
+    candidate_ids = paginated_pro_match_ids(candidate_limit)
     selected, rejected = collect_corpus(
         candidate_ids, args.matches_dir, args.count, get_match, delay_seconds=max(args.delay, 0.0)
     )

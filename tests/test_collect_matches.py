@@ -1,6 +1,11 @@
 import json
 
-from dota_replay_lab.collect_matches import collect_corpus, has_minute_series, write_manifest
+from dota_replay_lab.collect_matches import (
+    collect_corpus,
+    has_minute_series,
+    paginated_pro_match_ids,
+    write_manifest,
+)
 
 
 def _match(match_id, *, parsed=True):
@@ -42,3 +47,18 @@ def test_manifest_freezes_ids_and_hero_names(tmp_path) -> None:
     assert payload["hero_names"] == {"1": "Anti-Mage"}
     assert payload["hero_internal_names"] == {"1": "npc_dota_hero_antimage"}
     assert payload["corpus_version"] == "v1"
+
+
+def test_pro_feed_pagination_walks_backwards_and_deduplicates() -> None:
+    responses = {
+        "proMatches": [{"match_id": 5}, {"match_id": 4}, {"match_id": 3}],
+        "proMatches?less_than_match_id=3": [{"match_id": 3}, {"match_id": 2}, {"match_id": 1}],
+    }
+    paths = []
+
+    def fetch(path):
+        paths.append(path)
+        return responses[path]
+
+    assert paginated_pro_match_ids(5, fetch) == [5, 4, 3, 2, 1]
+    assert paths == ["proMatches", "proMatches?less_than_match_id=3"]
