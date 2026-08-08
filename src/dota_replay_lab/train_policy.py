@@ -55,7 +55,12 @@ def optimize_probability_biases(probabilities: Any, true_indices: Any) -> tuple[
 
     best_biases = [1.0] * len(LABELS)
     best_score = float(f1_score(true_indices, apply_probability_biases(probabilities, best_biases), average="macro"))
-    grids = ([1.0], [0.75, 1.0, 1.25], [0.25, 0.5, 0.75, 1.0], [0.75, 1.0, 1.25])
+    grids = (
+        [1.0],
+        [0.5, 0.75, 1.0, 1.25, 1.5],
+        [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+        [0.5, 0.75, 1.0, 1.25, 1.5],
+    )
     for candidate in itertools.product(*grids):
         score = float(f1_score(true_indices, apply_probability_biases(probabilities, list(candidate)), average="macro"))
         if score > best_score:
