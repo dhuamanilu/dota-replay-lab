@@ -26,4 +26,20 @@ Los detalles de cada etapa están en [docs/learning-path.md](docs/learning-path.
 
 ## Estado actual
 
-Base inicial creada. El siguiente entregable es el explorador de replays: descarga una partida pública, extrae sus eventos principales y genera un resumen legible.
+Base inicial creada. El primer entregable, el explorador de replays, ya permite descargar una partida pública y generar un resumen legible.
+
+## Primer experimento
+
+Con Python 3.11 o superior:
+
+```powershell
+python -m dota_replay_lab.fetch_match --latest-pro
+```
+
+El comando descarga la partida profesional más reciente que OpenDota pueda entregar, guarda su respuesta sin modificar y crea un resumen Markdown dentro de `artifacts/matches/`. Para analizar una partida concreta:
+
+```powershell
+python -m dota_replay_lab.fetch_match 1234567890
+```
+
+El identificador anterior es solo un ejemplo; sustitúyelo por un `match_id` real de OpenDota.
