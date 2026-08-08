@@ -15,6 +15,7 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         """
         CURRENT_TIME = 0
         BOT_MODE_NONE = 0
+        BOT_ACTION_TYPE_IDLE = 1
         TELEMETRY = {}
         function print(message) table.insert(TELEMETRY, message) end
 
@@ -36,6 +37,7 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:GetPlayerID() return 0 end
         function mockBot:GetCurrentXP() return 500 end
         function mockBot:GetXPNeededToLevel() return 140 end
+        function mockBot:GetCurrentActionType() return BOT_ACTION_TYPE_IDLE end
         function mockBot:GetUnitName() return "npc_dota_hero_life_stealer" end
         function mockBot:GetAssignedLane() return 2 end
         function mockBot:GetNearbyLaneCreeps(radius, enemies) return self.creeps end
@@ -94,7 +96,7 @@ def test_valve_adapter_executes_policy_and_issues_an_action() -> None:
     assert lua.globals().mockBot.last_target == "npc_dota_creep_badguys_melee"
     messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
     decision = next(json.loads(message.removeprefix("DRL_TELEMETRY ")) for message in messages if '"event":"decision"' in message)
-    assert decision["schema"] == 2
+    assert decision["schema"] == 3
     assert decision["player_id"] == 0
     assert decision["hero_name"] == "npc_dota_hero_life_stealer"
     assert decision["last_hits"] == 3
@@ -102,6 +104,25 @@ def test_valve_adapter_executes_policy_and_issues_an_action() -> None:
     assert decision["xp_to_next_level"] == 140
     assert "experience" in decision["missing_features"].split(",")
     assert "experience_change" in decision["missing_features"].split(",")
+
+
+def test_valve_adapter_measures_idle_alive_time() -> None:
+    lua = build_runtime("farm")
+    lua.globals().Think()
+    lua.execute("CURRENT_TIME = 5")
+    lua.globals().Think()
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    activity = [
+        json.loads(message.removeprefix("DRL_TELEMETRY "))
+        for message in messages
+        if '"event":"activity"' in message
+    ]
+    assert activity[-1]["idle"] is True
+    assert activity[-1]["idle_seconds"] == 5
+    assert activity[-1]["activity_seconds"] == 5
 
 
 def test_generated_policy_executes_through_the_valve_adapter() -> None:

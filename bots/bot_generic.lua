@@ -18,6 +18,7 @@ local tracker = {
 }
 local selected_action = "unknown"
 local last_order = { name = "", target = "", time = -100 }
+local activity = { last_sample = nil, idle_seconds = 0, observed_seconds = 0 }
 
 local function safe_number(callback, fallback)
   local ok, value = pcall(callback)
@@ -53,6 +54,7 @@ local telemetry_keys = {
   "player_id", "team_id", "hero_name", "action", "fallback", "order", "target",
   "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
   "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+  "action_type", "idle", "idle_seconds", "activity_seconds",
   "features_available", "missing_features", "error",
 }
 
@@ -63,7 +65,7 @@ local function telemetry(event, fields)
   local hero_ok, hero_name = pcall(function() return bot:GetUnitName() end)
   fields.hero_name = hero_ok and hero_name or "unknown"
   local parts = {
-    '"schema":2',
+    '"schema":3',
     '"event":' .. json_string(event),
     '"game_time":' .. tostring(math.floor(game_time() * 1000) / 1000),
     '"minute":' .. tostring(game_minute()),
@@ -76,6 +78,28 @@ local function telemetry(event, fields)
     end
   end
   print("DRL_TELEMETRY {" .. table.concat(parts, ",") .. "}")
+end
+
+local function sample_activity()
+  local now = game_time()
+  if activity.last_sample ~= nil and now - activity.last_sample < 5 then return end
+  local action_type, action_ok = safe_number(function()
+    return bot:GetCurrentActionType()
+  end, -1)
+  local elapsed = activity.last_sample ~= nil and math.max(0, now - activity.last_sample) or 0
+  if action_ok then
+    activity.observed_seconds = activity.observed_seconds + elapsed
+    if action_type == (BOT_ACTION_TYPE_IDLE or 1) then
+      activity.idle_seconds = activity.idle_seconds + elapsed
+    end
+  end
+  activity.last_sample = now
+  telemetry("activity", {
+    action_type = action_type,
+    idle = action_ok and action_type == (BOT_ACTION_TYPE_IDLE or 1),
+    idle_seconds = math.floor(activity.idle_seconds * 1000) / 1000,
+    activity_seconds = math.floor(activity.observed_seconds * 1000) / 1000,
+  })
 end
 
 if policy_ok then
@@ -345,7 +369,11 @@ end
 function Think()
   if bot == nil then return end
   local alive_ok, alive = pcall(function() return bot:IsAlive() end)
-  if not alive_ok or not alive then return end
+  if not alive_ok or not alive then
+    activity.last_sample = nil
+    return
+  end
+  sample_activity()
   local minute = game_minute()
   if minute ~= tracker.minute then selected_action = choose_action() end
   if selected_action == "fight" then

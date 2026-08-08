@@ -43,6 +43,13 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
     orders = Counter(
         str(row.get("order", "missing")) for row in rows if row.get("event") == "order_issued"
     )
+    tower_attack_orders = sum(
+        1
+        for row in rows
+        if row.get("event") == "order_issued"
+        and row.get("order") == "attack"
+        and "tower" in str(row.get("target", "")).lower()
+    )
     error_events = Counter(
         str(row.get("event")) for row in rows if row.get("event") in ERROR_EVENTS
     )
@@ -58,6 +65,7 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
         {int(row["schema"]) for row in rows if isinstance(row.get("schema"), (int, float))}
     )
     decisions_by_bot: dict[str, dict[str, Any]] = {}
+    activity_by_bot: dict[str, dict[str, Any]] = {}
     counter_fields = (
         "gold",
         "experience",
@@ -83,6 +91,25 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
                 snapshot[field] = row[field]
         decisions_by_bot[identity] = snapshot
 
+    for row in rows:
+        if row.get("event") != "activity" or "player_id" not in row:
+            continue
+        identity = f'{row["player_id"]}:{row.get("hero_name", "unknown")}'
+        idle_seconds = float(row.get("idle_seconds", 0))
+        activity_seconds = float(row.get("activity_seconds", 0))
+        activity_by_bot[identity] = {
+            "player_id": row["player_id"],
+            "team_id": row.get("team_id"),
+            "hero_name": row.get("hero_name", "unknown"),
+            "idle_seconds": idle_seconds,
+            "observed_alive_seconds": activity_seconds,
+            "idle_ratio": idle_seconds / activity_seconds if activity_seconds else 0,
+            "last_action_type": row.get("action_type"),
+        }
+
+    total_idle = sum(bot["idle_seconds"] for bot in activity_by_bot.values())
+    total_activity = sum(bot["observed_alive_seconds"] for bot in activity_by_bot.values())
+
     counter_maxima = {
         field: max(
             (float(row[field]) for row in rows if isinstance(row.get(field), (int, float))),
@@ -101,12 +128,15 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
         "decision_counts": dict(sorted(decisions.items())),
         "fallback_counts": dict(sorted(fallbacks.items())),
         "order_counts": dict(sorted(orders.items())),
+        "tower_attack_orders": tower_attack_orders,
         "error_event_counts": dict(sorted(error_events.items())),
         "first_game_time": min(game_times) if game_times else None,
         "last_game_time": max(game_times) if game_times else None,
         "observed_game_seconds": max(game_times) - min(game_times) if game_times else 0,
         "minutes_seen": minutes,
         "bot_snapshots": dict(sorted(decisions_by_bot.items())),
+        "activity_by_bot": dict(sorted(activity_by_bot.items())),
+        "aggregate_idle_ratio": total_idle / total_activity if total_activity else 0,
         "counter_maxima": counter_maxima,
     }
 
