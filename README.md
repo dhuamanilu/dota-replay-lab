@@ -86,3 +86,5 @@ python -m dota_replay_lab.export_lua_policy
 ```
 
 La política Lua generada se guarda en `bots/decision_policy.lua`. Su sintaxis puede verificarse sin Dota con `python -c "from luaparser import ast; ast.parse(open('bots/decision_policy.lua', encoding='utf-8').read())"` después de instalar `.[dev]`.
+
+`bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).

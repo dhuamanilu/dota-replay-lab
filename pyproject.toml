@@ -19,6 +19,7 @@ ml = [
 ]
 dev = [
   "luaparser>=4.0",
+  "lupa>=2.0",
   "pytest>=8.0",
 ]
 
