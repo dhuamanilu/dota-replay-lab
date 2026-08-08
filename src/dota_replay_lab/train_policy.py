@@ -27,6 +27,13 @@ NUMERIC_FEATURES = [
     "previous_farm",
 ]
 FEATURES = CATEGORICAL_FEATURES + NUMERIC_FEATURES
+XGB_TRIALS = {
+    "xgboost_d4_w075": {"max_depth": 4, "n_estimators": 900, "learning_rate": 0.04, "weight_power": 0.75},
+    "xgboost_d6_w050": {"max_depth": 6, "n_estimators": 750, "learning_rate": 0.04, "weight_power": 0.50},
+    "xgboost_d6_w075": {"max_depth": 6, "n_estimators": 750, "learning_rate": 0.04, "weight_power": 0.75},
+    "xgboost_d6_w100": {"max_depth": 6, "n_estimators": 750, "learning_rate": 0.04, "weight_power": 1.00},
+    "xgboost_d8_w075": {"max_depth": 8, "n_estimators": 600, "learning_rate": 0.05, "weight_power": 0.75},
+}
 
 
 def split_match_ids(match_ids: list[int], seed: int = 42) -> dict[str, list[int]]:
@@ -86,9 +93,9 @@ def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) 
     import joblib
     import numpy as np
     import pandas as pd
+    from sklearn.base import clone
     from sklearn.dummy import DummyClassifier
     from sklearn.linear_model import LogisticRegression
-    from sklearn.pipeline import Pipeline
     from sklearn.utils.class_weight import compute_sample_weight
     from xgboost import XGBClassifier
 
@@ -127,54 +134,82 @@ def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) 
         trained[name] = model
 
     xgb_device = "cuda" if device in {"auto", "cuda"} else "cpu"
-    xgb = XGBClassifier(
-        objective="multi:softprob",
-        num_class=len(LABELS),
-        n_estimators=700,
-        max_depth=7,
-        learning_rate=0.04,
-        subsample=0.9,
-        colsample_bytree=0.9,
-        min_child_weight=2,
-        reg_lambda=1.5,
-        tree_method="hist",
-        device=xgb_device,
-        eval_metric="mlogloss",
-        random_state=seed,
-        n_jobs=-1,
-    )
-    started = time.perf_counter()
-    try:
-        xgb.fit(
-            transformed["train"],
-            y_index["train"],
-            sample_weight=compute_sample_weight("balanced", y_text["train"]),
-            eval_set=[(transformed["validation"], y_index["validation"])],
-            verbose=False,
+
+    def make_xgb(params: dict[str, float], selected_device: str) -> XGBClassifier:
+        return XGBClassifier(
+            objective="multi:softprob",
+            num_class=len(LABELS),
+            n_estimators=int(params["n_estimators"]),
+            max_depth=int(params["max_depth"]),
+            learning_rate=params["learning_rate"],
+            subsample=0.9,
+            colsample_bytree=0.9,
+            min_child_weight=2,
+            reg_lambda=1.5,
+            tree_method="hist",
+            device=selected_device,
+            eval_metric="mlogloss",
+            random_state=seed,
+            n_jobs=-1,
         )
-    except Exception:
-        if device != "auto" or xgb_device == "cpu":
-            raise
-        xgb.set_params(device="cpu")
-        xgb_device = "cpu-fallback"
-        xgb.fit(
-            transformed["train"],
-            y_index["train"],
-            sample_weight=compute_sample_weight("balanced", y_text["train"]),
-            eval_set=[(transformed["validation"], y_index["validation"])],
-            verbose=False,
-        )
-    elapsed = time.perf_counter() - started
-    xgb_predictions = np.array([LABELS[index] for index in xgb.predict(transformed["validation"]).astype(int)])
-    validation_results["xgboost"] = _metrics(y_text["validation"], xgb_predictions)
-    validation_results["xgboost"]["train_seconds"] = elapsed
-    validation_results["xgboost"]["device"] = xgb_device
-    trained["xgboost"] = xgb
+
+    base_weights = compute_sample_weight("balanced", y_text["train"])
+    for name, params in XGB_TRIALS.items():
+        actual_device = "cpu" if xgb_device == "cpu-fallback" else xgb_device
+        xgb = make_xgb(params, actual_device)
+        started = time.perf_counter()
+        try:
+            xgb.fit(
+                transformed["train"],
+                y_index["train"],
+                sample_weight=np.power(base_weights, params["weight_power"]),
+                eval_set=[(transformed["validation"], y_index["validation"])],
+                verbose=False,
+            )
+        except Exception:
+            if device != "auto" or actual_device == "cpu":
+                raise
+            xgb_device = "cpu-fallback"
+            xgb = make_xgb(params, "cpu")
+            xgb.fit(
+                transformed["train"],
+                y_index["train"],
+                sample_weight=np.power(base_weights, params["weight_power"]),
+                eval_set=[(transformed["validation"], y_index["validation"])],
+                verbose=False,
+            )
+        elapsed = time.perf_counter() - started
+        predictions = np.array([LABELS[index] for index in xgb.predict(transformed["validation"]).astype(int)])
+        validation_results[name] = _metrics(y_text["validation"], predictions)
+        validation_results[name]["train_seconds"] = elapsed
+        validation_results[name]["device"] = xgb_device
+        validation_results[name]["parameters"] = params
+        trained[name] = xgb
 
     chosen = max(validation_results, key=lambda name: validation_results[name]["macro_f1"])
-    chosen_model = trained[chosen]
-    raw_test_predictions = chosen_model.predict(transformed["test"])
-    if chosen == "xgboost":
+    development = pd.concat([subsets["train"], subsets["validation"]], ignore_index=True)
+    final_preprocessor = _preprocessor()
+    development_x = final_preprocessor.fit_transform(development[FEATURES])
+    test_x = final_preprocessor.transform(subsets["test"][FEATURES])
+    started = time.perf_counter()
+    if chosen.startswith("xgboost"):
+        chosen_params = XGB_TRIALS[chosen]
+        actual_device = "cpu" if xgb_device == "cpu-fallback" else xgb_device
+        chosen_model = make_xgb(chosen_params, actual_device)
+        development_y = np.array([label_to_index[value] for value in development["label"]])
+        development_weights = compute_sample_weight("balanced", development["label"])
+        chosen_model.fit(
+            development_x,
+            development_y,
+            sample_weight=np.power(development_weights, chosen_params["weight_power"]),
+            verbose=False,
+        )
+    else:
+        chosen_model = clone(candidates[chosen])
+        chosen_model.fit(development_x, development["label"].to_numpy())
+    final_train_seconds = time.perf_counter() - started
+    raw_test_predictions = chosen_model.predict(test_x)
+    if chosen.startswith("xgboost"):
         test_predictions = np.array([LABELS[index] for index in raw_test_predictions.astype(int)])
     else:
         test_predictions = raw_test_predictions
@@ -189,12 +224,13 @@ def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) 
         "match_ids": splits,
         "validation": validation_results,
         "chosen_model": chosen,
+        "final_train_seconds": final_train_seconds,
         "test": test_metrics,
     }
     output_dir.mkdir(parents=True, exist_ok=True)
     joblib.dump(
         {
-            "preprocessor": preprocessor,
+            "preprocessor": final_preprocessor,
             "model": chosen_model,
             "model_name": chosen,
             "features": FEATURES,
