@@ -16,6 +16,7 @@ def test_second_rows_join_actions_and_compute_contiguous_movement() -> None:
         {
             "time": 0,
             "type": "interval",
+            "unit": "CDOTA_Unit_Hero_Axe",
             "slot": 0,
             "hero_id": 1,
             "x": 10,
@@ -25,6 +26,7 @@ def test_second_rows_join_actions_and_compute_contiguous_movement() -> None:
         {
             "time": 1,
             "type": "interval",
+            "unit": "CDOTA_Unit_Hero_Axe",
             "slot": 0,
             "hero_id": 1,
             "x": 13,
@@ -34,11 +36,30 @@ def test_second_rows_join_actions_and_compute_contiguous_movement() -> None:
         {
             "time": 3,
             "type": "interval",
+            "unit": "CDOTA_Unit_Hero_Axe",
             "slot": 0,
             "hero_id": 1,
             "x": 30,
             "y": 40,
             "life_state": 0,
+        },
+        {
+            "time": 1,
+            "type": "DOTA_COMBATLOG_DAMAGE",
+            "value": 75,
+            "attackername": "npc_dota_hero_axe",
+            "targetname": "npc_dota_hero_lina",
+            "attackerhero": True,
+            "targethero": True,
+        },
+        {
+            "time": 1,
+            "type": "DOTA_COMBATLOG_DAMAGE",
+            "value": 20,
+            "attackername": "npc_dota_creep_badguys_melee",
+            "targetname": "npc_dota_hero_axe",
+            "attackerhero": False,
+            "targethero": True,
         },
     ]
     rows = extract_second_rows(events)
@@ -47,4 +68,6 @@ def test_second_rows_join_actions_and_compute_contiguous_movement() -> None:
     assert rows[0]["attack_orders"] == 1
     assert rows[1]["movement_distance"] == 5
     assert rows[1]["alive"] == 0
+    assert rows[1]["hero_damage_dealt"] == 75
+    assert rows[1]["hero_damage_received"] == 20
     assert rows[2]["movement_distance"] == 0

@@ -46,7 +46,19 @@ OUTPUT_FIELDS = (
     "attack_orders",
     "cast_orders",
     "hold_orders",
+    "hero_damage_dealt",
+    "hero_damage_received",
 )
+
+
+def _hero_name(value: Any) -> str | None:
+    """Normalize parser unit names to the canonical hero suffix."""
+
+    text = str(value or "").lower()
+    for prefix in ("npc_dota_hero_", "cdota_unit_hero_"):
+        if text.startswith(prefix):
+            return text[len(prefix) :]
+    return None
 
 
 def iter_events(path: Path) -> Iterator[dict[str, Any]]:
@@ -72,6 +84,9 @@ def extract_second_rows(events: Iterable[dict[str, Any]]) -> list[dict[str, Any]
     intervals: list[dict[str, Any]] = []
     actions: Counter[tuple[int, int, str]] = Counter()
     totals: Counter[tuple[int, int]] = Counter()
+    damage_dealt: Counter[tuple[str, int]] = Counter()
+    damage_received: Counter[tuple[str, int]] = Counter()
+    hero_slots: dict[str, int] = {}
     for event in events:
         event_type = event.get("type")
         if event_type == "actions" and int(event.get("time", -1)) >= 0:
@@ -84,6 +99,27 @@ def extract_second_rows(events: Iterable[dict[str, Any]]) -> list[dict[str, Any]
         elif event_type == "interval" and int(event.get("time", -1)) >= 0:
             if "hero_id" in event and "x" in event and "y" in event:
                 intervals.append(event)
+                name = _hero_name(event.get("unit"))
+                if name is not None:
+                    hero_slots[name] = int(event["slot"])
+        elif event_type == "DOTA_COMBATLOG_DAMAGE" and int(event.get("time", -1)) >= 0:
+            second = int(event["time"])
+            value = max(float(event.get("value", 0)), 0.0)
+            target = _hero_name(event.get("targetname"))
+            attacker = _hero_name(event.get("attackername"))
+            if event.get("targethero") and target is not None:
+                damage_received[(target, second)] += value
+                if event.get("attackerhero") and attacker is not None:
+                    damage_dealt[(attacker, second)] += value
+
+    dealt_by_slot: Counter[tuple[int, int]] = Counter()
+    received_by_slot: Counter[tuple[int, int]] = Counter()
+    for (name, second), value in damage_dealt.items():
+        if name in hero_slots:
+            dealt_by_slot[(hero_slots[name], second)] += value
+    for (name, second), value in damage_received.items():
+        if name in hero_slots:
+            received_by_slot[(hero_slots[name], second)] += value
 
     previous: dict[int, tuple[float, float, int]] = {}
     rows = []
@@ -108,6 +144,8 @@ def extract_second_rows(events: Iterable[dict[str, Any]]) -> list[dict[str, Any]
                     f"{group}_orders": actions[(slot, second, group)]
                     for group in ACTION_GROUPS
                 },
+                "hero_damage_dealt": dealt_by_slot[(slot, second)],
+                "hero_damage_received": received_by_slot[(slot, second)],
             }
         )
         rows.append(row)

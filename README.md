@@ -98,6 +98,9 @@ La tubería de replay crudo descarga directamente desde Valve, detecta BZip2 o
 Zstandard por la firma del archivo y extrae estados y órdenes de los diez héroes
 una vez por segundo, sin abrir ni controlar el cliente. Consulta
 [docs/replay-trajectories.md](docs/replay-trajectories.md).
+El primer candidato de imitación de órdenes y sus límites están documentados en
+[docs/replay-behavior-policy.md](docs/replay-behavior-policy.md); por ahora es un
+experimento auxiliar y no sustituye la política canónica.
 
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 

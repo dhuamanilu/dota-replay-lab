@@ -29,6 +29,12 @@ vida, nivel, economía acumulada, movimiento desde el segundo anterior y conteos
 de órdenes `move`, `attack`, `cast` y `hold`. El split de cualquier experimento
 posterior debe hacerse por `match_id`, nunca por filas.
 
+El extractor también normaliza los nombres de unidades del combat log y conserva
+`hero_damage_dealt` y `hero_damage_received` por segundo. En una integración real
+de 20.570 filas encontró 1.183 segundos con daño de héroe infligido y 2.922 con
+daño recibido. Esto permite distinguir combate contra héroes sin asumir que toda
+orden `attack` era una pelea.
+
 Los `.dem`, comprimidos y eventos JSONL son temporales. Después de validar que
 la trayectoria contiene intervalos, el comando elimina únicamente esos archivos
 generados y conserva el CSV compacto. `--keep-events` permite retener el JSONL
