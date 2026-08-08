@@ -23,8 +23,8 @@ def test_policy_features_exclude_target_window_evidence() -> None:
     assert "label" not in FEATURES
     assert "signals" not in FEATURES
     assert "decision_minute" not in FEATURES
-    assert "denies" in FEATURES
-    assert "deny_change" in FEATURES
+    assert "denies" not in FEATURES
+    assert "deny_change" not in FEATURES
 
 
 def test_xgboost_search_has_distinct_bounded_trials() -> None:
