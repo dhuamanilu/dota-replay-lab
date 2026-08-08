@@ -1,13 +1,75 @@
 {
   "chosen_depth": 12,
+  "chosen_strategy": "teacher_raw",
+  "chosen_candidate": "teacher_raw_d12",
   "node_count": 879,
   "fidelity_validation": {
-    "6": 0.8251134644478063,
-    "8": 0.8296520423600605,
-    "10": 0.8381240544629349,
-    "12": 0.840695915279879
+    "teacher_calibrated_d6": {
+      "macro_f1": 0.41590447185782725,
+      "teacher_fidelity": 0.8313161875945537
+    },
+    "teacher_calibrated_d8": {
+      "macro_f1": 0.4284633086339128,
+      "teacher_fidelity": 0.8446293494704993
+    },
+    "teacher_calibrated_d10": {
+      "macro_f1": 0.42488557355424283,
+      "teacher_fidelity": 0.8508320726172466
+    },
+    "teacher_calibrated_d12": {
+      "macro_f1": 0.42267564637729804,
+      "teacher_fidelity": 0.8490166414523449
+    },
+    "teacher_raw_d6": {
+      "macro_f1": 0.41973616437038114,
+      "teacher_fidelity": 0.8234493192133132
+    },
+    "teacher_raw_d8": {
+      "macro_f1": 0.4176667934099423,
+      "teacher_fidelity": 0.829500756429652
+    },
+    "teacher_raw_d10": {
+      "macro_f1": 0.43185984667115507,
+      "teacher_fidelity": 0.8366111951588502
+    },
+    "teacher_raw_d12": {
+      "macro_f1": 0.4330151664192896,
+      "teacher_fidelity": 0.8414523449319213
+    },
+    "labels_d6": {
+      "macro_f1": 0.3440463551265869,
+      "teacher_fidelity": 0.7042360060514372
+    },
+    "labels_d8": {
+      "macro_f1": 0.3714743427590781,
+      "teacher_fidelity": 0.7531013615733737
+    },
+    "labels_d10": {
+      "macro_f1": 0.3796851770024291,
+      "teacher_fidelity": 0.7422087745839637
+    },
+    "labels_d12": {
+      "macro_f1": 0.3667455661733878,
+      "teacher_fidelity": 0.7
+    },
+    "labels_balanced_d6": {
+      "macro_f1": 0.33084271791037745,
+      "teacher_fidelity": 0.5689863842662632
+    },
+    "labels_balanced_d8": {
+      "macro_f1": 0.344256010126645,
+      "teacher_fidelity": 0.6202723146747352
+    },
+    "labels_balanced_d10": {
+      "macro_f1": 0.3572810156846086,
+      "teacher_fidelity": 0.6434190620272314
+    },
+    "labels_balanced_d12": {
+      "macro_f1": 0.3568073942985676,
+      "teacher_fidelity": 0.6186081694402421
+    }
   },
-  "teacher_fidelity_test": 0.852605459057072,
+  "teacher_fidelity_test": 0.8447890818858561,
   "student_test": {
     "accuracy": 0.5445409429280397,
     "balanced_accuracy": 0.4694958349711855,
@@ -66,59 +128,59 @@
     ]
   },
   "teacher_test": {
-    "accuracy": 0.5444168734491315,
-    "balanced_accuracy": 0.5019024358842135,
-    "macro_f1": 0.4348702249700579,
+    "accuracy": 0.5640198511166253,
+    "balanced_accuracy": 0.4683458621839308,
+    "macro_f1": 0.4372105716527534,
     "per_class": {
       "farm": {
-        "precision": 0.7002808988764045,
-        "recall": 0.5856236786469344,
-        "f1": 0.6378406038122042,
+        "precision": 0.6850293292527416,
+        "recall": 0.6309607704956542,
+        "f1": 0.6568843237955491,
         "support": 4257
       },
       "fight": {
-        "precision": 0.532448377581121,
-        "recall": 0.420909444228527,
-        "f1": 0.47015411330583895,
+        "precision": 0.5220522052205221,
+        "recall": 0.45083560046638166,
+        "f1": 0.48383733055265904,
         "support": 2573
       },
       "push": {
-        "precision": 0.08904109589041095,
-        "recall": 0.29770992366412213,
-        "f1": 0.13708260105448156,
+        "precision": 0.08614232209737828,
+        "recall": 0.17557251908396945,
+        "f1": 0.11557788944723618,
         "support": 131
       },
       "unknown": {
-        "precision": 0.381163708086785,
-        "recall": 0.7033666969972703,
-        "f1": 0.49440358170770704,
+        "precision": 0.4103030303030303,
+        "recall": 0.6160145586897179,
+        "f1": 0.4925427428155693,
         "support": 1099
       }
     },
     "confusion_matrix": [
       [
-        2493,
-        763,
-        215,
-        786
+        2686,
+        835,
+        123,
+        613
       ],
       [
-        862,
-        1083,
-        173,
-        455
+        951,
+        1160,
+        112,
+        350
       ],
       [
-        43,
-        35,
-        39,
-        14
+        57,
+        41,
+        23,
+        10
       ],
       [
-        162,
-        153,
-        11,
-        773
+        227,
+        186,
+        9,
+        677
       ]
     ]
   },
