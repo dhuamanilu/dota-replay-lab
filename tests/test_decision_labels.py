@@ -60,6 +60,7 @@ def test_rows_and_csv_include_rules_and_evidence(tmp_path) -> None:
     assert rows[0]["decision_minute"] == 1
     assert rows[0]["last_hit_change"] == 0
     assert rows[0]["kills_last_minute"] == 0
+    assert rows[0]["previous_fight"] == 0
     with output.open(encoding="utf-8", newline="") as handle:
         saved = list(csv.DictReader(handle))
     assert saved[0]["hero"] == "Anti-Mage"
@@ -73,3 +74,14 @@ def test_features_do_not_include_the_labeled_minute() -> None:
     assert row["state_minute"] == 0
     assert row["kills_last_minute"] == 0
     assert row["last_hits"] == 0
+
+
+def test_previous_signals_only_describe_completed_interval() -> None:
+    player = _player(
+        gold_t=[100, 200, 300], xp_t=[0, 100, 200], lh_t=[0, 0, 0],
+        kills_log=[{"time": 45}],
+    )
+    rows = list(iter_decision_rows({"match_id": 42, "players": [player]}, {1: "Anti-Mage"}))
+    assert rows[0]["label"] == "fight"
+    assert rows[0]["previous_fight"] == 0
+    assert rows[1]["previous_fight"] == 1

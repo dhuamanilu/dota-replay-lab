@@ -106,6 +106,7 @@ def iter_decision_rows(
         for decision_minute in range(1, max(series_lengths)):
             state = state_at_minute(match, player, decision_minute - 1, hero_names)
             label, signals = label_decision(match, player, player_index, decision_minute)
+            previous_signals = decision_signals(match, player, player_index, decision_minute - 1)
             row = asdict(state)
             row["state_minute"] = row.pop("minute")
             row.update(
@@ -114,6 +115,9 @@ def iter_decision_rows(
                     "player_slot": int(player.get("player_slot", -1)),
                     "hero_id": int(player.get("hero_id", 0)),
                     "decision_minute": decision_minute,
+                    "previous_fight": int("fight" in previous_signals),
+                    "previous_push": int("push" in previous_signals),
+                    "previous_farm": int("farm" in previous_signals),
                     "label": label,
                     "signals": "+".join(signals) if signals else "none",
                     "rules_version": LABEL_RULES_VERSION,
