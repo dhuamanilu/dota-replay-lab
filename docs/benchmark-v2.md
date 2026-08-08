@@ -28,24 +28,26 @@
 | `majority` | 0.1742 | 0.0052 | cpu |
 
 Modelo elegido: `xgboost_d4_w075`.
+Sesgos calibrados con predicciones out-of-fold: farm=1, fight=1, push=0.75, unknown=0.75.
+Macro-F1 out-of-fold tras calibración: 0.4448.
 
 ## Test congelado del modelo GPU
 
-- Macro-F1: 0.4349.
-- Balanced accuracy: 0.5019.
-- Accuracy: 0.5444.
+- Macro-F1: 0.4372.
+- Balanced accuracy: 0.4683.
+- Accuracy: 0.5640.
 
 | Etiqueta | Precisión | Recall | F1 | Soporte |
 | --- | ---: | ---: | ---: | ---: |
-| farm | 0.7003 | 0.5856 | 0.6378 | 4257 |
-| fight | 0.5324 | 0.4209 | 0.4702 | 2573 |
-| push | 0.0890 | 0.2977 | 0.1371 | 131 |
-| unknown | 0.3812 | 0.7034 | 0.4944 | 1099 |
+| farm | 0.6850 | 0.6310 | 0.6569 | 4257 |
+| fight | 0.5221 | 0.4508 | 0.4838 | 2573 |
+| push | 0.0861 | 0.1756 | 0.1156 | 131 |
+| unknown | 0.4103 | 0.6160 | 0.4925 | 1099 |
 
 ## Política Lua destilada
 
-- Profundidad: 12; nodos: 879.
-- Fidelidad al XGBoost en test: 0.8526.
+- Estrategia: teacher_raw; profundidad: 12; nodos: 879.
+- Fidelidad al XGBoost en test: 0.8448.
 - Macro-F1 en test: 0.4248.
 
 ## Interpretación
