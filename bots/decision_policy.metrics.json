@@ -1,188 +1,69 @@
 {
-  "chosen_depth": 12,
-  "chosen_strategy": "teacher_calibrated",
-  "chosen_candidate": "teacher_calibrated_d12",
-  "node_count": 1699,
-  "fidelity_validation": {
-    "teacher_calibrated_d6": {
-      "macro_f1": 0.43016669920918943,
-      "teacher_fidelity": 0.8915786202610317
-    },
-    "teacher_calibrated_d8": {
-      "macro_f1": 0.4410281482012756,
-      "teacher_fidelity": 0.9050963331261653
-    },
-    "teacher_calibrated_d10": {
-      "macro_f1": 0.4400052228416022,
-      "teacher_fidelity": 0.9131137352392791
-    },
-    "teacher_calibrated_d12": {
-      "macro_f1": 0.4439899315167398,
-      "teacher_fidelity": 0.9175885643256682
-    },
-    "teacher_raw_d6": {
-      "macro_f1": 0.4289173647854966,
-      "teacher_fidelity": 0.8674642635177129
-    },
-    "teacher_raw_d8": {
-      "macro_f1": 0.43190783929874116,
-      "teacher_fidelity": 0.8866376631448104
-    },
-    "teacher_raw_d10": {
-      "macro_f1": 0.4399599735244837,
-      "teacher_fidelity": 0.8944064636420137
-    },
-    "teacher_raw_d12": {
-      "macro_f1": 0.43941187483255906,
-      "teacher_fidelity": 0.8986948415164698
-    },
-    "labels_d6": {
-      "macro_f1": 0.39465338668530625,
-      "teacher_fidelity": 0.8467681789931635
-    },
-    "labels_d8": {
-      "macro_f1": 0.38267499718157705,
-      "teacher_fidelity": 0.8173710379117465
-    },
-    "labels_d10": {
-      "macro_f1": 0.39209797357465637,
-      "teacher_fidelity": 0.8273151025481665
-    },
-    "labels_d12": {
-      "macro_f1": 0.38733636403411276,
-      "teacher_fidelity": 0.8058110627719081
-    },
-    "labels_balanced_d6": {
-      "macro_f1": 0.34755499365769454,
-      "teacher_fidelity": 0.568769422001243
-    },
-    "labels_balanced_d8": {
-      "macro_f1": 0.3767897526087369,
-      "teacher_fidelity": 0.6342759477936607
-    },
-    "labels_balanced_d10": {
-      "macro_f1": 0.3773423702105041,
-      "teacher_fidelity": 0.6343691733996271
-    },
-    "labels_balanced_d12": {
-      "macro_f1": 0.3774231954981384,
-      "teacher_fidelity": 0.6369794903666873
-    }
-  },
-  "teacher_fidelity_test": 0.9133194347926801,
-  "student_test": {
-    "accuracy": 0.6011813759555247,
-    "balanced_accuracy": 0.44316303522608247,
-    "macro_f1": 0.44199148536263594,
+  "policy_type": "recurrent_gru",
+  "source_model": "artifacts\\sequence-models\\sequence-policy-v1.pt",
+  "best_epoch": 15,
+  "validation_macro_f1": 0.4704855626889184,
+  "test": {
+    "accuracy": 0.5957214166864749,
+    "balanced_accuracy": 0.49000233924294256,
+    "macro_f1": 0.4590864700029845,
     "per_class": {
       "farm": {
-        "precision": 0.6835006021678041,
-        "recall": 0.7256531560329028,
-        "f1": 0.7039464163893081,
-        "support": 23463
+        "precision": 0.6801415717879834,
+        "recall": 0.7172730134460583,
+        "f1": 0.6982139730344948,
+        "support": 22237
       },
       "fight": {
-        "precision": 0.5449206676282712,
-        "recall": 0.4283631651413299,
-        "f1": 0.47966263093456674,
-        "support": 12347
+        "precision": 0.6622978248745119,
+        "recall": 0.36896069597638653,
+        "f1": 0.4739100069839369,
+        "support": 12874
       },
       "push": {
-        "precision": 0.1407766990291262,
-        "recall": 0.07571801566579635,
-        "f1": 0.09847198641765705,
-        "support": 766
+        "precision": 0.12687224669603525,
+        "recall": 0.19618528610354224,
+        "f1": 0.15409309791332262,
+        "support": 734
       },
       "unknown": {
-        "precision": 0.4396954065340211,
-        "recall": 0.5429178040643009,
-        "f1": 0.48588490770901194,
-        "support": 6594
+        "precision": 0.40903801396431344,
+        "recall": 0.6775903614457831,
+        "f1": 0.5101288020801839,
+        "support": 6225
       }
     },
     "confusion_matrix": [
       [
-        17026,
-        3279,
-        166,
-        2992
+        15950,
+        1847,
+        593,
+        3847
       ],
       [
-        5381,
-        5289,
-        156,
-        1521
+        5571,
+        4750,
+        383,
+        2170
       ],
       [
-        494,
-        165,
-        58,
-        49
+        412,
+        101,
+        144,
+        77
       ],
       [
-        2009,
-        973,
-        32,
-        3580
+        1518,
+        474,
+        15,
+        4218
       ]
     ]
   },
-  "teacher_test": {
-    "accuracy": 0.6003011350474867,
-    "balanced_accuracy": 0.4531362598840226,
-    "macro_f1": 0.4487637636247884,
-    "per_class": {
-      "farm": {
-        "precision": 0.690755128047026,
-        "recall": 0.7161914503686656,
-        "f1": 0.703243356350701,
-        "support": 23463
-      },
-      "fight": {
-        "precision": 0.5322676727561557,
-        "recall": 0.4341945411840933,
-        "f1": 0.47825505151880104,
-        "support": 12347
-      },
-      "push": {
-        "precision": 0.1265625,
-        "recall": 0.10574412532637076,
-        "f1": 0.11522048364153627,
-        "support": 766
-      },
-      "unknown": {
-        "precision": 0.4512360103308326,
-        "recall": 0.5564149226569609,
-        "f1": 0.49833616298811545,
-        "support": 6594
-      }
-    },
-    "confusion_matrix": [
-      [
-        16804,
-        3474,
-        290,
-        2895
-      ],
-      [
-        5236,
-        5361,
-        231,
-        1519
-      ],
-      [
-        467,
-        170,
-        81,
-        48
-      ],
-      [
-        1820,
-        1067,
-        38,
-        3669
-      ]
-    ]
+  "lua_parity": {
+    "rows": 5000,
+    "matches": 5000,
+    "fidelity": 1.0
   },
-  "test_rows": 43170
+  "lua_bytes": 2185087
 }
