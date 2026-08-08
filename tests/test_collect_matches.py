@@ -36,8 +36,9 @@ def test_collect_corpus_reuses_cache_and_skips_unparsed(tmp_path) -> None:
 
 def test_manifest_freezes_ids_and_hero_names(tmp_path) -> None:
     output = tmp_path / "manifest.json"
-    write_manifest(output, [10, 20], [], {1: "Anti-Mage"})
+    write_manifest(output, [10, 20], [], {1: "Anti-Mage"}, {1: "npc_dota_hero_antimage"})
     payload = json.loads(output.read_text(encoding="utf-8"))
     assert payload["match_ids"] == [10, 20]
     assert payload["hero_names"] == {"1": "Anti-Mage"}
+    assert payload["hero_internal_names"] == {"1": "npc_dota_hero_antimage"}
     assert payload["corpus_version"] == "v1"
