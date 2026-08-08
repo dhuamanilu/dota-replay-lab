@@ -53,11 +53,12 @@ python -m dota_replay_lab.inspect_state 8934279386 --minute 12
 
 ## Primer dataset de decisiones
 
-Después de descargar una o varias partidas, crea una fila CSV por héroe/minuto:
+Para congelar un corpus profesional reproducible y crear una fila CSV por héroe/minuto:
 
 ```powershell
 $env:PYTHONPATH='src'
-python -m dota_replay_lab.build_dataset 8934279386
+python -m dota_replay_lab.collect_matches --count 25
+python -m dota_replay_lab.build_dataset --manifest artifacts/corpora/pro-matches-v1.json
 ```
 
 El resultado predeterminado es `artifacts/datasets/decision-labels-v2.csv`. Las entradas describen el estado al inicio del minuto y la etiqueta describe el intervalo posterior, evitando filtrar el futuro al modelo. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v2](docs/decision-labels-v2.md).

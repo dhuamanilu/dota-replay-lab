@@ -21,7 +21,8 @@ FIELDNAMES = [
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build a CSV with one provisional decision per hero/minute.")
-    parser.add_argument("match_ids", nargs="+", type=int, help="Previously downloaded OpenDota match IDs")
+    parser.add_argument("match_ids", nargs="*", type=int, help="Previously downloaded OpenDota match IDs")
+    parser.add_argument("--manifest", type=Path, help="Corpus manifest created by collect_matches")
     parser.add_argument("--input-dir", type=Path, default=Path("artifacts/matches"))
     parser.add_argument(
         "--output", type=Path,
@@ -42,16 +43,26 @@ def write_dataset(matches: list[dict[str, Any]], hero_names: dict[int, str], out
 
 def main() -> int:
     args = parse_args()
+    match_ids = list(args.match_ids)
+    hero_names = None
+    if args.manifest:
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        match_ids.extend(int(match_id) for match_id in manifest.get("match_ids", []))
+        hero_names = {int(hero_id): str(name) for hero_id, name in manifest.get("hero_names", {}).items()}
+    match_ids = list(dict.fromkeys(match_ids))
+    if not match_ids:
+        raise SystemExit("Provide at least one match ID or --manifest.")
     matches = []
-    for match_id in args.match_ids:
+    for match_id in match_ids:
         path = args.input_dir / f"{match_id}.json"
         if not path.exists():
             raise SystemExit(f"Missing raw match data: {path}. Run fetch_match first.")
         matches.append(json.loads(path.read_text(encoding="utf-8")))
-    try:
-        hero_names = get_hero_names()
-    except OpenDotaError as error:
-        raise SystemExit(f"Could not load hero names: {error}") from error
+    if not hero_names:
+        try:
+            hero_names = get_hero_names()
+        except OpenDotaError as error:
+            raise SystemExit(f"Could not load hero names: {error}") from error
 
     row_count = write_dataset(matches, hero_names, args.output)
     print(f"Saved {row_count} hero-minute rows: {args.output}")
