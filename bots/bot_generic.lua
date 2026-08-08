@@ -334,6 +334,33 @@ local function push()
   return farm("push_no_tower")
 end
 
+local function move_to_ancient(fallback)
+  local ancient_ok, ancient = pcall(function() return GetAncient(bot:GetTeam()) end)
+  if not ancient_ok or ancient == nil then
+    telemetry("query_error", { action = "unknown", fallback = fallback, error = ancient })
+    return false
+  end
+  local moved, err = pcall(function() bot:Action_MoveToLocation(ancient:GetLocation()) end)
+  if not moved then
+    telemetry("order_error", { order = "move", target = "ancient", fallback = fallback, error = err })
+    return false
+  end
+  record_order("move", "ancient", fallback)
+  return true
+end
+
+local function retreat_for_survival()
+  local health, health_ok = safe_number(function() return bot:GetHealth() end, 0)
+  local max_health, max_health_ok = safe_number(function() return bot:GetMaxHealth() end, 0)
+  if not health_ok or not max_health_ok or max_health <= 0 then return false end
+  local health_ratio = health / max_health
+  if health_ratio > 0.25 then return false end
+  local mode = BOT_MODE_NONE or 0
+  local enemies_ok, enemies = pcall(function() return bot:GetNearbyHeroes(1600, true, mode) end)
+  if health_ratio > 0.15 and (not enemies_ok or enemies == nil or #enemies == 0) then return false end
+  return move_to_ancient("low_health")
+end
+
 local function retreat_if_threatened(fallback)
   local mode = BOT_MODE_NONE or 0
   local ok, enemies = pcall(function() return bot:GetNearbyHeroes(1200, true, mode) end)
@@ -342,18 +369,8 @@ local function retreat_if_threatened(fallback)
     return farm("enemy_query_error")
   end
   if enemies == nil or #enemies == 0 then return farm(fallback or "unknown_no_threat") end
-  local ancient_ok, ancient = pcall(function() return GetAncient(bot:GetTeam()) end)
-  if not ancient_ok or ancient == nil then
-    telemetry("query_error", { action = "unknown", fallback = fallback, error = ancient })
-    return farm("ancient_unavailable")
-  end
-  local moved, err = pcall(function() bot:Action_MoveToLocation(ancient:GetLocation()) end)
-  if not moved then
-    telemetry("order_error", { order = "move", target = "ancient", fallback = fallback, error = err })
-    return farm("retreat_order_error")
-  end
-  record_order("move", "ancient", fallback)
-  return true
+  if move_to_ancient(fallback) then return true end
+  return farm("retreat_unavailable")
 end
 
 local function choose_action()
@@ -394,6 +411,7 @@ function Think()
     return
   end
   sample_activity()
+  if retreat_for_survival() then return end
   local minute = game_minute()
   if minute ~= tracker.minute then selected_action = choose_action() end
   if selected_action == "fight" then

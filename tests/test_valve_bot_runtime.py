@@ -27,8 +27,10 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
           return unit
         end
 
-        mockBot = { creeps = {}, heroes = {}, towers = {} }
+        mockBot = { creeps = {}, heroes = {}, towers = {}, health = 1000, max_health = 1000 }
         function mockBot:IsAlive() return true end
+        function mockBot:GetHealth() return self.health end
+        function mockBot:GetMaxHealth() return self.max_health end
         function mockBot:GetGold() return 600 end
         function mockBot:GetXP() return 500 end
         function mockBot:GetLastHits() return 3 end
@@ -210,6 +212,21 @@ def test_farm_without_nearby_creep_moves_to_lane_front() -> None:
     messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
     assert any('"target":"lane_front"' in message for message in messages)
     assert any('"fallback":"farm_no_creep"' in message for message in messages)
+
+
+def test_low_health_with_nearby_enemy_retreats_before_policy_order() -> None:
+    lua = build_runtime("fight")
+    lua.execute(
+        'mockBot.health = 200; mockBot.heroes = { makeUnit("npc_dota_hero_axe", 900) }'
+    )
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "move"
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    assert any('"target":"ancient"' in message for message in messages)
+    assert any('"fallback":"low_health"' in message for message in messages)
 
 
 def test_policy_error_degrades_to_unknown_and_emits_structured_telemetry() -> None:
