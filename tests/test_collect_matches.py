@@ -1,0 +1,43 @@
+import json
+
+from dota_replay_lab.collect_matches import collect_corpus, has_minute_series, write_manifest
+
+
+def _match(match_id, *, parsed=True):
+    series = [0, 1] if parsed else []
+    return {
+        "match_id": match_id,
+        "players": [{"gold_t": series, "xp_t": series, "lh_t": series} for _ in range(10)],
+    }
+
+
+def test_has_minute_series_requires_ten_complete_players() -> None:
+    assert has_minute_series(_match(1))
+    assert not has_minute_series(_match(1, parsed=False))
+    assert not has_minute_series({"players": _match(1)["players"][:9]})
+
+
+def test_collect_corpus_reuses_cache_and_skips_unparsed(tmp_path) -> None:
+    matches_dir = tmp_path / "matches"
+    matches_dir.mkdir()
+    (matches_dir / "1.json").write_text(json.dumps(_match(1)), encoding="utf-8")
+    fetched = []
+
+    def fetcher(match_id):
+        fetched.append(match_id)
+        return _match(match_id, parsed=match_id != 2)
+
+    selected, rejected = collect_corpus([1, 2, 3], matches_dir, 2, fetcher)
+
+    assert selected == [1, 3]
+    assert fetched == [2, 3]
+    assert rejected[0]["match_id"] == 2
+
+
+def test_manifest_freezes_ids_and_hero_names(tmp_path) -> None:
+    output = tmp_path / "manifest.json"
+    write_manifest(output, [10, 20], [], {1: "Anti-Mage"})
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    assert payload["match_ids"] == [10, 20]
+    assert payload["hero_names"] == {"1": "Anti-Mage"}
+    assert payload["corpus_version"] == "v1"
