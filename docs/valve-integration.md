@@ -44,3 +44,37 @@ En la tercera sesión hubo 29 decisiones `farm` y 7 `unknown`; los nueve bots re
 Las ventajas de oro y experiencia por equipo siguen en cero porque no se ha validado una lectura equivalente para ambos equipos desde la API del bot. `previous_*` ya procede de órdenes observadas, aunque sigue siendo una aproximación a las señales agregadas de OpenDota. El benchmark offline mide imitación de etiquetas heurísticas, no habilidad, MMR ni probabilidad de victoria.
 
 La ejecución dentro de Dota ya confirmó carga, `Think()`, movimiento, ataque, degradaciones y contadores con la política de árbol anterior. La GRU portable posterior tiene paridad exacta con PyTorch y ejecuta el adaptador bajo `lupa`, pero no se presenta como validada dentro del cliente. Las mejoras posteriores se desarrollan con replays y pruebas automatizadas; no requieren controlar manualmente Dota.
+
+## Predictor de combate por replay
+
+El adaptador carga también `replay_combat_policy.lua`. El modelo reducido usa
+solo señales que la API puede leer y anticipa combate a cinco segundos. Para
+limitar falsos positivos, únicamente abre una pelea oportunista cuando
+`engage_probability >= 0,90` y ya existe un enemigo a 900 unidades. La retirada
+por poca vida conserva prioridad absoluta; un fallo del predictor desactiva esta
+ruta sin afectar la política principal.
+
+La mejora offline y la paridad exacta sklearn/Lua están documentadas en
+`replay-combat-policy.md`. Todavía no existe evidencia de win rate para esta
+integración y no se presenta como validada dentro del cliente.
+
+## Coordinador de equipo por self-play
+
+El adaptador intenta cargar `team_selfplay_policy.lua` antes de recurrir a la GRU
+individual. Al comienzo de cada minuto consulta `GetTeamMember(1..5)`, construye
+cinco estados y obtiene un único plan coordinado. Cada bot usa la posición que le
+corresponde dentro de ese plan. La misma semilla determinista por minuto y equipo
+mantiene la selección alineada entre runtimes; incluso un bot muerto avanza el
+estado recurrente antes de omitir órdenes.
+
+Las lecturas de oro, last hits y kills están protegidas con `pcall`. Experiencia y
+ventajas de equipo siguen en cero porque aún no existe una lectura validada que
+reproduzca su semántica histórica. Si falta un miembro, no se reconoce al bot
+propio, falla una consulta crítica o la predicción devuelve una acción inválida,
+el adaptador vuelve a la política individual. Retirada por supervivencia y consejo
+conservador de combate conservan prioridad sobre el plan aprendido.
+
+La política se entrenó y auditó sin abrir el cliente. La integración está cubierta
+por un runtime Lua simulado y el módulo exportado tiene paridad PyTorch/Lua, pero
+aún no se afirma que el coordinador haya sido validado en una partida real. Véase
+`self-play.md` para resultados, límites y reproducción.

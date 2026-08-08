@@ -20,7 +20,7 @@ Los detalles de cada etapa están en [docs/learning-path.md](docs/learning-path.
 
 - Dota primero: el proyecto trabaja con partidas reales desde el comienzo.
 - Reproducible: código, configuraciones y resultados versionados.
-- Local primero: la RTX 4050 Laptop se usa para los experimentos iniciales.
+- Local primero: la GTX 1660 Ti se usa para los experimentos iniciales.
 - Medible: ninguna afirmación de nivel se hace sin una evaluación publicada.
 - Abierto: el repositorio, pesos de modelos entrenados y documentación se publicarán bajo licencia MIT.
 
@@ -88,6 +88,28 @@ python -m dota_replay_lab.export_lua_policy
 La política Lua generada se guarda en `bots/decision_policy.lua`. Su sintaxis puede verificarse sin Dota con `python -c "from luaparser import ast; ast.parse(open('bots/decision_policy.lua', encoding='utf-8').read())"` después de instalar `.[dev]`.
 
 La política canónica actual es una GRU causal ligera. Para reproducirla con CUDA e instalar el wheel correcto de PyTorch, sigue [docs/sequence-policy.md](docs/sequence-policy.md); `export_sequence_lua` comprueba paridad contra PyTorch antes de reemplazar el Lua.
+
+La primera etapa hacia reinforcement learning construye recompensas causales, zero-sum y
+ponderación por ventaja sobre transiciones observadas. Ningún candidato superó aún el umbral
+estadístico para reemplazar la GRU vigente; protocolo, ablaciones y audit externo están en
+[docs/offline-rl.md](docs/offline-rl.md).
+
+La etapa de self-play ya promovió un PPO recurrente coordinado para los cinco
+héroes. Se entrenó en un simulador causal calibrado con replays, pasó una
+auditoría de cinco semillas y se exportó con paridad exacta de planes a Lua. Es
+una mejora medida dentro del simulador, no un win rate dentro de Dota. Arquitectura,
+rechazos, cifras y comandos reproducibles están en
+[docs/self-play.md](docs/self-play.md).
+
+La tubería de replay crudo descarga directamente desde Valve, detecta BZip2 o
+Zstandard por la firma del archivo y extrae estados y órdenes de los diez héroes
+una vez por segundo, sin abrir ni controlar el cliente. Consulta
+[docs/replay-trajectories.md](docs/replay-trajectories.md).
+El primer candidato de imitación de órdenes y sus límites están documentados en
+[docs/replay-behavior-policy.md](docs/replay-behavior-policy.md); por ahora es un
+experimento auxiliar y no sustituye la política canónica.
+La separación entre ataques genéricos y combate real, incluyendo el candidato a
+cinco segundos, está en [docs/replay-combat-policy.md](docs/replay-combat-policy.md).
 
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 

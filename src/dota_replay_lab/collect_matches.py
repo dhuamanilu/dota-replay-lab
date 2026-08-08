@@ -113,6 +113,42 @@ def write_manifest(
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def excluded_match_ids(manifests: Iterable[Path]) -> set[int]:
+    """Load match IDs that must remain outside a newly collected audit corpus."""
+
+    excluded: set[int] = set()
+    for manifest_path in manifests:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        excluded.update(int(match_id) for match_id in manifest.get("match_ids", []))
+    return excluded
+
+
+def cached_match_ids(matches_dir: Path) -> list[int]:
+    """Return cached numeric match IDs newest-first without network access."""
+
+    ids = []
+    for path in matches_dir.glob("*.json"):
+        try:
+            ids.append(int(path.stem))
+        except ValueError:
+            continue
+    return sorted(set(ids), reverse=True)
+
+
+def hero_names_from_manifests(manifests: Iterable[Path]) -> tuple[dict[int, str], dict[int, str]]:
+    """Reuse frozen hero catalogues while resuming a network-limited collection."""
+
+    display: dict[int, str] = {}
+    internal: dict[int, str] = {}
+    for path in manifests:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        display.update({int(key): str(value) for key, value in payload.get("hero_names", {}).items()})
+        internal.update(
+            {int(key): str(value) for key, value in payload.get("hero_internal_names", {}).items()}
+        )
+    return display, internal
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect parsed pro matches and freeze their IDs in a manifest.")
     parser.add_argument("--count", type=int, default=25, help="Number of usable matches to collect")
@@ -121,6 +157,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--delay", type=float, default=1.1, help="Seconds between uncached API requests")
     parser.add_argument("--matches-dir", type=Path, default=Path("artifacts/matches"))
+    parser.add_argument(
+        "--exclude-manifest",
+        type=Path,
+        action="append",
+        default=[],
+        help="Manifest whose match IDs must not enter the new corpus; may be repeated",
+    )
+    parser.add_argument(
+        "--cached-only",
+        action="store_true",
+        help="Build the corpus exclusively from cached match JSON files without API calls",
+    )
     parser.add_argument(
         "--manifest", type=Path, default=Path(f"artifacts/corpora/pro-matches-{CORPUS_VERSION}.json")
     )
@@ -131,22 +179,30 @@ def main() -> int:
     args = parse_args()
     if args.count < 2:
         raise SystemExit("--count must be at least 2 for a match-level train/test split.")
+    excluded = excluded_match_ids(args.exclude_manifest)
     candidate_limit = args.candidate_limit or max(args.count * 2, 100)
-    candidate_ids = paginated_pro_match_ids(candidate_limit)
+    candidate_ids = (
+        cached_match_ids(args.matches_dir)[:candidate_limit]
+        if args.cached_only
+        else paginated_pro_match_ids(candidate_limit)
+    )
+    candidate_ids = [match_id for match_id in candidate_ids if match_id not in excluded]
     selected, rejected = collect_corpus(
         candidate_ids, args.matches_dir, args.count, get_match, delay_seconds=max(args.delay, 0.0)
     )
-    hero_catalogue = get_json("constants/heroes")
-    hero_names = {
-        int(hero.get("id", hero_id)): str(hero["localized_name"])
-        for hero_id, hero in hero_catalogue.items()
-        if isinstance(hero, dict) and hero.get("localized_name")
-    }
-    hero_internal_names = {
-        int(hero.get("id", hero_id)): str(hero["name"])
-        for hero_id, hero in hero_catalogue.items()
-        if isinstance(hero, dict) and hero.get("name")
-    }
+    hero_names, hero_internal_names = hero_names_from_manifests(args.exclude_manifest)
+    if not hero_names:
+        hero_catalogue = get_json("constants/heroes")
+        hero_names = {
+            int(hero.get("id", hero_id)): str(hero["localized_name"])
+            for hero_id, hero in hero_catalogue.items()
+            if isinstance(hero, dict) and hero.get("localized_name")
+        }
+        hero_internal_names = {
+            int(hero.get("id", hero_id)): str(hero["name"])
+            for hero_id, hero in hero_catalogue.items()
+            if isinstance(hero, dict) and hero.get("name")
+        }
     write_manifest(args.manifest, selected, rejected, hero_names, hero_internal_names)
     print(f"Saved corpus manifest with {len(selected)} matches: {args.manifest}")
     if len(selected) < args.count:

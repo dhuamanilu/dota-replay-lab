@@ -20,6 +20,9 @@ ml = [
 dl = [
   "torch>=2.13",
 ]
+replay = [
+  "zstandard>=0.23",
+]
 dev = [
   "luaparser>=4.0",
   "lupa>=2.0",
