@@ -8,9 +8,11 @@ ROOT = Path(__file__).parents[1]
 
 def test_valve_adapter_loads_policy_and_exposes_think() -> None:
     source = (ROOT / "bots" / "bot_generic.lua").read_text(encoding="utf-8")
-    assert 'require(GetScriptDirectory() .. "/decision_policy")' in source
+    assert 'local policy_path = GetScriptDirectory() .. "/decision_policy"' in source
+    assert "pcall(require, policy_path)" in source
     assert "function Think()" in source
-    assert "policy.predict(checkpoint_state())" in source
+    assert "pcall(policy.predict, state)" in source
+    assert 'print("DRL_TELEMETRY {"' in source
 
 
 def test_generated_lua_and_adapter_parse_when_luaparser_is_installed() -> None:

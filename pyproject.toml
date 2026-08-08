@@ -17,6 +17,9 @@ ml = [
   "scikit-learn>=1.4",
   "xgboost>=2.1",
 ]
+dl = [
+  "torch>=2.13",
+]
 dev = [
   "luaparser>=4.0",
   "lupa>=2.0",

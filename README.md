@@ -61,7 +61,7 @@ python -m dota_replay_lab.collect_matches --count 500
 python -m dota_replay_lab.build_dataset --manifest artifacts/corpora/pro-matches-v1.json
 ```
 
-El resultado predeterminado es `artifacts/datasets/decision-labels-v2.csv`. Las entradas describen el estado al inicio del minuto y la etiqueta describe el intervalo posterior, evitando filtrar el futuro al modelo. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v2](docs/decision-labels-v2.md).
+El resultado predeterminado es `artifacts/datasets/decision-labels-v3.csv`. Conserva las reglas de etiqueta v2 y registra denies acumulados y por minuto para análisis. Una ablación agrupada mostró que incluirlos en el predictor reducía macro-F1, así que la política canónica los excluye. Las entradas describen el estado al inicio del minuto y la etiqueta describe el intervalo posterior, evitando filtrar el futuro al modelo. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v2](docs/decision-labels-v2.md).
 
 Para entrenar y evaluar baselines sin mezclar minutos de una misma partida entre conjuntos:
 
@@ -87,6 +87,8 @@ python -m dota_replay_lab.export_lua_policy
 
 La política Lua generada se guarda en `bots/decision_policy.lua`. Su sintaxis puede verificarse sin Dota con `python -c "from luaparser import ast; ast.parse(open('bots/decision_policy.lua', encoding='utf-8').read())"` después de instalar `.[dev]`.
 
+La política canónica actual es una GRU causal ligera. Para reproducirla con CUDA e instalar el wheel correcto de PyTorch, sigue [docs/sequence-policy.md](docs/sequence-policy.md); `export_sequence_lua` comprueba paridad contra PyTorch antes de reemplazar el Lua.
+
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 
-Los resultados completos y el protocolo de evaluación están publicados en [docs/benchmark-v2.md](docs/benchmark-v2.md). Se regeneran con `python -m dota_replay_lab.benchmark_report`.
+Los resultados actuales y el protocolo de evaluación están publicados en [docs/benchmark-v3.md](docs/benchmark-v3.md); el benchmark anterior permanece en [docs/benchmark-v2.md](docs/benchmark-v2.md). Se regeneran con `python -m dota_replay_lab.benchmark_report`.

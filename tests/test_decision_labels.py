@@ -7,7 +7,8 @@ from dota_replay_lab.decision_labels import decision_features, iter_decision_row
 def _player(**overrides):
     player = {
         "player_slot": 0, "isRadiant": True, "hero_id": 1,
-        "gold_t": [100, 250], "xp_t": [0, 100], "lh_t": [0, 3], "kills_log": [],
+        "gold_t": [100, 250], "xp_t": [0, 100], "lh_t": [0, 3], "dn_t": [0, 1],
+        "kills_log": [],
     }
     player.update(overrides)
     return player
@@ -59,6 +60,8 @@ def test_rows_and_csv_include_rules_and_evidence(tmp_path) -> None:
     assert rows[0]["state_minute"] == 0
     assert rows[0]["decision_minute"] == 1
     assert rows[0]["last_hit_change"] == 0
+    assert rows[0]["denies"] == 0
+    assert rows[0]["deny_change"] == 0
     assert rows[0]["kills_last_minute"] == 0
     assert rows[0]["previous_fight"] == 0
     with output.open(encoding="utf-8", newline="") as handle:

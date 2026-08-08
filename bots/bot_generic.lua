@@ -1,38 +1,156 @@
 -- Experimental Valve bot adapter for the distilled Dota Replay Lab policy.
-local policy = require(GetScriptDirectory() .. "/decision_policy")
-local bot = GetBot()
+local policy_path = GetScriptDirectory() .. "/decision_policy"
+local policy_ok, policy_or_error = pcall(require, policy_path)
+local policy = policy_ok and policy_or_error or nil
+local bot_ok, bot = pcall(GetBot)
+if not bot_ok then bot = nil end
 
 local tracker = {
   minute = -1,
   gold = 0,
   experience = 0,
   last_hits = 0,
+  denies = 0,
   kills = 0,
   gold_change = 0,
   experience_change = 0,
   last_hit_change = 0,
+  deny_change = 0,
   kills_last_minute = 0,
-  previous_action = "unknown",
 }
 local selected_action = "unknown"
+local last_order = { name = "", target = "", time = -100 }
+local activity = { last_sample = nil, idle_seconds = 0, observed_seconds = 0 }
+local observed = { fight = 0, push = 0, farm = 0 }
+local previous_observed = { fight = 0, push = 0, farm = 0 }
 
 local function safe_number(callback, fallback)
   local ok, value = pcall(callback)
-  if ok and type(value) == "number" then return value end
-  return fallback
+  if ok and type(value) == "number" then return value, true end
+  return fallback, false
+end
+
+local function game_time()
+  local value = safe_number(function() return DotaTime() end, 0)
+  return value
 end
 
 local function game_minute()
-  return math.max(0, math.floor(safe_number(function() return DotaTime() end, 0) / 60))
+  return math.max(0, math.floor(game_time() / 60))
+end
+
+local function json_string(value)
+  local escaped = tostring(value)
+    :gsub("\\", "\\\\")
+    :gsub('"', '\\"')
+    :gsub("\r", "\\r")
+    :gsub("\n", "\\n")
+  return '"' .. escaped .. '"'
+end
+
+local function json_value(value)
+  if type(value) == "number" then return tostring(value) end
+  if type(value) == "boolean" then return value and "true" or "false" end
+  return json_string(value)
+end
+
+local telemetry_keys = {
+  "player_id", "team_id", "hero_name", "action", "fallback", "order", "target",
+  "gold", "experience", "level", "xp_to_next_level", "last_hits", "denies", "kills", "deaths",
+  "gold_change", "experience_change", "last_hit_change", "deny_change", "kills_last_minute",
+  "previous_fight", "previous_push", "previous_farm",
+  "action_type", "idle", "idle_seconds", "activity_seconds",
+  "features_available", "missing_features", "error",
+}
+
+local function telemetry(event, fields)
+  fields = fields or {}
+  fields.player_id = safe_number(function() return bot:GetPlayerID() end, -1)
+  fields.team_id = safe_number(function() return bot:GetTeam() end, -1)
+  local hero_ok, hero_name = pcall(function() return bot:GetUnitName() end)
+  fields.hero_name = hero_ok and hero_name or "unknown"
+  local parts = {
+    '"schema":4',
+    '"event":' .. json_string(event),
+    '"game_time":' .. tostring(math.floor(game_time() * 1000) / 1000),
+    '"minute":' .. tostring(game_minute()),
+  }
+  for _, key in ipairs(telemetry_keys) do
+    if fields ~= nil and fields[key] ~= nil then
+      local value = fields[key]
+      if key == "error" then value = tostring(value):sub(1, 240) end
+      table.insert(parts, json_string(key) .. ":" .. json_value(value))
+    end
+  end
+  print("DRL_TELEMETRY {" .. table.concat(parts, ",") .. "}")
+end
+
+local function sample_activity()
+  local now = game_time()
+  if activity.last_sample ~= nil and now - activity.last_sample < 5 then return end
+  local action_type, action_ok = safe_number(function()
+    return bot:GetCurrentActionType()
+  end, -1)
+  local elapsed = activity.last_sample ~= nil and math.max(0, now - activity.last_sample) or 0
+  if action_ok then
+    activity.observed_seconds = activity.observed_seconds + elapsed
+    if action_type == (BOT_ACTION_TYPE_IDLE or 1) then
+      activity.idle_seconds = activity.idle_seconds + elapsed
+    end
+  end
+  activity.last_sample = now
+  telemetry("activity", {
+    action_type = action_type,
+    idle = action_ok and action_type == (BOT_ACTION_TYPE_IDLE or 1),
+    idle_seconds = math.floor(activity.idle_seconds * 1000) / 1000,
+    activity_seconds = math.floor(activity.observed_seconds * 1000) / 1000,
+  })
+end
+
+if policy_ok then
+  telemetry("policy_loaded", {})
+else
+  telemetry("policy_load_error", { error = policy_or_error })
+end
+
+local function append(values, value)
+  table.insert(values, value)
+end
+
+local function read_counter(available, missing, name, callback, fallback)
+  local value, ok = safe_number(callback, fallback)
+  append(ok and available or missing, name)
+  return value, ok
 end
 
 local function read_counters()
-  return {
-    gold = safe_number(function() return bot:GetGold() end, tracker.gold),
-    experience = safe_number(function() return bot:GetXP() end, tracker.experience),
-    last_hits = safe_number(function() return bot:GetLastHits() end, tracker.last_hits),
-    kills = safe_number(function() return bot:GetKills() end, tracker.kills),
+  local available = {}
+  local missing = {}
+  local counters = {
+    available = available,
+    missing = missing,
   }
+  counters.gold, counters.gold_ok = read_counter(
+    available, missing, "gold", function() return bot:GetGold() end, tracker.gold
+  )
+  -- GetCurrentXP belongs to the server entity API, not CDOTA_Bot_Script.
+  -- Preserve the trained input default and report the domain gap honestly.
+  counters.experience = tracker.experience
+  counters.experience_ok = false
+  append(missing, "experience")
+  counters.last_hits, counters.last_hits_ok = read_counter(
+    available, missing, "last_hits", function() return bot:GetLastHits() end, tracker.last_hits
+  )
+  counters.denies, counters.denies_ok = read_counter(
+    available, missing, "denies", function() return bot:GetDenies() end, tracker.denies
+  )
+  counters.kills, counters.kills_ok = read_counter(available, missing, "kills", function()
+    return GetHeroKills(bot:GetPlayerID())
+  end, tracker.kills)
+  counters.deaths = safe_number(function() return GetHeroDeaths(bot:GetPlayerID()) end, 0)
+  counters.level = safe_number(function() return GetHeroLevel(bot:GetPlayerID()) end, 1)
+  counters.xp_to_next_level = safe_number(function() return bot:GetXPNeededToLevel() end, -1)
+  return counters
 end
 
 local function checkpoint_state()
@@ -43,87 +161,325 @@ local function checkpoint_state()
       tracker.gold_change = counters.gold - tracker.gold
       tracker.experience_change = counters.experience - tracker.experience
       tracker.last_hit_change = counters.last_hits - tracker.last_hits
+      tracker.deny_change = counters.denies - tracker.denies
       tracker.kills_last_minute = counters.kills - tracker.kills
-      tracker.previous_action = selected_action
+      previous_observed.fight = observed.fight
+      previous_observed.push = observed.push
+      previous_observed.farm = observed.farm
     end
+    observed.fight = 0
+    observed.push = 0
+    observed.farm = 0
     tracker.minute = minute
     tracker.gold = counters.gold
     tracker.experience = counters.experience
     tracker.last_hits = counters.last_hits
+    tracker.denies = counters.denies
     tracker.kills = counters.kills
   end
-  local team = safe_number(function() return bot:GetTeam() end, 2) == 2 and "Radiant" or "Dire"
+
+  local team_number, team_ok = safe_number(function() return bot:GetTeam() end, 2)
+  append(team_ok and counters.available or counters.missing, "team")
+  local unit_ok, unit_name = pcall(function() return bot:GetUnitName() end)
+  append(unit_ok and counters.available or counters.missing, "hero_id")
+  local hero_id = 0
+  if policy ~= nil and unit_ok then
+    local hero_ok, value = pcall(policy.hero_id, unit_name)
+    if hero_ok and type(value) == "number" then
+      hero_id = value
+    else
+      append(counters.missing, "policy.hero_id")
+    end
+  end
+
+  append(counters.available, "state_minute")
+  append(counters.gold_ok and counters.available or counters.missing, "gold_change")
+  append(counters.experience_ok and counters.available or counters.missing, "experience_change")
+  append(counters.last_hits_ok and counters.available or counters.missing, "last_hit_change")
+  append(counters.denies_ok and counters.available or counters.missing, "deny_change")
+  append(counters.kills_ok and counters.available or counters.missing, "kills_last_minute")
+  append(counters.missing, "team_gold_advantage")
+  append(counters.missing, "team_experience_advantage")
+  append(counters.available, "previous_fight")
+  append(counters.available, "previous_push")
+  append(counters.available, "previous_farm")
+
   return {
-    hero_id = policy.hero_id(bot:GetUnitName()),
-    team = team,
+    hero_id = hero_id,
+    team = team_number == 2 and "Radiant" or "Dire",
     state_minute = minute,
     gold = counters.gold,
     experience = counters.experience,
+    level = counters.level,
+    xp_to_next_level = counters.xp_to_next_level,
     last_hits = counters.last_hits,
+    denies = counters.denies,
+    kills = counters.kills,
+    deaths = counters.deaths,
     gold_change = tracker.gold_change,
     experience_change = tracker.experience_change,
     last_hit_change = tracker.last_hit_change,
+    deny_change = tracker.deny_change,
     team_gold_advantage = 0,
     team_experience_advantage = 0,
     kills_last_minute = tracker.kills_last_minute,
-    previous_fight = tracker.previous_action == "fight" and 1 or 0,
-    previous_push = tracker.previous_action == "push" and 1 or 0,
-    previous_farm = tracker.previous_action == "farm" and 1 or 0,
-  }
+    previous_fight = previous_observed.fight,
+    previous_push = previous_observed.push,
+    previous_farm = previous_observed.farm,
+  }, table.concat(counters.available, ","), table.concat(counters.missing, ",")
+end
+
+local function add_state_fields(fields, state)
+  for _, key in ipairs({
+    "gold", "experience", "level", "xp_to_next_level", "last_hits", "denies", "kills", "deaths",
+    "gold_change", "experience_change", "last_hit_change", "deny_change", "kills_last_minute",
+    "previous_fight", "previous_push", "previous_farm",
+  }) do
+    fields[key] = state[key]
+  end
+  return fields
+end
+
+local function unit_name(unit)
+  local ok, value = pcall(function() return unit:GetUnitName() end)
+  if ok and value ~= nil then return value end
+  return "unknown"
 end
 
 local function weakest(units)
   local target = nil
+  local target_health = nil
   for _, unit in pairs(units or {}) do
-    if unit ~= nil and unit:IsAlive() and (target == nil or unit:GetHealth() < target:GetHealth()) then
+    local ok, alive, health = pcall(function()
+      return unit:IsAlive(), unit:GetHealth()
+    end)
+    if ok and alive and type(health) == "number" and (target_health == nil or health < target_health) then
       target = unit
+      target_health = health
     end
   end
   return target
 end
 
-local function attack(target)
+local function weakest_killable(units, damage, maximum_health_ratio)
+  if type(damage) ~= "number" or damage <= 0 then return nil end
+  local target = nil
+  local target_health = nil
+  for _, unit in pairs(units or {}) do
+    local ok, alive, health, max_health = pcall(function()
+      return unit:IsAlive(), unit:GetHealth(), unit:GetMaxHealth()
+    end)
+    local ratio_ok = maximum_health_ratio == nil
+      or (type(max_health) == "number" and max_health > 0 and health / max_health <= maximum_health_ratio)
+    if ok and alive and ratio_ok and type(health) == "number" and health <= damage * 1.15
+      and (target_health == nil or health < target_health) then
+      target = unit
+      target_health = health
+    end
+  end
+  return target
+end
+
+local function record_order(order, target, fallback)
+  local now = game_time()
+  if order ~= last_order.name or target ~= last_order.target or now - last_order.time >= 5 then
+    telemetry("order_issued", { order = order, target = target, fallback = fallback })
+    last_order.name = order
+    last_order.target = target
+    last_order.time = now
+  end
+end
+
+local function attack(target, fallback)
   if target == nil then return false end
-  bot:Action_AttackUnit(target, true)
+  local ok, err = pcall(function() bot:Action_AttackUnit(target, true) end)
+  if not ok then
+    telemetry("order_error", { order = "attack", target = unit_name(target), fallback = fallback, error = err })
+    return false
+  end
+  record_order("attack", unit_name(target), fallback)
   return true
 end
 
-local function farm()
+local function move_to_lane(fallback)
+  local lane_ok, lane = pcall(function() return bot:GetAssignedLane() end)
+  if not lane_ok or type(lane) ~= "number" then
+    telemetry("query_error", { action = "farm", fallback = fallback, error = lane })
+    return false
+  end
+  local front_ok, location = pcall(function()
+    return GetLaneFrontLocation(bot:GetTeam(), lane, -600)
+  end)
+  if not front_ok or location == nil then
+    telemetry("query_error", { action = "farm", fallback = fallback, error = location })
+    return false
+  end
+  local moved, err = pcall(function() bot:Action_MoveToLocation(location) end)
+  if not moved then
+    telemetry("order_error", { order = "move", target = "lane_front", fallback = fallback, error = err })
+    return false
+  end
+  record_order("move", "lane_front", fallback)
+  return true
+end
+
+local function farm(fallback)
   local ok, creeps = pcall(function() return bot:GetNearbyLaneCreeps(1400, true) end)
-  return ok and attack(weakest(creeps))
+  if not ok then
+    telemetry("query_error", { action = "farm", fallback = fallback, error = creeps })
+    return false
+  end
+  local attack_damage = safe_number(function() return bot:GetAttackDamage() end, 0)
+  local target = weakest_killable(creeps, attack_damage, nil)
+  if attack(target, fallback or "last_hit") then
+    observed.farm = 1
+    return true
+  end
+  local allies_ok, allied_creeps = pcall(function() return bot:GetNearbyLaneCreeps(900, false) end)
+  if allies_ok then
+    local deny_target = weakest_killable(allied_creeps, attack_damage, 0.5)
+    if attack(deny_target, fallback or "deny") then
+      observed.farm = 1
+      return true
+    end
+  end
+  if attack(weakest(creeps), fallback) then
+    observed.farm = 1
+    return true
+  end
+  local moved = move_to_lane(fallback or "farm_no_creep")
+  if moved then observed.farm = 1 end
+  return moved
 end
 
 local function fight()
   local mode = BOT_MODE_NONE or 0
   local ok, heroes = pcall(function() return bot:GetNearbyHeroes(1800, true, mode) end)
-  return ok and attack(weakest(heroes))
+  if not ok then
+    telemetry("query_error", { action = "fight", error = heroes })
+    return false
+  end
+  local attacked = attack(weakest(heroes), nil)
+  if attacked then observed.fight = 1 end
+  return attacked
 end
 
 local function push()
   local ok, towers = pcall(function() return bot:GetNearbyTowers(2200, true) end)
-  if ok and attack(weakest(towers)) then return true end
-  return farm()
+  if not ok then
+    telemetry("query_error", { action = "push", error = towers })
+    return farm("push_tower_query_error")
+  end
+  if attack(weakest(towers), nil) then
+    observed.push = 1
+    return true
+  end
+  return farm("push_no_tower")
 end
 
-local function retreat_if_threatened()
+local function safe_push_opportunity()
+  local towers_ok, towers = pcall(function() return bot:GetNearbyTowers(900, true) end)
+  if not towers_ok or towers == nil or #towers == 0 then return false end
+  local mode = BOT_MODE_NONE or 0
+  local enemies_ok, enemies = pcall(function() return bot:GetNearbyHeroes(1200, true, mode) end)
+  if not enemies_ok or enemies == nil or #enemies > 0 then return false end
+  local creeps_ok, allied_creeps = pcall(function()
+    return bot:GetNearbyLaneCreeps(900, false)
+  end)
+  if not creeps_ok or allied_creeps == nil or #allied_creeps == 0 then return false end
+  if not attack(weakest(towers), "safe_push_opportunity") then return false end
+  observed.push = 1
+  return true
+end
+
+local function move_to_ancient(fallback)
+  local ancient_ok, ancient = pcall(function() return GetAncient(bot:GetTeam()) end)
+  if not ancient_ok or ancient == nil then
+    telemetry("query_error", { action = "unknown", fallback = fallback, error = ancient })
+    return false
+  end
+  local moved, err = pcall(function() bot:Action_MoveToLocation(ancient:GetLocation()) end)
+  if not moved then
+    telemetry("order_error", { order = "move", target = "ancient", fallback = fallback, error = err })
+    return false
+  end
+  record_order("move", "ancient", fallback)
+  return true
+end
+
+local function retreat_for_survival()
+  local health, health_ok = safe_number(function() return bot:GetHealth() end, 0)
+  local max_health, max_health_ok = safe_number(function() return bot:GetMaxHealth() end, 0)
+  if not health_ok or not max_health_ok or max_health <= 0 then return false end
+  local health_ratio = health / max_health
+  if health_ratio > 0.25 then return false end
+  local mode = BOT_MODE_NONE or 0
+  local enemies_ok, enemies = pcall(function() return bot:GetNearbyHeroes(1600, true, mode) end)
+  if health_ratio > 0.15 and (not enemies_ok or enemies == nil or #enemies == 0) then return false end
+  return move_to_ancient("low_health")
+end
+
+local function retreat_if_threatened(fallback)
   local mode = BOT_MODE_NONE or 0
   local ok, enemies = pcall(function() return bot:GetNearbyHeroes(1200, true, mode) end)
-  if not ok or enemies == nil or #enemies == 0 then return farm() end
-  local moved = pcall(function()
-    local ancient = GetAncient(bot:GetTeam())
-    bot:Action_MoveToLocation(ancient:GetLocation())
-  end)
-  return moved
+  if not ok then
+    telemetry("query_error", { action = "unknown", fallback = fallback, error = enemies })
+    return farm("enemy_query_error")
+  end
+  if enemies == nil or #enemies == 0 then return farm(fallback or "unknown_no_threat") end
+  if move_to_ancient(fallback) then return true end
+  return farm("retreat_unavailable")
+end
+
+local function choose_action()
+  local state, available, missing = checkpoint_state()
+  if policy == nil then
+    telemetry("decision", add_state_fields({
+      action = "unknown", fallback = "policy_unavailable",
+      features_available = available, missing_features = missing,
+    }, state))
+    return "unknown"
+  end
+  local ok, action = pcall(policy.predict, state)
+  if not ok then
+    telemetry("decision_error", add_state_fields({
+      action = "unknown", fallback = "policy_error", error = action,
+      features_available = available, missing_features = missing,
+    }, state))
+    return "unknown"
+  end
+  if action ~= "farm" and action ~= "fight" and action ~= "push" and action ~= "unknown" then
+    telemetry("decision_error", add_state_fields({
+      action = "unknown", fallback = "invalid_policy_action", error = action,
+      features_available = available, missing_features = missing,
+    }, state))
+    return "unknown"
+  end
+  telemetry("decision", add_state_fields({
+    action = action, features_available = available, missing_features = missing,
+  }, state))
+  return action
 end
 
 function Think()
-  if bot == nil or not bot:IsAlive() then return end
-  local minute = game_minute()
-  if minute ~= tracker.minute then
-    selected_action = policy.predict(checkpoint_state())
+  if bot == nil then return end
+  local alive_ok, alive = pcall(function() return bot:IsAlive() end)
+  if not alive_ok or not alive then
+    activity.last_sample = nil
+    return
   end
-  if selected_action == "fight" and fight() then return end
-  if selected_action == "push" and push() then return end
-  if selected_action == "farm" and farm() then return end
-  retreat_if_threatened()
+  sample_activity()
+  if retreat_for_survival() then return end
+  local minute = game_minute()
+  if minute ~= tracker.minute then selected_action = choose_action() end
+  if selected_action ~= "fight" and safe_push_opportunity() then return end
+  if selected_action == "fight" then
+    if fight() then return end
+    if farm("fight_no_target") then return end
+  elseif selected_action == "push" then
+    if push() then return end
+  elseif selected_action == "farm" then
+    if farm(nil) then return end
+  end
+  retreat_if_threatened(selected_action .. "_no_order")
 end

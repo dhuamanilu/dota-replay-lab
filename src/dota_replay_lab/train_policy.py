@@ -53,7 +53,12 @@ def optimize_probability_biases(probabilities: Any, true_indices: Any) -> tuple[
 
     best_biases = [1.0] * len(LABELS)
     best_score = float(f1_score(true_indices, apply_probability_biases(probabilities, best_biases), average="macro"))
-    grids = ([1.0], [0.75, 1.0, 1.25], [0.25, 0.5, 0.75, 1.0], [0.75, 1.0, 1.25])
+    grids = (
+        [1.0],
+        [0.5, 0.75, 1.0, 1.25, 1.5],
+        [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+        [0.5, 0.75, 1.0, 1.25, 1.5],
+    )
     for candidate in itertools.product(*grids):
         score = float(f1_score(true_indices, apply_probability_biases(probabilities, list(candidate)), average="macro"))
         if score > best_score:
@@ -337,7 +342,7 @@ def train_and_evaluate(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train decision baselines with match-level holdouts.")
-    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v2.csv"))
+    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v3.csv"))
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts/models"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")

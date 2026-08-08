@@ -14,7 +14,7 @@ from .opendota import OpenDotaError, get_hero_names
 
 FIELDNAMES = [
     "match_id", "player_slot", "hero_id", "state_minute", "decision_minute", "team", "hero", "gold", "experience",
-    "last_hits", "gold_change", "experience_change", "last_hit_change", "team_gold_advantage",
+    "last_hits", "denies", "gold_change", "experience_change", "last_hit_change", "deny_change", "team_gold_advantage",
     "team_experience_advantage", "kills_last_minute", "previous_fight", "previous_push",
     "previous_farm", "label", "signals", "rules_version",
 ]
@@ -27,7 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", type=Path, default=Path("artifacts/matches"))
     parser.add_argument(
         "--output", type=Path,
-        default=Path(f"artifacts/datasets/decision-labels-{LABEL_RULES_VERSION}.csv"),
+        default=Path("artifacts/datasets/decision-labels-v3.csv"),
     )
     return parser.parse_args()
 
