@@ -30,9 +30,10 @@ Base inicial creada. El primer entregable, el explorador de replays, ya permite 
 
 ## Primer experimento
 
-Con Python 3.11 o superior:
+Con Python 3.9 o superior y el código fuente en `PYTHONPATH`:
 
 ```powershell
+$env:PYTHONPATH='src'
 python -m dota_replay_lab.fetch_match --latest-pro
 ```
 
@@ -49,3 +50,14 @@ Para pausar la partida y comparar los diez héroes en un minuto concreto:
 ```powershell
 python -m dota_replay_lab.inspect_state 8934279386 --minute 12
 ```
+
+## Primer dataset de decisiones
+
+Después de descargar una o varias partidas, crea una fila CSV por héroe/minuto:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m dota_replay_lab.build_dataset 8934279386
+```
+
+El resultado predeterminado es `artifacts/datasets/decision-labels-v1.csv`. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v1](docs/decision-labels-v1.md).
