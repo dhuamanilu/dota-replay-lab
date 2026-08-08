@@ -57,3 +57,24 @@ ruta sin afectar la política principal.
 La mejora offline y la paridad exacta sklearn/Lua están documentadas en
 `replay-combat-policy.md`. Todavía no existe evidencia de win rate para esta
 integración y no se presenta como validada dentro del cliente.
+
+## Coordinador de equipo por self-play
+
+El adaptador intenta cargar `team_selfplay_policy.lua` antes de recurrir a la GRU
+individual. Al comienzo de cada minuto consulta `GetTeamMember(1..5)`, construye
+cinco estados y obtiene un único plan coordinado. Cada bot usa la posición que le
+corresponde dentro de ese plan. La misma semilla determinista por minuto y equipo
+mantiene la selección alineada entre runtimes; incluso un bot muerto avanza el
+estado recurrente antes de omitir órdenes.
+
+Las lecturas de oro, last hits y kills están protegidas con `pcall`. Experiencia y
+ventajas de equipo siguen en cero porque aún no existe una lectura validada que
+reproduzca su semántica histórica. Si falta un miembro, no se reconoce al bot
+propio, falla una consulta crítica o la predicción devuelve una acción inválida,
+el adaptador vuelve a la política individual. Retirada por supervivencia y consejo
+conservador de combate conservan prioridad sobre el plan aprendido.
+
+La política se entrenó y auditó sin abrir el cliente. La integración está cubierta
+por un runtime Lua simulado y el módulo exportado tiene paridad PyTorch/Lua, pero
+aún no se afirma que el coordinador haya sido validado en una partida real. Véase
+`self-play.md` para resultados, límites y reproducción.

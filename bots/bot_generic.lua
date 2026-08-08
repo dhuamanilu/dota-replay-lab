@@ -5,6 +5,9 @@ local policy = policy_ok and policy_or_error or nil
 local combat_policy_path = GetScriptDirectory() .. "/replay_combat_policy"
 local combat_policy_ok, combat_policy_or_error = pcall(require, combat_policy_path)
 local combat_policy = combat_policy_ok and combat_policy_or_error or nil
+local team_policy_path = GetScriptDirectory() .. "/team_selfplay_policy"
+local team_policy_ok, team_policy_or_error = pcall(require, team_policy_path)
+local team_policy = team_policy_ok and team_policy_or_error or nil
 local bot_ok, bot = pcall(GetBot)
 if not bot_ok then bot = nil end
 
@@ -22,11 +25,13 @@ local tracker = {
   kills_last_minute = 0,
 }
 local selected_action = "unknown"
+local selected_minute = -1
 local last_order = { name = "", target = "", time = -100 }
 local activity = { last_sample = nil, idle_seconds = 0, observed_seconds = 0 }
 local observed = { fight = 0, push = 0, farm = 0 }
 local previous_observed = { fight = 0, push = 0, farm = 0 }
 local combat_tracker = { time = -100, prediction = nil, x = nil, y = nil }
+local team_tracker = { gold = {}, last_hits = {}, kills = {}, previous_actions = {} }
 
 local function safe_number(callback, fallback)
   local ok, value = pcall(callback)
@@ -121,6 +126,11 @@ if combat_policy_ok then
   telemetry("combat_policy_loaded", {})
 else
   telemetry("combat_policy_load_error", { error = combat_policy_or_error })
+end
+if team_policy_ok then
+  telemetry("team_selfplay_policy_loaded", {})
+else
+  telemetry("team_selfplay_policy_load_error", { error = team_policy_or_error })
 end
 
 local function append(values, value)
@@ -558,8 +568,82 @@ local function choose_action()
   return action
 end
 
+local function member_number(member, callback, fallback)
+  local ok, value = pcall(callback, member)
+  if ok and type(value) == "number" then return value end
+  return fallback
+end
+
+local function choose_team_action()
+  if team_policy == nil then return nil end
+  local states = {}
+  local own_index = nil
+  local own_player = safe_number(function() return bot:GetPlayerID() end, -1)
+  local minute = game_minute()
+  local team_number = safe_number(function() return bot:GetTeam() end, 2)
+  for index = 1, 5 do
+    local ok, member = pcall(function() return GetTeamMember(index) end)
+    if not ok or member == nil then return nil end
+    local player_id = member_number(member, function(unit) return unit:GetPlayerID() end, -1)
+    if player_id == own_player then own_index = index end
+    local gold = member_number(member, function(unit) return unit:GetGold() end, 0)
+    local last_hits = member_number(member, function(unit) return unit:GetLastHits() end, 0)
+    local kills = safe_number(function() return GetHeroKills(player_id) end, 0)
+    local previous = team_tracker.previous_actions[index] or "unknown"
+    local unit_ok, unit_name = pcall(function() return member:GetUnitName() end)
+    local hero_id = 0
+    if unit_ok then
+      local hero_ok, value = pcall(team_policy.hero_id, unit_name)
+      if hero_ok and type(value) == "number" then hero_id = value end
+    end
+    states[index] = {
+      hero_id = hero_id,
+      team = team_number == 2 and "Radiant" or "Dire",
+      state_minute = minute,
+      gold = gold,
+      experience = 0,
+      last_hits = last_hits,
+      gold_change = team_tracker.gold[index] ~= nil and gold - team_tracker.gold[index] or 0,
+      experience_change = 0,
+      last_hit_change = team_tracker.last_hits[index] ~= nil
+        and last_hits - team_tracker.last_hits[index] or 0,
+      team_gold_advantage = 0,
+      team_experience_advantage = 0,
+      kills_last_minute = team_tracker.kills[index] ~= nil
+        and kills - team_tracker.kills[index] or 0,
+      previous_fight = previous == "fight" and 1 or 0,
+      previous_push = previous == "push" and 1 or 0,
+      previous_farm = previous == "farm" and 1 or 0,
+    }
+    team_tracker.gold[index] = gold
+    team_tracker.last_hits[index] = last_hits
+    team_tracker.kills[index] = kills
+  end
+  if own_index == nil then return nil end
+  local modulus = 2147483647
+  local random_value = ((minute * 1103515245 + team_number * 12345) % modulus) / modulus
+  local predicted, result = pcall(team_policy.predict, states, random_value)
+  if not predicted or type(result) ~= "table" or type(result.actions) ~= "table" then
+    telemetry("team_selfplay_prediction_error", { error = result })
+    return nil
+  end
+  local action = result.actions[own_index]
+  if action ~= "farm" and action ~= "fight" and action ~= "push" and action ~= "unknown" then
+    telemetry("team_selfplay_prediction_error", { error = "invalid team action" })
+    return nil
+  end
+  for index = 1, 5 do team_tracker.previous_actions[index] = result.actions[index] end
+  telemetry("team_selfplay_decision", { action = action })
+  return action
+end
+
 function Think()
   if bot == nil then return end
+  local minute = game_minute()
+  if minute ~= selected_minute then
+    selected_action = choose_team_action() or choose_action()
+    selected_minute = minute
+  end
   local alive_ok, alive = pcall(function() return bot:IsAlive() end)
   if not alive_ok or not alive then
     activity.last_sample = nil
@@ -567,8 +651,6 @@ function Think()
   end
   sample_activity()
   if retreat_for_survival() then return end
-  local minute = game_minute()
-  if minute ~= tracker.minute then selected_action = choose_action() end
   local combat = combat_prediction()
   if selected_action ~= "fight" and conservative_combat_opportunity(combat) then return end
   if selected_action ~= "fight" and safe_push_opportunity() then return end

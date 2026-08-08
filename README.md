@@ -94,6 +94,13 @@ ponderación por ventaja sobre transiciones observadas. Ningún candidato super�
 estadístico para reemplazar la GRU vigente; protocolo, ablaciones y audit externo están en
 [docs/offline-rl.md](docs/offline-rl.md).
 
+La etapa de self-play ya promovió un PPO recurrente coordinado para los cinco
+héroes. Se entrenó en un simulador causal calibrado con replays, pasó una
+auditoría de cinco semillas y se exportó con paridad exacta de planes a Lua. Es
+una mejora medida dentro del simulador, no un win rate dentro de Dota. Arquitectura,
+rechazos, cifras y comandos reproducibles están en
+[docs/self-play.md](docs/self-play.md).
+
 La tubería de replay crudo descarga directamente desde Valve, detecta BZip2 o
 Zstandard por la firma del archivo y extrae estados y órdenes de los diez héroes
 una vez por segundo, sin abrir ni controlar el cliente. Consulta

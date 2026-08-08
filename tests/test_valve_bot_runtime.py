@@ -14,6 +14,7 @@ def build_runtime(
     *,
     policy_error: bool = False,
     combat_engage_probability: float | None = None,
+    team_action: str | tuple[str, str, str, str, str] | None = None,
 ):
     lupa = pytest.importorskip("lupa")
     lua = lupa.LuaRuntime(unpack_returned_tuples=True)
@@ -83,6 +84,7 @@ def build_runtime(
     lua.execute(f"function GetScriptDirectory() return {json.dumps(bots_path)} end")
     module_name = f"{bots_path}/decision_policy"
     combat_module_name = f"{bots_path}/replay_combat_policy"
+    team_module_name = f"{bots_path}/team_selfplay_policy"
     if prediction is None:
         policy_source = (ROOT / "bots" / "decision_policy.lua").read_text(encoding="utf-8")
         lua.execute(
@@ -114,8 +116,58 @@ def build_runtime(
         end
         """
     )
+    if team_action is None:
+        lua.execute(
+            f"package.preload[{json.dumps(team_module_name)}] = function() error('team policy disabled in test') end"
+        )
+    else:
+        team_actions = (team_action,) * 5 if isinstance(team_action, str) else team_action
+        lua.execute(
+            f"""
+            package.preload[{json.dumps(team_module_name)}] = function()
+              return {{
+                hero_id = function(name) return 54 end,
+                predict = function(states, random_value)
+                  return {{ actions = {{ {','.join(json.dumps(action) for action in team_actions)} }} }}
+                end,
+              }}
+            end
+            """
+        )
     lua.execute((ROOT / "bots" / "bot_generic.lua").read_text(encoding="utf-8"))
     return lua
+
+
+def test_coordinated_team_policy_overrides_individual_policy() -> None:
+    lua = build_runtime(
+        "farm", team_action=("farm", "push", "fight", "unknown", "farm")
+    )
+    lua.execute(
+        """
+        function teammate(name, player_id)
+          local member = makeUnit(name, 1000)
+          function member:GetPlayerID() return player_id end
+          return member
+        end
+        teamMembers = {
+          teammate("npc_dota_hero_axe", 4),
+          teammate("npc_dota_hero_crystal_maiden", 3),
+          mockBot,
+          teammate("npc_dota_hero_juggernaut", 2),
+          teammate("npc_dota_hero_lina", 1),
+        }
+        function GetTeamMember(index) return teamMembers[index] end
+        mockBot.heroes = { makeUnit("npc_dota_hero_axe", 900) }
+        """
+    )
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "attack"
+    assert lua.globals().mockBot.last_target == "npc_dota_hero_axe"
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    assert any('"event":"team_selfplay_decision"' in message for message in messages)
 
 
 def test_high_confidence_combat_advice_can_trigger_close_engagement() -> None:
