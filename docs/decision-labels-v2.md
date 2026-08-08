@@ -1,6 +1,8 @@
-# Etiquetas de decisión v1
+# Etiquetas de decisión v2
 
-Este dataset no contiene la intención verdadera del jugador. Es una primera aproximación auditable: cada fila representa a un héroe en un minuto y conserva tanto la etiqueta elegida como todas las señales que compitieron por ella.
+Este dataset no contiene la intención verdadera del jugador. Es una primera aproximación auditable: cada fila representa a un héroe al inicio de un intervalo de un minuto y conserva tanto la etiqueta elegida para el intervalo siguiente como todas las señales que compitieron por ella.
+
+Las columnas de estado se calculan en `state_minute`; la etiqueta observa exclusivamente el intervalo posterior que termina en `decision_minute`. Esta separación evita que kills o last hits futuros se filtren a las entradas del modelo.
 
 ## Reglas
 
@@ -12,7 +14,7 @@ La prioridad es `fight > push > farm > unknown`.
 - `unknown`: ninguna regla tuvo evidencia suficiente.
 - `retreat`: forma parte del vocabulario conceptual, pero v1 no la asigna. Sin posiciones, vida, dirección de movimiento o visión, hacerlo sería inventar la etiqueta.
 
-La columna `signals` conserva conflictos como `fight+push+farm`; `label` contiene la decisión tomada por prioridad. `rules_version=v1` permite comparar futuras correcciones sin mezclar definiciones.
+La columna `signals` conserva conflictos como `fight+push+farm`; `label` contiene la decisión tomada por prioridad. `rules_version=v2` permite comparar futuras correcciones sin mezclar definiciones. La versión v1 fue descartada antes de entrenar porque mezclaba el estado final del minuto con la etiqueta del mismo intervalo.
 
 ## Sesgos conocidos
 

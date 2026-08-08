@@ -8,7 +8,7 @@ from typing import Any, Iterable, Mapping
 from .hero_state import state_at_minute
 
 
-LABEL_RULES_VERSION = "v1"
+LABEL_RULES_VERSION = "v2"
 LABEL_PRIORITY = ("fight", "push", "farm")
 
 
@@ -103,15 +103,17 @@ def iter_decision_rows(
         ]
         if not series_lengths:
             continue
-        for minute in range(1, max(series_lengths)):
-            state = state_at_minute(match, player, minute, hero_names)
-            label, signals = label_decision(match, player, player_index, minute)
+        for decision_minute in range(1, max(series_lengths)):
+            state = state_at_minute(match, player, decision_minute - 1, hero_names)
+            label, signals = label_decision(match, player, player_index, decision_minute)
             row = asdict(state)
+            row["state_minute"] = row.pop("minute")
             row.update(
                 {
                     "match_id": match_id,
                     "player_slot": int(player.get("player_slot", -1)),
                     "hero_id": int(player.get("hero_id", 0)),
+                    "decision_minute": decision_minute,
                     "label": label,
                     "signals": "+".join(signals) if signals else "none",
                     "rules_version": LABEL_RULES_VERSION,

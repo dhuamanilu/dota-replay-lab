@@ -56,7 +56,20 @@ def test_rows_and_csv_include_rules_and_evidence(tmp_path) -> None:
     count = write_dataset([match], {1: "Anti-Mage"}, output)
     assert count == 1
     assert rows[0]["label"] == "farm"
+    assert rows[0]["state_minute"] == 0
+    assert rows[0]["decision_minute"] == 1
+    assert rows[0]["last_hit_change"] == 0
+    assert rows[0]["kills_last_minute"] == 0
     with output.open(encoding="utf-8", newline="") as handle:
         saved = list(csv.DictReader(handle))
     assert saved[0]["hero"] == "Anti-Mage"
-    assert saved[0]["rules_version"] == "v1"
+    assert saved[0]["rules_version"] == "v2"
+
+
+def test_features_do_not_include_the_labeled_minute() -> None:
+    player = _player(kills_log=[{"time": 45}])
+    row = list(iter_decision_rows({"match_id": 42, "players": [player]}, {1: "Anti-Mage"}))[0]
+    assert row["label"] == "fight"
+    assert row["state_minute"] == 0
+    assert row["kills_last_minute"] == 0
+    assert row["last_hits"] == 0
