@@ -56,6 +56,19 @@ def split_match_ids(match_ids: list[int], seed: int = 42) -> dict[str, list[int]
     }
 
 
+def match_folds(match_ids: list[int], fold_count: int = 5, seed: int = 42) -> list[list[int]]:
+    """Partition unique match IDs into deterministic, disjoint validation folds."""
+
+    import numpy as np
+
+    unique = np.array(sorted(set(match_ids)), dtype=int)
+    if fold_count < 2 or len(unique) < fold_count:
+        raise ValueError("fold_count must be between 2 and the number of unique matches.")
+    rng = np.random.default_rng(seed)
+    rng.shuffle(unique)
+    return [part.tolist() for part in np.array_split(unique, fold_count)]
+
+
 def _metrics(y_true: Any, y_pred: Any) -> dict[str, Any]:
     from sklearn.metrics import accuracy_score, balanced_accuracy_score, classification_report, confusion_matrix
 
@@ -89,7 +102,9 @@ def _preprocessor():
     )
 
 
-def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) -> dict[str, Any]:
+def train_and_evaluate(
+    dataset: Path, output_dir: Path, seed: int, device: str, cv_folds: int = 5
+) -> dict[str, Any]:
     import joblib
     import numpy as np
     import pandas as pd
@@ -108,31 +123,14 @@ def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) 
         raise ValueError(f"Unexpected labels: {', '.join(unexpected_labels)}")
 
     splits = split_match_ids(frame["match_id"].astype(int).tolist(), seed)
-    subsets = {name: frame[frame["match_id"].isin(ids)].copy() for name, ids in splits.items()}
+    development_ids = splits["train"] + splits["validation"]
+    development = frame[frame["match_id"].isin(development_ids)].copy().reset_index(drop=True)
+    test = frame[frame["match_id"].isin(splits["test"])].copy().reset_index(drop=True)
     label_to_index = {label: index for index, label in enumerate(LABELS)}
-    preprocessor = _preprocessor()
-    transformed = {}
-    transformed["train"] = preprocessor.fit_transform(subsets["train"][FEATURES])
-    transformed["validation"] = preprocessor.transform(subsets["validation"][FEATURES])
-    transformed["test"] = preprocessor.transform(subsets["test"][FEATURES])
-    y_text = {name: subset["label"].to_numpy() for name, subset in subsets.items()}
-    y_index = {name: np.array([label_to_index[value] for value in labels]) for name, labels in y_text.items()}
-
-    validation_results: dict[str, Any] = {}
     candidates: dict[str, Any] = {
         "majority": DummyClassifier(strategy="most_frequent"),
         "logistic": LogisticRegression(max_iter=2000, class_weight="balanced", random_state=seed),
     }
-    trained: dict[str, Any] = {}
-    for name, model in candidates.items():
-        started = time.perf_counter()
-        model.fit(transformed["train"], y_text["train"])
-        elapsed = time.perf_counter() - started
-        validation_results[name] = _metrics(y_text["validation"], model.predict(transformed["validation"]))
-        validation_results[name]["train_seconds"] = elapsed
-        validation_results[name]["device"] = "cpu"
-        trained[name] = model
-
     xgb_device = "cuda" if device in {"auto", "cuda"} else "cpu"
 
     def make_xgb(params: dict[str, float], selected_device: str) -> XGBClassifier:
@@ -153,44 +151,82 @@ def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) 
             n_jobs=-1,
         )
 
-    base_weights = compute_sample_weight("balanced", y_text["train"])
-    for name, params in XGB_TRIALS.items():
-        actual_device = "cpu" if xgb_device == "cpu-fallback" else xgb_device
-        xgb = make_xgb(params, actual_device)
-        started = time.perf_counter()
-        try:
-            xgb.fit(
-                transformed["train"],
-                y_index["train"],
-                sample_weight=np.power(base_weights, params["weight_power"]),
-                eval_set=[(transformed["validation"], y_index["validation"])],
-                verbose=False,
-            )
-        except Exception:
-            if device != "auto" or actual_device == "cpu":
-                raise
-            xgb_device = "cpu-fallback"
-            xgb = make_xgb(params, "cpu")
-            xgb.fit(
-                transformed["train"],
-                y_index["train"],
-                sample_weight=np.power(base_weights, params["weight_power"]),
-                eval_set=[(transformed["validation"], y_index["validation"])],
-                verbose=False,
-            )
-        elapsed = time.perf_counter() - started
-        predictions = np.array([LABELS[index] for index in xgb.predict(transformed["validation"]).astype(int)])
-        validation_results[name] = _metrics(y_text["validation"], predictions)
-        validation_results[name]["train_seconds"] = elapsed
-        validation_results[name]["device"] = xgb_device
-        validation_results[name]["parameters"] = params
-        trained[name] = xgb
+    fold_ids = match_folds(development_ids, cv_folds, seed)
+    fold_results: dict[str, list[dict[str, Any]]] = {
+        name: [] for name in [*candidates, *XGB_TRIALS]
+    }
+    for fold_number, validation_ids in enumerate(fold_ids, start=1):
+        validation_mask = development["match_id"].isin(validation_ids).to_numpy()
+        fit_frame = development[~validation_mask]
+        validation_frame = development[validation_mask]
+        preprocessor = _preprocessor()
+        fit_x = preprocessor.fit_transform(fit_frame[FEATURES])
+        validation_x = preprocessor.transform(validation_frame[FEATURES])
+        fit_y_text = fit_frame["label"].to_numpy()
+        validation_y_text = validation_frame["label"].to_numpy()
+        fit_y_index = np.array([label_to_index[value] for value in fit_y_text])
+        validation_y_index = np.array([label_to_index[value] for value in validation_y_text])
 
-    chosen = max(validation_results, key=lambda name: validation_results[name]["macro_f1"])
-    development = pd.concat([subsets["train"], subsets["validation"]], ignore_index=True)
+        for name, template in candidates.items():
+            model = clone(template)
+            started = time.perf_counter()
+            model.fit(fit_x, fit_y_text)
+            metrics = _metrics(validation_y_text, model.predict(validation_x))
+            metrics.update({"fold": fold_number, "train_seconds": time.perf_counter() - started, "device": "cpu"})
+            fold_results[name].append(metrics)
+
+        base_weights = compute_sample_weight("balanced", fit_y_text)
+        for name, params in XGB_TRIALS.items():
+            actual_device = "cpu" if xgb_device == "cpu-fallback" else xgb_device
+            model = make_xgb(params, actual_device)
+            started = time.perf_counter()
+            try:
+                model.fit(
+                    fit_x,
+                    fit_y_index,
+                    sample_weight=np.power(base_weights, params["weight_power"]),
+                    eval_set=[(validation_x, validation_y_index)],
+                    verbose=False,
+                )
+            except Exception:
+                if device != "auto" or actual_device == "cpu":
+                    raise
+                xgb_device = "cpu-fallback"
+                model = make_xgb(params, "cpu")
+                model.fit(
+                    fit_x,
+                    fit_y_index,
+                    sample_weight=np.power(base_weights, params["weight_power"]),
+                    eval_set=[(validation_x, validation_y_index)],
+                    verbose=False,
+                )
+            predictions = np.array([LABELS[index] for index in model.predict(validation_x).astype(int)])
+            metrics = _metrics(validation_y_text, predictions)
+            metrics.update(
+                {
+                    "fold": fold_number,
+                    "train_seconds": time.perf_counter() - started,
+                    "device": xgb_device,
+                    "parameters": params,
+                }
+            )
+            fold_results[name].append(metrics)
+
+    cross_validation = {}
+    for name, results in fold_results.items():
+        scores = np.array([result["macro_f1"] for result in results])
+        cross_validation[name] = {
+            "macro_f1_mean": float(scores.mean()),
+            "macro_f1_std": float(scores.std()),
+            "train_seconds": float(sum(result["train_seconds"] for result in results)),
+            "device": results[0]["device"],
+            "folds": results,
+        }
+    chosen = max(cross_validation, key=lambda name: cross_validation[name]["macro_f1_mean"])
+
     final_preprocessor = _preprocessor()
     development_x = final_preprocessor.fit_transform(development[FEATURES])
-    test_x = final_preprocessor.transform(subsets["test"][FEATURES])
+    test_x = final_preprocessor.transform(test[FEATURES])
     started = time.perf_counter()
     if chosen.startswith("xgboost"):
         chosen_params = XGB_TRIALS[chosen]
@@ -213,16 +249,17 @@ def train_and_evaluate(dataset: Path, output_dir: Path, seed: int, device: str) 
         test_predictions = np.array([LABELS[index] for index in raw_test_predictions.astype(int)])
     else:
         test_predictions = raw_test_predictions
-    test_metrics = _metrics(y_text["test"], test_predictions)
+    test_metrics = _metrics(test["label"].to_numpy(), test_predictions)
 
     result = {
         "dataset": str(dataset),
         "seed": seed,
         "features": FEATURES,
         "labels": list(LABELS),
-        "rows": {name: len(subset) for name, subset in subsets.items()},
+        "rows": {"development": len(development), "test": len(test)},
         "match_ids": splits,
-        "validation": validation_results,
+        "cross_validation": cross_validation,
+        "cv_folds": fold_ids,
         "chosen_model": chosen,
         "final_train_seconds": final_train_seconds,
         "test": test_metrics,
@@ -250,16 +287,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts/models"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
+    parser.add_argument("--cv-folds", type=int, default=5)
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    result = train_and_evaluate(args.dataset, args.output_dir, args.seed, args.device)
-    validation = result["validation"]
-    print("Validation macro-F1:")
-    for name in sorted(validation):
-        print(f"  {name}: {validation[name]['macro_f1']:.4f} ({validation[name]['device']})")
+    result = train_and_evaluate(args.dataset, args.output_dir, args.seed, args.device, args.cv_folds)
+    cross_validation = result["cross_validation"]
+    print("Grouped cross-validation macro-F1 (mean +/- std):")
+    for name in sorted(cross_validation):
+        summary = cross_validation[name]
+        print(f"  {name}: {summary['macro_f1_mean']:.4f} +/- {summary['macro_f1_std']:.4f} ({summary['device']})")
     print(f"Chosen: {result['chosen_model']}")
     print(f"Held-out test macro-F1: {result['test']['macro_f1']:.4f}")
     print(f"Saved model and metrics: {args.output_dir}")
