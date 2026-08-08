@@ -2,6 +2,9 @@
   "policy_type": "recurrent_gru",
   "source_model": "artifacts\\sequence-models\\sequence-policy-v1.pt",
   "best_epoch": 15,
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce GTX 1660 Ti",
+  "train_seconds": 34.73321269999997,
   "validation_macro_f1": 0.4704855626889184,
   "test": {
     "accuracy": 0.5957214166864749,
