@@ -78,3 +78,11 @@ Para ejecutar la política en el estado de un héroe y obtener probabilidades pa
 ```powershell
 python -m dota_replay_lab.predict_policy 8934279386 --minute 12 --player-slot 0
 ```
+
+Para destilar el modelo GPU a un árbol Lua autocontenido que pueda incorporarse a un bot de Valve:
+
+```powershell
+python -m dota_replay_lab.export_lua_policy
+```
+
+La política Lua generada se guarda en `bots/decision_policy.lua`. Su sintaxis puede verificarse sin Dota con `python -c "from luaparser import ast; ast.parse(open('bots/decision_policy.lua', encoding='utf-8').read())"` después de instalar `.[dev]`.
