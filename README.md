@@ -60,4 +60,4 @@ $env:PYTHONPATH='src'
 python -m dota_replay_lab.build_dataset 8934279386
 ```
 
-El resultado predeterminado es `artifacts/datasets/decision-labels-v1.csv`. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v1](docs/decision-labels-v1.md).
+El resultado predeterminado es `artifacts/datasets/decision-labels-v2.csv`. Las entradas describen el estado al inicio del minuto y la etiqueta describe el intervalo posterior, evitando filtrar el futuro al modelo. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v2](docs/decision-labels-v2.md).
