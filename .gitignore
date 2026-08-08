@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+dist/
+build/
+*.egg-info/
+
+# Downloaded replays and derived datasets can be large and are regenerated.
+data/raw/
+data/processed/
+
+# Local training artifacts.
+artifacts/

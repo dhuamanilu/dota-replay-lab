@@ -1,0 +1,17 @@
+[project]
+name = "dota-replay-lab"
+version = "0.1.0"
+description = "Local, reproducible experiments for learning Dota 2 decisions from public replays."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Diego Alonso Huamani Luque" },
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
