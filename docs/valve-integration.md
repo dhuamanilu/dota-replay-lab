@@ -14,7 +14,7 @@ Las acciones realmente ejecutadas en el minuto anterior alimentan `previous_figh
 
 ## Telemetría
 
-Cada línea empieza con `DRL_TELEMETRY` y contiene JSON con versión de esquema, tiempo de juego, identidad del bot, evento y sus campos asociados. El esquema 2 añadió oro, nivel, XP necesaria para subir, last hits, kills y muertes. El esquema 3 añadió muestras de acción, tiempo vivo observado y tiempo inactivo acumulado. Las órdenes repetidas se muestrean como máximo una vez cada cinco segundos.
+Cada línea empieza con `DRL_TELEMETRY` y contiene JSON con versión de esquema, tiempo de juego, identidad del bot, evento y sus campos asociados. El esquema 2 añadió oro, nivel, XP necesaria para subir, last hits, kills y muertes. El esquema 3 añadió muestras de acción, tiempo vivo observado y tiempo inactivo acumulado. El esquema 4 añade denies y su cambio por minuto. Las órdenes repetidas se muestrean como máximo una vez cada cinco segundos.
 
 El resumen también cuenta ataques dirigidos a unidades cuyo nombre contiene `tower`. Es un proxy de intención de push, no daño exacto a torres.
 
@@ -43,4 +43,4 @@ En la tercera sesión hubo 29 decisiones `farm` y 7 `unknown`; los nueve bots re
 
 Las ventajas de oro y experiencia por equipo siguen en cero porque no se ha validado una lectura equivalente para ambos equipos desde la API del bot. `previous_*` ya procede de órdenes observadas, aunque sigue siendo una aproximación a las señales agregadas de OpenDota. El benchmark offline mide imitación de etiquetas heurísticas, no habilidad, MMR ni probabilidad de victoria.
 
-La ejecución dentro de Dota ya confirmó carga, `Think()`, movimiento, ataque, degradaciones y contadores. Las mejoras posteriores se desarrollan con replays y pruebas automatizadas; no requieren controlar manualmente el cliente.
+La ejecución dentro de Dota ya confirmó carga, `Think()`, movimiento, ataque, degradaciones y contadores con la política de árbol anterior. La GRU portable posterior tiene paridad exacta con PyTorch y ejecuta el adaptador bajo `lupa`, pero no se presenta como validada dentro del cliente. Las mejoras posteriores se desarrollan con replays y pruebas automatizadas; no requieren controlar manualmente Dota.

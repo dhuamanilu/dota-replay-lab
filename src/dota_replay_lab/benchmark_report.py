@@ -27,16 +27,33 @@ def render_benchmark(
     bias_text = ", ".join(f"{label}={value:g}" for label, value in biases.items()) or "sin ajuste"
     match_count = len({match_id for split in training["match_ids"].values() for match_id in split})
     total_rows = sum(training["rows"].values())
+    if portable.get("policy_type") == "recurrent_gru":
+        parity = portable["lua_parity"]
+        portable_lines = [
+            "- Arquitectura: GRU causal de dos capas, 96 unidades ocultas.",
+            f"- Entrenamiento: {portable.get('device', 'desconocido')} en {portable.get('gpu') or 'CPU'}, {portable.get('train_seconds', 0):.1f} segundos.",
+            "- Selección de época: validación fija del 20 % de partidas; el test no participa.",
+            f"- Macro-F1 de validación: {portable['validation_macro_f1']:.4f}.",
+            f"- Macro-F1 en test: {portable['test']['macro_f1']:.4f}.",
+            f"- Paridad Lua/PyTorch: {parity['matches']}/{parity['rows']} ({parity['fidelity']:.4f}).",
+            f"- Tamaño Lua autocontenido: {portable['lua_bytes'] / 1_000_000:.2f} MB.",
+        ]
+    else:
+        portable_lines = [
+            f"- Estrategia: {portable.get('chosen_strategy', 'teacher')}; profundidad: {portable['chosen_depth']}; nodos: {portable['node_count']}.",
+            f"- Fidelidad al XGBoost en test: {portable['teacher_fidelity_test']:.4f}.",
+            f"- Macro-F1 en test: {portable['student_test']['macro_f1']:.4f}.",
+        ]
     return "\n".join(
         [
-            "# Benchmark de política v2",
+            "# Benchmark de política v3",
             "",
             "## Datos y protocolo",
             "",
             f"- Partidas profesionales: {match_count}.",
             f"- Filas héroe/minuto: {total_rows}.",
             f"- Desarrollo: {training['rows']['development']} filas; test congelado: {training['rows']['test']} filas.",
-            "- Selección: macro-F1 medio en cinco folds disjuntos por `match_id`.",
+            "- Selección XGBoost: macro-F1 medio en cinco folds disjuntos por `match_id`.",
             "- Evaluación final: 20 % de partidas nunca usadas para ajustar ni seleccionar.",
             "",
             "| Etiqueta | Filas |",
@@ -57,7 +74,7 @@ def render_benchmark(
                 else []
             ),
             "",
-            "## Test congelado del modelo GPU",
+            "## Test congelado del baseline XGBoost",
             "",
             f"- Macro-F1: {training['test']['macro_f1']:.4f}.",
             f"- Balanced accuracy: {training['test']['balanced_accuracy']:.4f}.",
@@ -67,18 +84,16 @@ def render_benchmark(
             "| --- | ---: | ---: | ---: | ---: |",
             *test_rows,
             "",
-            "## Política Lua destilada",
+            "## Política recurrente portable",
             "",
-            f"- Estrategia: {portable.get('chosen_strategy', 'teacher')}; profundidad: {portable['chosen_depth']}; nodos: {portable['node_count']}.",
-            f"- Fidelidad al XGBoost en test: {portable['teacher_fidelity_test']:.4f}.",
-            f"- Macro-F1 en test: {portable['student_test']['macro_f1']:.4f}.",
+            *portable_lines,
             "",
             "## Interpretación",
             "",
             "El resultado mide imitación de etiquetas heurísticas, no win rate ni nivel de MMR. "
             "`push` sigue siendo la clase más débil y el estado de OpenDota no contiene vida, maná, "
-            "cooldowns, visión o posición exacta. La política Lua requiere evaluación dentro de Dota antes "
-            "de atribuirle desempeño jugable.",
+            "cooldowns, visión o posición exacta. La GRU mejora la imitación secuencial, pero su exportación "
+            "Lua solo tiene paridad offline; no se atribuye habilidad jugable sin una evaluación del runtime.",
             "",
         ]
     )
@@ -89,7 +104,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--training", type=Path, default=Path("artifacts/models/decision-policy-v1.metrics.json"))
     parser.add_argument("--portable", type=Path, default=Path("bots/decision_policy.metrics.json"))
     parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v3.csv"))
-    parser.add_argument("--output", type=Path, default=Path("docs/benchmark-v2.md"))
+    parser.add_argument("--output", type=Path, default=Path("docs/benchmark-v3.md"))
     return parser.parse_args()
 
 

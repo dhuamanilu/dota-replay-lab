@@ -87,6 +87,8 @@ python -m dota_replay_lab.export_lua_policy
 
 La política Lua generada se guarda en `bots/decision_policy.lua`. Su sintaxis puede verificarse sin Dota con `python -c "from luaparser import ast; ast.parse(open('bots/decision_policy.lua', encoding='utf-8').read())"` después de instalar `.[dev]`.
 
+La política canónica actual es una GRU causal ligera. Para reproducirla con CUDA e instalar el wheel correcto de PyTorch, sigue [docs/sequence-policy.md](docs/sequence-policy.md); `export_sequence_lua` comprueba paridad contra PyTorch antes de reemplazar el Lua.
+
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 
-Los resultados completos y el protocolo de evaluación están publicados en [docs/benchmark-v2.md](docs/benchmark-v2.md). Se regeneran con `python -m dota_replay_lab.benchmark_report`.
+Los resultados actuales y el protocolo de evaluación están publicados en [docs/benchmark-v3.md](docs/benchmark-v3.md); el benchmark anterior permanece en [docs/benchmark-v2.md](docs/benchmark-v2.md). Se regeneran con `python -m dota_replay_lab.benchmark_report`.
