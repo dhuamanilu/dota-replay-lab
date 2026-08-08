@@ -15,7 +15,8 @@ from .opendota import OpenDotaError, get_hero_names
 FIELDNAMES = [
     "match_id", "player_slot", "hero_id", "state_minute", "decision_minute", "team", "hero", "gold", "experience",
     "last_hits", "gold_change", "experience_change", "last_hit_change", "team_gold_advantage",
-    "team_experience_advantage", "kills_last_minute", "label", "signals", "rules_version",
+    "team_experience_advantage", "kills_last_minute", "previous_fight", "previous_push",
+    "previous_farm", "label", "signals", "rules_version",
 ]
 
 

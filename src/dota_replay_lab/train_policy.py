@@ -22,6 +22,9 @@ NUMERIC_FEATURES = [
     "team_gold_advantage",
     "team_experience_advantage",
     "kills_last_minute",
+    "previous_fight",
+    "previous_push",
+    "previous_farm",
 ]
 FEATURES = CATEGORICAL_FEATURES + NUMERIC_FEATURES
 
