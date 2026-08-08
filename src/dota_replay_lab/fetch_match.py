@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .opendota import OpenDotaError, get_hero_names, get_match, latest_pro_match_id
 from .summary import render_match_summary
+from .timeline import render_advantage_svg, render_timeline
 
 
 def parse_args() -> argparse.Namespace:
@@ -42,10 +43,16 @@ def main() -> int:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     raw_path = args.output_dir / f"{match_id}.json"
     report_path = args.output_dir / f"{match_id}.md"
+    chart_path = args.output_dir / f"{match_id}.advantages.svg"
     raw_path.write_text(json.dumps(match, indent=2, ensure_ascii=False), encoding="utf-8")
-    report_path.write_text(render_match_summary(match, hero_names), encoding="utf-8")
+    chart_path.write_text(render_advantage_svg(match), encoding="utf-8")
+    report = render_match_summary(match, hero_names)
+    report += "\n" + render_timeline(match, hero_names)
+    report += f"![Ventajas por minuto]({chart_path.name})\n"
+    report_path.write_text(report, encoding="utf-8")
     print(f"Saved raw data: {raw_path}")
     print(f"Saved report: {report_path}")
+    print(f"Saved chart: {chart_path}")
     return 0
 
 
