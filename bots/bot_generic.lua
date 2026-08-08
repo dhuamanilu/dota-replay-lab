@@ -251,6 +251,25 @@ local function weakest(units)
   return target
 end
 
+local function weakest_killable(units, damage, maximum_health_ratio)
+  if type(damage) ~= "number" or damage <= 0 then return nil end
+  local target = nil
+  local target_health = nil
+  for _, unit in pairs(units or {}) do
+    local ok, alive, health, max_health = pcall(function()
+      return unit:IsAlive(), unit:GetHealth(), unit:GetMaxHealth()
+    end)
+    local ratio_ok = maximum_health_ratio == nil
+      or (type(max_health) == "number" and max_health > 0 and health / max_health <= maximum_health_ratio)
+    if ok and alive and ratio_ok and type(health) == "number" and health <= damage * 1.15
+      and (target_health == nil or health < target_health) then
+      target = unit
+      target_health = health
+    end
+  end
+  return target
+end
+
 local function record_order(order, target, fallback)
   local now = game_time()
   if order ~= last_order.name or target ~= last_order.target or now - last_order.time >= 5 then
@@ -299,6 +318,20 @@ local function farm(fallback)
   if not ok then
     telemetry("query_error", { action = "farm", fallback = fallback, error = creeps })
     return false
+  end
+  local attack_damage = safe_number(function() return bot:GetAttackDamage() end, 0)
+  local target = weakest_killable(creeps, attack_damage, nil)
+  if attack(target, fallback or "last_hit") then
+    observed.farm = 1
+    return true
+  end
+  local allies_ok, allied_creeps = pcall(function() return bot:GetNearbyLaneCreeps(900, false) end)
+  if allies_ok then
+    local deny_target = weakest_killable(allied_creeps, attack_damage, 0.5)
+    if attack(deny_target, fallback or "deny") then
+      observed.farm = 1
+      return true
+    end
   end
   if attack(weakest(creeps), fallback) then
     observed.farm = 1

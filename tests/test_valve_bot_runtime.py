@@ -19,10 +19,11 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         TELEMETRY = {}
         function print(message) table.insert(TELEMETRY, message) end
 
-        function makeUnit(name, health)
-          local unit = { name = name, health = health }
+        function makeUnit(name, health, max_health)
+          local unit = { name = name, health = health, max_health = max_health or health }
           function unit:IsAlive() return true end
           function unit:GetHealth() return self.health end
+          function unit:GetMaxHealth() return self.max_health end
           function unit:GetUnitName() return self.name end
           return unit
         end
@@ -42,6 +43,7 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:GetPlayerID() return 0 end
         function mockBot:GetCurrentXP() return 500 end
         function mockBot:GetXPNeededToLevel() return 140 end
+        function mockBot:GetAttackDamage() return 60 end
         function mockBot:GetCurrentActionType() return BOT_ACTION_TYPE_IDLE end
         function mockBot:GetUnitName() return "npc_dota_hero_life_stealer" end
         function mockBot:GetAssignedLane() return 2 end
@@ -218,6 +220,24 @@ def test_farm_without_nearby_creep_moves_to_lane_front() -> None:
     messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
     assert any('"target":"lane_front"' in message for message in messages)
     assert any('"fallback":"farm_no_creep"' in message for message in messages)
+
+
+def test_farm_denies_killable_allied_creep_when_no_enemy_last_hit_exists() -> None:
+    lua = build_runtime("farm")
+    lua.execute(
+        """
+        mockBot.creeps = { makeUnit("npc_dota_creep_badguys_melee", 300, 550) }
+        mockBot.allied_creeps = { makeUnit("npc_dota_creep_goodguys_melee", 40, 550) }
+        """
+    )
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "attack"
+    assert lua.globals().mockBot.last_target == "npc_dota_creep_goodguys_melee"
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    assert any('"fallback":"deny"' in message for message in messages)
 
 
 def test_low_health_with_nearby_enemy_retreats_before_policy_order() -> None:
