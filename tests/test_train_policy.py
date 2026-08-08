@@ -1,4 +1,4 @@
-from dota_replay_lab.train_policy import FEATURES, XGB_TRIALS, split_match_ids
+from dota_replay_lab.train_policy import FEATURES, XGB_TRIALS, match_folds, split_match_ids
 
 
 def test_match_splits_are_disjoint_and_complete() -> None:
@@ -22,3 +22,11 @@ def test_xgboost_search_has_distinct_bounded_trials() -> None:
     assert len(XGB_TRIALS) >= 3
     assert len(XGB_TRIALS) == len(set(XGB_TRIALS))
     assert all(0 < trial["weight_power"] <= 1 for trial in XGB_TRIALS.values())
+
+
+def test_match_folds_are_disjoint_and_cover_development_matches() -> None:
+    folds = match_folds(list(range(20)), fold_count=5, seed=3)
+    assert all(len(fold) == 4 for fold in folds)
+    flattened = [match_id for fold in folds for match_id in fold]
+    assert len(flattened) == len(set(flattened))
+    assert set(flattened) == set(range(20))
