@@ -33,7 +33,10 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:GetLastHits() return 3 end
         function mockBot:GetKills() return 0 end
         function mockBot:GetTeam() return 2 end
+        function mockBot:GetPlayerID() return 0 end
+        function mockBot:GetCurrentXP() return 500 end
         function mockBot:GetUnitName() return "npc_dota_hero_life_stealer" end
+        function mockBot:GetAssignedLane() return 2 end
         function mockBot:GetNearbyLaneCreeps(radius, enemies) return self.creeps end
         function mockBot:GetNearbyHeroes(radius, enemies, mode) return self.heroes end
         function mockBot:GetNearbyTowers(radius, enemies) return self.towers end
@@ -44,7 +47,11 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:Action_MoveToLocation(location) self.last_action = "move" end
 
         function GetBot() return mockBot end
+        function GetHeroKills(player_id) return 0 end
         function DotaTime() return CURRENT_TIME end
+        function GetLaneFrontLocation(team, lane, offset)
+          return { x = 100, y = 200 }
+        end
         function GetAncient(team)
           return { GetLocation = function() return { x = 0, y = 0 } end }
         end
@@ -139,6 +146,15 @@ def test_fight_without_target_falls_back_to_farm_and_records_it() -> None:
     messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
     assert any('"event":"order_issued"' in message for message in messages)
     assert any('"fallback":"fight_no_target"' in message for message in messages)
+
+
+def test_farm_without_nearby_creep_moves_to_lane_front() -> None:
+    lua = build_runtime("farm")
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "move"
+    messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
+    assert any('"target":"lane_front"' in message for message in messages)
+    assert any('"fallback":"farm_no_creep"' in message for message in messages)
 
 
 def test_policy_error_degrades_to_unknown_and_emits_structured_telemetry() -> None:

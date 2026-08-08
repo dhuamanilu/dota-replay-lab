@@ -95,9 +95,11 @@ local function read_counters()
     missing = missing,
   }
   counters.gold = read_counter(available, missing, "gold", function() return bot:GetGold() end, tracker.gold)
-  counters.experience = read_counter(available, missing, "experience", function() return bot:GetXP() end, tracker.experience)
+  counters.experience = read_counter(available, missing, "experience", function() return bot:GetCurrentXP() end, tracker.experience)
   counters.last_hits = read_counter(available, missing, "last_hits", function() return bot:GetLastHits() end, tracker.last_hits)
-  counters.kills = read_counter(available, missing, "kills", function() return bot:GetKills() end, tracker.kills)
+  counters.kills = read_counter(available, missing, "kills", function()
+    return GetHeroKills(bot:GetPlayerID())
+  end, tracker.kills)
   return counters
 end
 
@@ -204,13 +206,36 @@ local function attack(target, fallback)
   return true
 end
 
+local function move_to_lane(fallback)
+  local lane_ok, lane = pcall(function() return bot:GetAssignedLane() end)
+  if not lane_ok or type(lane) ~= "number" then
+    telemetry("query_error", { action = "farm", fallback = fallback, error = lane })
+    return false
+  end
+  local front_ok, location = pcall(function()
+    return GetLaneFrontLocation(bot:GetTeam(), lane, -600)
+  end)
+  if not front_ok or location == nil then
+    telemetry("query_error", { action = "farm", fallback = fallback, error = location })
+    return false
+  end
+  local moved, err = pcall(function() bot:Action_MoveToLocation(location) end)
+  if not moved then
+    telemetry("order_error", { order = "move", target = "lane_front", fallback = fallback, error = err })
+    return false
+  end
+  record_order("move", "lane_front", fallback)
+  return true
+end
+
 local function farm(fallback)
   local ok, creeps = pcall(function() return bot:GetNearbyLaneCreeps(1400, true) end)
   if not ok then
     telemetry("query_error", { action = "farm", fallback = fallback, error = creeps })
     return false
   end
-  return attack(weakest(creeps), fallback)
+  if attack(weakest(creeps), fallback) then return true end
+  return move_to_lane(fallback or "farm_no_creep")
 end
 
 local function fight()

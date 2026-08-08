@@ -4,7 +4,7 @@
 
 ## Traducción de acciones
 
-- `farm`: ataca al creep de línea enemigo con menos vida dentro de 1400 unidades.
+- `farm`: ataca al creep de línea enemigo con menos vida dentro de 1400 unidades; si no hay uno, avanza hacia el frente de su línea asignada.
 - `fight`: ataca al héroe enemigo con menos vida dentro de 1800 unidades.
 - `push`: ataca una torre cercana; si no existe, vuelve a farm.
 - `unknown`: retrocede al Ancient si hay un enemigo muy cerca; en otro caso farmea.
