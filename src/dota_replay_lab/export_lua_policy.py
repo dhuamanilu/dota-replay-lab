@@ -27,6 +27,15 @@ def _teacher_predictions(bundle: Mapping[str, Any], transformed: Any) -> Any:
     return np.array([LABELS[index] for index in indices])
 
 
+def _raw_teacher_predictions(bundle: Mapping[str, Any], transformed: Any) -> Any:
+    import numpy as np
+
+    values = np.asarray(bundle["model"].predict(transformed))
+    if values.dtype.kind in "iu":
+        return np.array([LABELS[int(value)] for value in values])
+    return values.astype(str)
+
+
 def render_lua_tree(
     student: Any, preprocessor: Any, hero_internal_names: dict[int, str] | None = None
 ) -> str:
@@ -147,20 +156,47 @@ def distill_policy(
     test_x = bundle["preprocessor"].transform(test[FEATURES])
     teacher_development = _teacher_predictions(bundle, development_x)
     teacher_test = _teacher_predictions(bundle, test_x)
+    raw_teacher_development = _raw_teacher_predictions(bundle, development_x)
+    true_development = development["label"].to_numpy()
+    strategy_targets = {
+        "teacher_calibrated": (teacher_development, None),
+        "teacher_raw": (raw_teacher_development, None),
+        "labels": (true_development, None),
+        "labels_balanced": (true_development, "balanced"),
+    }
     validation_results = {}
-    for depth in DEPTH_CANDIDATES:
-        student = DecisionTreeClassifier(max_depth=depth, min_samples_leaf=20, random_state=seed)
-        student.fit(development_x[fit_mask.to_numpy()], teacher_development[fit_mask.to_numpy()])
-        predictions = student.predict(development_x[~fit_mask.to_numpy()])
-        validation_results[str(depth)] = float(
-            accuracy_score(teacher_development[~fit_mask.to_numpy()], predictions)
-        )
-    chosen_depth = int(max(validation_results, key=validation_results.get))
-    student = DecisionTreeClassifier(max_depth=chosen_depth, min_samples_leaf=20, random_state=seed)
-    student.fit(development_x, teacher_development)
+    specifications = {}
+    for strategy, (targets, class_weight) in strategy_targets.items():
+        for depth in DEPTH_CANDIDATES:
+            name = f"{strategy}_d{depth}"
+            student = DecisionTreeClassifier(
+                max_depth=depth, min_samples_leaf=20, class_weight=class_weight, random_state=seed
+            )
+            student.fit(development_x[fit_mask.to_numpy()], targets[fit_mask.to_numpy()])
+            predictions = student.predict(development_x[~fit_mask.to_numpy()])
+            label_metrics = _metrics(true_development[~fit_mask.to_numpy()], predictions)
+            validation_results[name] = {
+                "macro_f1": label_metrics["macro_f1"],
+                "teacher_fidelity": float(
+                    accuracy_score(teacher_development[~fit_mask.to_numpy()], predictions)
+                ),
+            }
+            specifications[name] = (strategy, depth, class_weight)
+    chosen_name = max(validation_results, key=lambda name: validation_results[name]["macro_f1"])
+    chosen_strategy, chosen_depth, chosen_class_weight = specifications[chosen_name]
+    chosen_targets = strategy_targets[chosen_strategy][0]
+    student = DecisionTreeClassifier(
+        max_depth=chosen_depth,
+        min_samples_leaf=20,
+        class_weight=chosen_class_weight,
+        random_state=seed,
+    )
+    student.fit(development_x, chosen_targets)
     student_test = student.predict(test_x)
     result = {
         "chosen_depth": chosen_depth,
+        "chosen_strategy": chosen_strategy,
+        "chosen_candidate": chosen_name,
         "node_count": int(student.tree_.node_count),
         "fidelity_validation": validation_results,
         "teacher_fidelity_test": float(accuracy_score(teacher_test, student_test)),
@@ -197,7 +233,10 @@ def main() -> int:
     args = parse_args()
     result = distill_policy(args.dataset, args.model, args.metrics, args.manifest, args.output, args.seed)
     print(f"Saved portable policy: {args.output}")
-    print(f"Depth: {result['chosen_depth']}; nodes: {result['node_count']}")
+    print(
+        f"Strategy: {result['chosen_strategy']}; depth: {result['chosen_depth']}; "
+        f"nodes: {result['node_count']}"
+    )
     print(f"Teacher fidelity on test: {result['teacher_fidelity_test']:.4f}")
     print(f"Student held-out macro-F1: {result['student_test']['macro_f1']:.4f}")
     return 0

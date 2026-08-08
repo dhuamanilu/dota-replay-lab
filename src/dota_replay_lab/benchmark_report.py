@@ -23,6 +23,8 @@ def render_benchmark(
         for label, metrics in training["test"]["per_class"].items()
     ]
     label_rows = [f"| {label} | {count} |" for label, count in label_counts.most_common()]
+    biases = training.get("class_biases", {})
+    bias_text = ", ".join(f"{label}={value:g}" for label, value in biases.items()) or "sin ajuste"
     match_count = len({match_id for split in training["match_ids"].values() for match_id in split})
     total_rows = sum(training["rows"].values())
     return "\n".join(
@@ -48,6 +50,12 @@ def render_benchmark(
             *cv_rows,
             "",
             f"Modelo elegido: `{training['chosen_model']}`.",
+            f"Sesgos calibrados con predicciones out-of-fold: {bias_text}.",
+            *(
+                [f"Macro-F1 out-of-fold tras calibración: {training['calibrated_oof_macro_f1']:.4f}."]
+                if "calibrated_oof_macro_f1" in training
+                else []
+            ),
             "",
             "## Test congelado del modelo GPU",
             "",
@@ -61,7 +69,7 @@ def render_benchmark(
             "",
             "## Política Lua destilada",
             "",
-            f"- Profundidad: {portable['chosen_depth']}; nodos: {portable['node_count']}.",
+            f"- Estrategia: {portable.get('chosen_strategy', 'teacher')}; profundidad: {portable['chosen_depth']}; nodos: {portable['node_count']}.",
             f"- Fidelidad al XGBoost en test: {portable['teacher_fidelity_test']:.4f}.",
             f"- Macro-F1 en test: {portable['student_test']['macro_f1']:.4f}.",
             "",
