@@ -50,13 +50,20 @@ local function json_value(value)
 end
 
 local telemetry_keys = {
-  "action", "fallback", "order", "target", "features_available",
-  "missing_features", "error",
+  "player_id", "team_id", "hero_name", "action", "fallback", "order", "target",
+  "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
+  "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+  "features_available", "missing_features", "error",
 }
 
 local function telemetry(event, fields)
+  fields = fields or {}
+  fields.player_id = safe_number(function() return bot:GetPlayerID() end, -1)
+  fields.team_id = safe_number(function() return bot:GetTeam() end, -1)
+  local hero_ok, hero_name = pcall(function() return bot:GetUnitName() end)
+  fields.hero_name = hero_ok and hero_name or "unknown"
   local parts = {
-    '"schema":1',
+    '"schema":2',
     '"event":' .. json_string(event),
     '"game_time":' .. tostring(math.floor(game_time() * 1000) / 1000),
     '"minute":' .. tostring(game_minute()),
@@ -84,7 +91,7 @@ end
 local function read_counter(available, missing, name, callback, fallback)
   local value, ok = safe_number(callback, fallback)
   append(ok and available or missing, name)
-  return value
+  return value, ok
 end
 
 local function read_counters()
@@ -94,12 +101,23 @@ local function read_counters()
     available = available,
     missing = missing,
   }
-  counters.gold = read_counter(available, missing, "gold", function() return bot:GetGold() end, tracker.gold)
-  counters.experience = read_counter(available, missing, "experience", function() return bot:GetCurrentXP() end, tracker.experience)
-  counters.last_hits = read_counter(available, missing, "last_hits", function() return bot:GetLastHits() end, tracker.last_hits)
-  counters.kills = read_counter(available, missing, "kills", function()
+  counters.gold, counters.gold_ok = read_counter(
+    available, missing, "gold", function() return bot:GetGold() end, tracker.gold
+  )
+  -- GetCurrentXP belongs to the server entity API, not CDOTA_Bot_Script.
+  -- Preserve the trained input default and report the domain gap honestly.
+  counters.experience = tracker.experience
+  counters.experience_ok = false
+  append(missing, "experience")
+  counters.last_hits, counters.last_hits_ok = read_counter(
+    available, missing, "last_hits", function() return bot:GetLastHits() end, tracker.last_hits
+  )
+  counters.kills, counters.kills_ok = read_counter(available, missing, "kills", function()
     return GetHeroKills(bot:GetPlayerID())
   end, tracker.kills)
+  counters.deaths = safe_number(function() return GetHeroDeaths(bot:GetPlayerID()) end, 0)
+  counters.level = safe_number(function() return GetHeroLevel(bot:GetPlayerID()) end, 1)
+  counters.xp_to_next_level = safe_number(function() return bot:GetXPNeededToLevel() end, -1)
   return counters
 end
 
@@ -135,10 +153,10 @@ local function checkpoint_state()
   end
 
   append(counters.available, "state_minute")
-  append(counters.available, "gold_change")
-  append(counters.available, "experience_change")
-  append(counters.available, "last_hit_change")
-  append(counters.available, "kills_last_minute")
+  append(counters.gold_ok and counters.available or counters.missing, "gold_change")
+  append(counters.experience_ok and counters.available or counters.missing, "experience_change")
+  append(counters.last_hits_ok and counters.available or counters.missing, "last_hit_change")
+  append(counters.kills_ok and counters.available or counters.missing, "kills_last_minute")
   append(counters.missing, "team_gold_advantage")
   append(counters.missing, "team_experience_advantage")
   append(counters.missing, "previous_fight")
@@ -151,7 +169,11 @@ local function checkpoint_state()
     state_minute = minute,
     gold = counters.gold,
     experience = counters.experience,
+    level = counters.level,
+    xp_to_next_level = counters.xp_to_next_level,
     last_hits = counters.last_hits,
+    kills = counters.kills,
+    deaths = counters.deaths,
     gold_change = tracker.gold_change,
     experience_change = tracker.experience_change,
     last_hit_change = tracker.last_hit_change,
@@ -162,6 +184,16 @@ local function checkpoint_state()
     previous_push = 0,
     previous_farm = 0,
   }, table.concat(counters.available, ","), table.concat(counters.missing, ",")
+end
+
+local function add_state_fields(fields, state)
+  for _, key in ipairs({
+    "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
+    "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+  }) do
+    fields[key] = state[key]
+  end
+  return fields
 end
 
 local function unit_name(unit)
@@ -283,30 +315,30 @@ end
 local function choose_action()
   local state, available, missing = checkpoint_state()
   if policy == nil then
-    telemetry("decision", {
+    telemetry("decision", add_state_fields({
       action = "unknown", fallback = "policy_unavailable",
       features_available = available, missing_features = missing,
-    })
+    }, state))
     return "unknown"
   end
   local ok, action = pcall(policy.predict, state)
   if not ok then
-    telemetry("decision_error", {
+    telemetry("decision_error", add_state_fields({
       action = "unknown", fallback = "policy_error", error = action,
       features_available = available, missing_features = missing,
-    })
+    }, state))
     return "unknown"
   end
   if action ~= "farm" and action ~= "fight" and action ~= "push" and action ~= "unknown" then
-    telemetry("decision_error", {
+    telemetry("decision_error", add_state_fields({
       action = "unknown", fallback = "invalid_policy_action", error = action,
       features_available = available, missing_features = missing,
-    })
+    }, state))
     return "unknown"
   end
-  telemetry("decision", {
+  telemetry("decision", add_state_fields({
     action = action, features_available = available, missing_features = missing,
-  })
+  }, state))
   return action
 end
 

@@ -35,6 +35,7 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:GetTeam() return 2 end
         function mockBot:GetPlayerID() return 0 end
         function mockBot:GetCurrentXP() return 500 end
+        function mockBot:GetXPNeededToLevel() return 140 end
         function mockBot:GetUnitName() return "npc_dota_hero_life_stealer" end
         function mockBot:GetAssignedLane() return 2 end
         function mockBot:GetNearbyLaneCreeps(radius, enemies) return self.creeps end
@@ -48,6 +49,8 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
 
         function GetBot() return mockBot end
         function GetHeroKills(player_id) return 0 end
+        function GetHeroDeaths(player_id) return 0 end
+        function GetHeroLevel(player_id) return 2 end
         function DotaTime() return CURRENT_TIME end
         function GetLaneFrontLocation(team, lane, offset)
           return { x = 100, y = 200 }
@@ -89,6 +92,16 @@ def test_valve_adapter_executes_policy_and_issues_an_action() -> None:
     lua.globals().Think()
     assert lua.globals().mockBot.last_action == "attack"
     assert lua.globals().mockBot.last_target == "npc_dota_creep_badguys_melee"
+    messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
+    decision = next(json.loads(message.removeprefix("DRL_TELEMETRY ")) for message in messages if '"event":"decision"' in message)
+    assert decision["schema"] == 2
+    assert decision["player_id"] == 0
+    assert decision["hero_name"] == "npc_dota_hero_life_stealer"
+    assert decision["last_hits"] == 3
+    assert decision["level"] == 2
+    assert decision["xp_to_next_level"] == 140
+    assert "experience" in decision["missing_features"].split(",")
+    assert "experience_change" in decision["missing_features"].split(",")
 
 
 def test_generated_policy_executes_through_the_valve_adapter() -> None:
@@ -167,4 +180,9 @@ def test_policy_error_degrades_to_unknown_and_emits_structured_telemetry() -> No
     assert any('"event":"policy_loaded"' in message for message in messages)
     assert any('"event":"decision_error"' in message for message in messages)
     assert any('"fallback":"policy_error"' in message for message in messages)
-    assert any('"missing_features":"team_gold_advantage' in message for message in messages)
+    decision_error = next(
+        json.loads(message.removeprefix("DRL_TELEMETRY "))
+        for message in messages
+        if '"event":"decision_error"' in message
+    )
+    assert "team_gold_advantage" in decision_error["missing_features"].split(",")

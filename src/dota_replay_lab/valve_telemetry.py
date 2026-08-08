@@ -57,6 +57,39 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
     schemas = sorted(
         {int(row["schema"]) for row in rows if isinstance(row.get("schema"), (int, float))}
     )
+    decisions_by_bot: dict[str, dict[str, Any]] = {}
+    counter_fields = (
+        "gold",
+        "experience",
+        "level",
+        "xp_to_next_level",
+        "last_hits",
+        "kills",
+        "deaths",
+    )
+    for row in rows:
+        if row.get("event") != "decision" or "player_id" not in row:
+            continue
+        identity = f'{row["player_id"]}:{row.get("hero_name", "unknown")}'
+        snapshot = {
+            "player_id": row["player_id"],
+            "team_id": row.get("team_id"),
+            "hero_name": row.get("hero_name", "unknown"),
+            "last_minute": row.get("minute"),
+            "last_action": row.get("action"),
+        }
+        for field in counter_fields:
+            if isinstance(row.get(field), (int, float)):
+                snapshot[field] = row[field]
+        decisions_by_bot[identity] = snapshot
+
+    counter_maxima = {
+        field: max(
+            (float(row[field]) for row in rows if isinstance(row.get(field), (int, float))),
+            default=None,
+        )
+        for field in counter_fields
+    }
 
     return {
         "records": len(rows),
@@ -73,6 +106,8 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
         "last_game_time": max(game_times) if game_times else None,
         "observed_game_seconds": max(game_times) - min(game_times) if game_times else 0,
         "minutes_seen": minutes,
+        "bot_snapshots": dict(sorted(decisions_by_bot.items())),
+        "counter_maxima": counter_maxima,
     }
 
 
