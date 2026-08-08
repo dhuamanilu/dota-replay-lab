@@ -10,10 +10,12 @@ local tracker = {
   gold = 0,
   experience = 0,
   last_hits = 0,
+  denies = 0,
   kills = 0,
   gold_change = 0,
   experience_change = 0,
   last_hit_change = 0,
+  deny_change = 0,
   kills_last_minute = 0,
 }
 local selected_action = "unknown"
@@ -54,8 +56,8 @@ end
 
 local telemetry_keys = {
   "player_id", "team_id", "hero_name", "action", "fallback", "order", "target",
-  "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
-  "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+  "gold", "experience", "level", "xp_to_next_level", "last_hits", "denies", "kills", "deaths",
+  "gold_change", "experience_change", "last_hit_change", "deny_change", "kills_last_minute",
   "previous_fight", "previous_push", "previous_farm",
   "action_type", "idle", "idle_seconds", "activity_seconds",
   "features_available", "missing_features", "error",
@@ -68,7 +70,7 @@ local function telemetry(event, fields)
   local hero_ok, hero_name = pcall(function() return bot:GetUnitName() end)
   fields.hero_name = hero_ok and hero_name or "unknown"
   local parts = {
-    '"schema":3',
+    '"schema":4',
     '"event":' .. json_string(event),
     '"game_time":' .. tostring(math.floor(game_time() * 1000) / 1000),
     '"minute":' .. tostring(game_minute()),
@@ -139,6 +141,9 @@ local function read_counters()
   counters.last_hits, counters.last_hits_ok = read_counter(
     available, missing, "last_hits", function() return bot:GetLastHits() end, tracker.last_hits
   )
+  counters.denies, counters.denies_ok = read_counter(
+    available, missing, "denies", function() return bot:GetDenies() end, tracker.denies
+  )
   counters.kills, counters.kills_ok = read_counter(available, missing, "kills", function()
     return GetHeroKills(bot:GetPlayerID())
   end, tracker.kills)
@@ -156,6 +161,7 @@ local function checkpoint_state()
       tracker.gold_change = counters.gold - tracker.gold
       tracker.experience_change = counters.experience - tracker.experience
       tracker.last_hit_change = counters.last_hits - tracker.last_hits
+      tracker.deny_change = counters.denies - tracker.denies
       tracker.kills_last_minute = counters.kills - tracker.kills
       previous_observed.fight = observed.fight
       previous_observed.push = observed.push
@@ -168,6 +174,7 @@ local function checkpoint_state()
     tracker.gold = counters.gold
     tracker.experience = counters.experience
     tracker.last_hits = counters.last_hits
+    tracker.denies = counters.denies
     tracker.kills = counters.kills
   end
 
@@ -189,6 +196,7 @@ local function checkpoint_state()
   append(counters.gold_ok and counters.available or counters.missing, "gold_change")
   append(counters.experience_ok and counters.available or counters.missing, "experience_change")
   append(counters.last_hits_ok and counters.available or counters.missing, "last_hit_change")
+  append(counters.denies_ok and counters.available or counters.missing, "deny_change")
   append(counters.kills_ok and counters.available or counters.missing, "kills_last_minute")
   append(counters.missing, "team_gold_advantage")
   append(counters.missing, "team_experience_advantage")
@@ -205,11 +213,13 @@ local function checkpoint_state()
     level = counters.level,
     xp_to_next_level = counters.xp_to_next_level,
     last_hits = counters.last_hits,
+    denies = counters.denies,
     kills = counters.kills,
     deaths = counters.deaths,
     gold_change = tracker.gold_change,
     experience_change = tracker.experience_change,
     last_hit_change = tracker.last_hit_change,
+    deny_change = tracker.deny_change,
     team_gold_advantage = 0,
     team_experience_advantage = 0,
     kills_last_minute = tracker.kills_last_minute,
@@ -221,8 +231,8 @@ end
 
 local function add_state_fields(fields, state)
   for _, key in ipairs({
-    "gold", "experience", "level", "xp_to_next_level", "last_hits", "kills", "deaths",
-    "gold_change", "experience_change", "last_hit_change", "kills_last_minute",
+    "gold", "experience", "level", "xp_to_next_level", "last_hits", "denies", "kills", "deaths",
+    "gold_change", "experience_change", "last_hit_change", "deny_change", "kills_last_minute",
     "previous_fight", "previous_push", "previous_farm",
   }) do
     fields[key] = state[key]

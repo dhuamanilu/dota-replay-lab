@@ -72,6 +72,7 @@ def summarize(records: Iterable[dict[str, Any]], invalid_lines: int = 0) -> dict
         "level",
         "xp_to_next_level",
         "last_hits",
+        "denies",
         "kills",
         "deaths",
     )

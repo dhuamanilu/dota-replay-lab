@@ -38,6 +38,7 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
         function mockBot:GetGold() return 600 end
         function mockBot:GetXP() return 500 end
         function mockBot:GetLastHits() return 3 end
+        function mockBot:GetDenies() return 2 end
         function mockBot:GetKills() return 0 end
         function mockBot:GetTeam() return 2 end
         function mockBot:GetPlayerID() return 0 end
@@ -106,10 +107,11 @@ def test_valve_adapter_executes_policy_and_issues_an_action() -> None:
     assert lua.globals().mockBot.last_target == "npc_dota_creep_badguys_melee"
     messages = [lua.globals().TELEMETRY[index] for index in range(1, len(lua.globals().TELEMETRY) + 1)]
     decision = next(json.loads(message.removeprefix("DRL_TELEMETRY ")) for message in messages if '"event":"decision"' in message)
-    assert decision["schema"] == 3
+    assert decision["schema"] == 4
     assert decision["player_id"] == 0
     assert decision["hero_name"] == "npc_dota_hero_life_stealer"
     assert decision["last_hits"] == 3
+    assert decision["denies"] == 2
     assert decision["level"] == 2
     assert decision["xp_to_next_level"] == 140
     assert "experience" in decision["missing_features"].split(",")

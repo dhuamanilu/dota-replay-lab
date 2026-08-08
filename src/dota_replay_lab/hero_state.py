@@ -14,9 +14,11 @@ class HeroMinuteState:
     gold: int
     experience: int
     last_hits: int
+    denies: int
     gold_change: int
     experience_change: int
     last_hit_change: int
+    deny_change: int
     team_gold_advantage: int
     team_experience_advantage: int
     kills_last_minute: int
@@ -60,9 +62,11 @@ def state_at_minute(
         gold=_at(player.get("gold_t", []), minute),
         experience=_at(player.get("xp_t", []), minute),
         last_hits=_at(player.get("lh_t", []), minute),
+        denies=_at(player.get("dn_t", []), minute),
         gold_change=_change(player.get("gold_t", []), minute),
         experience_change=_change(player.get("xp_t", []), minute),
         last_hit_change=_change(player.get("lh_t", []), minute),
+        deny_change=_change(player.get("dn_t", []), minute),
         team_gold_advantage=sign * _at(match.get("radiant_gold_adv", []), minute),
         team_experience_advantage=sign * _at(match.get("radiant_xp_adv", []), minute),
         kills_last_minute=_kills_in_window(player, (minute - 1) * 60, minute * 60),
@@ -74,15 +78,17 @@ def render_states(match: Mapping[str, Any], minute: int, hero_names: Mapping[int
 
     states = [state_at_minute(match, player, minute, hero_names) for player in match.get("players", [])]
     rows = [
-        "| {team} | {hero} | {gold} | {xp} | {lh} | {gold_delta:+} | {xp_delta:+} | {lh_delta:+} | {gadv:+} | {xadv:+} | {kills} |".format(
+        "| {team} | {hero} | {gold} | {xp} | {lh} | {denies} | {gold_delta:+} | {xp_delta:+} | {lh_delta:+} | {deny_delta:+} | {gadv:+} | {xadv:+} | {kills} |".format(
             team=state.team,
             hero=state.hero,
             gold=state.gold,
             xp=state.experience,
             lh=state.last_hits,
+            denies=state.denies,
             gold_delta=state.gold_change,
             xp_delta=state.experience_change,
             lh_delta=state.last_hit_change,
+            deny_delta=state.deny_change,
             gadv=state.team_gold_advantage,
             xadv=state.team_experience_advantage,
             kills=state.kills_last_minute,
@@ -96,8 +102,8 @@ def render_states(match: Mapping[str, Any], minute: int, hero_names: Mapping[int
             "Las ventajas están expresadas desde la perspectiva de cada equipo: positivo significa ventaja propia. "
             "Los cambios comparan este minuto con el anterior.",
             "",
-            "| Equipo | Héroe | Oro | XP | LH | Δ oro | Δ XP | Δ LH | Ventaja oro | Ventaja XP | Kills último min. |",
-            "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+            "| Equipo | Héroe | Oro | XP | LH | Denies | Δ oro | Δ XP | Δ LH | Δ denies | Ventaja oro | Ventaja XP | Kills último min. |",
+            "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
             *rows,
             "",
             "## Límites conscientes",

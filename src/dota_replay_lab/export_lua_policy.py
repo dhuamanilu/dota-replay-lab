@@ -218,7 +218,7 @@ def distill_policy(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Distill the trained policy into standalone Lua.")
-    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v2.csv"))
+    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v3.csv"))
     parser.add_argument("--model", type=Path, default=Path("artifacts/models/decision-policy-v1.joblib"))
     parser.add_argument(
         "--metrics", type=Path, default=Path("artifacts/models/decision-policy-v1.metrics.json")

@@ -17,9 +17,11 @@ NUMERIC_FEATURES = [
     "gold",
     "experience",
     "last_hits",
+    "denies",
     "gold_change",
     "experience_change",
     "last_hit_change",
+    "deny_change",
     "team_gold_advantage",
     "team_experience_advantage",
     "kills_last_minute",
@@ -337,7 +339,7 @@ def train_and_evaluate(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train decision baselines with match-level holdouts.")
-    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v2.csv"))
+    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v3.csv"))
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts/models"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")

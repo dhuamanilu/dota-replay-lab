@@ -88,7 +88,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Render the current policy benchmark as Markdown.")
     parser.add_argument("--training", type=Path, default=Path("artifacts/models/decision-policy-v1.metrics.json"))
     parser.add_argument("--portable", type=Path, default=Path("bots/decision_policy.metrics.json"))
-    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v2.csv"))
+    parser.add_argument("--dataset", type=Path, default=Path("artifacts/datasets/decision-labels-v3.csv"))
     parser.add_argument("--output", type=Path, default=Path("docs/benchmark-v2.md"))
     return parser.parse_args()
 

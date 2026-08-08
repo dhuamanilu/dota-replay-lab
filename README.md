@@ -61,7 +61,7 @@ python -m dota_replay_lab.collect_matches --count 500
 python -m dota_replay_lab.build_dataset --manifest artifacts/corpora/pro-matches-v1.json
 ```
 
-El resultado predeterminado es `artifacts/datasets/decision-labels-v2.csv`. Las entradas describen el estado al inicio del minuto y la etiqueta describe el intervalo posterior, evitando filtrar el futuro al modelo. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v2](docs/decision-labels-v2.md).
+El resultado predeterminado es `artifacts/datasets/decision-labels-v3.csv`. Conserva las reglas de etiqueta v2 y añade denies acumulados y por minuto al estado observable. Las entradas describen el estado al inicio del minuto y la etiqueta describe el intervalo posterior, evitando filtrar el futuro al modelo. Las etiquetas son heurísticas transparentes (`fight`, `push`, `farm` o `unknown`), no la intención verdadera del jugador. `retreat` queda reservada y no se asigna sin evidencia de posición o movimiento. Consulta [las reglas y sesgos de v2](docs/decision-labels-v2.md).
 
 Para entrenar y evaluar baselines sin mezclar minutos de una misma partida entre conjuntos:
 
