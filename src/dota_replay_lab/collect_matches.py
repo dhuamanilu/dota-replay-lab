@@ -71,12 +71,16 @@ def write_manifest(
     match_ids: list[int],
     rejected: list[dict[str, Any]],
     hero_names: Mapping[int, str],
+    hero_internal_names: Mapping[int, str] | None = None,
 ) -> None:
     payload = {
         "corpus_version": CORPUS_VERSION,
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "match_ids": match_ids,
         "hero_names": {str(hero_id): name for hero_id, name in sorted(hero_names.items())},
+        "hero_internal_names": {
+            str(hero_id): name for hero_id, name in sorted((hero_internal_names or {}).items())
+        },
         "rejected": rejected,
     }
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -105,7 +109,13 @@ def main() -> int:
         candidate_ids, args.matches_dir, args.count, get_match, delay_seconds=max(args.delay, 0.0)
     )
     hero_names = get_hero_names()
-    write_manifest(args.manifest, selected, rejected, hero_names)
+    hero_catalogue = get_json("constants/heroes")
+    hero_internal_names = {
+        int(hero.get("id", hero_id)): str(hero["name"])
+        for hero_id, hero in hero_catalogue.items()
+        if isinstance(hero, dict) and hero.get("name")
+    }
+    write_manifest(args.manifest, selected, rejected, hero_names, hero_internal_names)
     print(f"Saved corpus manifest with {len(selected)} matches: {args.manifest}")
     if len(selected) < args.count:
         print(f"Warning: requested {args.count}, but only {len(selected)} usable matches were available.")
