@@ -19,6 +19,7 @@ def test_benchmark_report_includes_protocol_and_portable_metrics() -> None:
         },
     }
     portable = {
+        "chosen_strategy": "labels_balanced",
         "chosen_depth": 8,
         "node_count": 100,
         "teacher_fidelity_test": 0.9,
