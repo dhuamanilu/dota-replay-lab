@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
-from .opendota import OpenDotaError, get_hero_names, get_json, get_match
+from .opendota import OpenDotaError, get_json, get_match
 
 
 CORPUS_VERSION = "v1"
@@ -136,8 +136,12 @@ def main() -> int:
     selected, rejected = collect_corpus(
         candidate_ids, args.matches_dir, args.count, get_match, delay_seconds=max(args.delay, 0.0)
     )
-    hero_names = get_hero_names()
     hero_catalogue = get_json("constants/heroes")
+    hero_names = {
+        int(hero.get("id", hero_id)): str(hero["localized_name"])
+        for hero_id, hero in hero_catalogue.items()
+        if isinstance(hero, dict) and hero.get("localized_name")
+    }
     hero_internal_names = {
         int(hero.get("id", hero_id)): str(hero["name"])
         for hero_id, hero in hero_catalogue.items()

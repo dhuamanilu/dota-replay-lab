@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import time
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -16,22 +17,35 @@ class OpenDotaError(RuntimeError):
     """Raised when OpenDota cannot provide a usable response."""
 
 
-def get_json(path: str, *, timeout_seconds: int = 30) -> Any:
+def get_json(
+    path: str, *, timeout_seconds: int = 30, max_attempts: int = 4, backoff_seconds: float = 5.0
+) -> Any:
     """Fetch a JSON document from a relative OpenDota API path."""
 
-    request = Request(
-        f"{API_BASE}/{path.lstrip('/')}",
-        headers={"Accept": "application/json", "User-Agent": USER_AGENT},
-    )
-    try:
-        with urlopen(request, timeout=timeout_seconds) as response:
-            return json.load(response)
-    except HTTPError as error:
-        raise OpenDotaError(f"OpenDota returned HTTP {error.code} for {path}.") from error
-    except URLError as error:
-        raise OpenDotaError(f"Could not reach OpenDota: {error.reason}.") from error
-    except json.JSONDecodeError as error:
-        raise OpenDotaError("OpenDota returned invalid JSON.") from error
+    for attempt in range(max_attempts):
+        request = Request(
+            f"{API_BASE}/{path.lstrip('/')}",
+            headers={"Accept": "application/json", "User-Agent": USER_AGENT},
+        )
+        try:
+            with urlopen(request, timeout=timeout_seconds) as response:
+                return json.load(response)
+        except HTTPError as error:
+            retryable = error.code == 429 or 500 <= error.code < 600
+            if retryable and attempt + 1 < max_attempts:
+                retry_after = error.headers.get("Retry-After") if error.headers else None
+                delay = float(retry_after) if retry_after else backoff_seconds * (2**attempt)
+                time.sleep(delay)
+                continue
+            raise OpenDotaError(f"OpenDota returned HTTP {error.code} for {path}.") from error
+        except URLError as error:
+            if attempt + 1 < max_attempts:
+                time.sleep(backoff_seconds * (2**attempt))
+                continue
+            raise OpenDotaError(f"Could not reach OpenDota: {error.reason}.") from error
+        except json.JSONDecodeError as error:
+            raise OpenDotaError("OpenDota returned invalid JSON.") from error
+    raise OpenDotaError(f"OpenDota exhausted retries for {path}.")
 
 
 def latest_pro_match_id() -> int:
