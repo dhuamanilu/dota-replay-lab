@@ -101,6 +101,8 @@ una vez por segundo, sin abrir ni controlar el cliente. Consulta
 El primer candidato de imitación de órdenes y sus límites están documentados en
 [docs/replay-behavior-policy.md](docs/replay-behavior-policy.md); por ahora es un
 experimento auxiliar y no sustituye la política canónica.
+La separación entre ataques genéricos y combate real, incluyendo el candidato a
+cinco segundos, está en [docs/replay-combat-policy.md](docs/replay-combat-policy.md).
 
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 

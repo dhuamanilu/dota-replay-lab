@@ -17,6 +17,6 @@ def test_valve_adapter_loads_policy_and_exposes_think() -> None:
 
 def test_generated_lua_and_adapter_parse_when_luaparser_is_installed() -> None:
     ast = pytest.importorskip("luaparser.ast")
-    for filename in ("decision_policy.lua", "bot_generic.lua"):
+    for filename in ("decision_policy.lua", "replay_combat_policy.lua", "bot_generic.lua"):
         source = (ROOT / "bots" / filename).read_text(encoding="utf-8")
         ast.parse(source)

@@ -44,3 +44,16 @@ En la tercera sesión hubo 29 decisiones `farm` y 7 `unknown`; los nueve bots re
 Las ventajas de oro y experiencia por equipo siguen en cero porque no se ha validado una lectura equivalente para ambos equipos desde la API del bot. `previous_*` ya procede de órdenes observadas, aunque sigue siendo una aproximación a las señales agregadas de OpenDota. El benchmark offline mide imitación de etiquetas heurísticas, no habilidad, MMR ni probabilidad de victoria.
 
 La ejecución dentro de Dota ya confirmó carga, `Think()`, movimiento, ataque, degradaciones y contadores con la política de árbol anterior. La GRU portable posterior tiene paridad exacta con PyTorch y ejecuta el adaptador bajo `lupa`, pero no se presenta como validada dentro del cliente. Las mejoras posteriores se desarrollan con replays y pruebas automatizadas; no requieren controlar manualmente Dota.
+
+## Predictor de combate por replay
+
+El adaptador carga también `replay_combat_policy.lua`. El modelo reducido usa
+solo señales que la API puede leer y anticipa combate a cinco segundos. Para
+limitar falsos positivos, únicamente abre una pelea oportunista cuando
+`engage_probability >= 0,90` y ya existe un enemigo a 900 unidades. La retirada
+por poca vida conserva prioridad absoluta; un fallo del predictor desactiva esta
+ruta sin afectar la política principal.
+
+La mejora offline y la paridad exacta sklearn/Lua están documentadas en
+`replay-combat-policy.md`. Todavía no existe evidencia de win rate para esta
+integración y no se presenta como validada dentro del cliente.

@@ -2,6 +2,9 @@
 local policy_path = GetScriptDirectory() .. "/decision_policy"
 local policy_ok, policy_or_error = pcall(require, policy_path)
 local policy = policy_ok and policy_or_error or nil
+local combat_policy_path = GetScriptDirectory() .. "/replay_combat_policy"
+local combat_policy_ok, combat_policy_or_error = pcall(require, combat_policy_path)
+local combat_policy = combat_policy_ok and combat_policy_or_error or nil
 local bot_ok, bot = pcall(GetBot)
 if not bot_ok then bot = nil end
 
@@ -23,6 +26,7 @@ local last_order = { name = "", target = "", time = -100 }
 local activity = { last_sample = nil, idle_seconds = 0, observed_seconds = 0 }
 local observed = { fight = 0, push = 0, farm = 0 }
 local previous_observed = { fight = 0, push = 0, farm = 0 }
+local combat_tracker = { time = -100, prediction = nil, x = nil, y = nil }
 
 local function safe_number(callback, fallback)
   local ok, value = pcall(callback)
@@ -61,6 +65,7 @@ local telemetry_keys = {
   "previous_fight", "previous_push", "previous_farm",
   "action_type", "idle", "idle_seconds", "activity_seconds",
   "features_available", "missing_features", "error",
+  "engage_probability", "threat_probability",
 }
 
 local function telemetry(event, fields)
@@ -111,6 +116,11 @@ if policy_ok then
   telemetry("policy_loaded", {})
 else
   telemetry("policy_load_error", { error = policy_or_error })
+end
+if combat_policy_ok then
+  telemetry("combat_policy_loaded", {})
+else
+  telemetry("combat_policy_load_error", { error = combat_policy_or_error })
 end
 
 local function append(values, value)
@@ -364,6 +374,93 @@ local function fight()
   return attacked
 end
 
+local function spatial_context(units, own_x, own_y)
+  local nearest = 256
+  local nearby = 0
+  for _, unit in pairs(units or {}) do
+    local ok, location = pcall(function() return unit:GetLocation() end)
+    if ok and location ~= nil and type(location.x) == "number" and type(location.y) == "number" then
+      local distance = math.sqrt((location.x - own_x) ^ 2 + (location.y - own_y) ^ 2) / 64
+      nearest = math.min(nearest, distance)
+      if distance <= 20 then nearby = nearby + 1 end
+    end
+  end
+  return nearest, nearby
+end
+
+local function combat_prediction()
+  if combat_policy == nil or policy == nil then return nil end
+  local now = game_time()
+  if combat_tracker.prediction ~= nil and now - combat_tracker.time < 1 then
+    return combat_tracker.prediction
+  end
+  local location_ok, location = pcall(function() return bot:GetLocation() end)
+  if not location_ok or location == nil or type(location.x) ~= "number" or type(location.y) ~= "number" then
+    return nil
+  end
+  local mode = BOT_MODE_NONE or 0
+  local enemies_ok, enemies = pcall(function() return bot:GetNearbyHeroes(16000, true, mode) end)
+  local allies_ok, allies = pcall(function() return bot:GetNearbyHeroes(16000, false, mode) end)
+  if not enemies_ok or not allies_ok then return nil end
+  local enemy_distance, enemies_nearby = spatial_context(enemies, location.x, location.y)
+  local ally_distance, allies_nearby = spatial_context(allies, location.x, location.y)
+  local counters = read_counters()
+  local hero_ok, hero_id = pcall(policy.hero_id, bot:GetUnitName())
+  if not hero_ok then hero_id = 0 end
+  local movement = 0
+  if combat_tracker.x ~= nil then
+    movement = math.sqrt((location.x - combat_tracker.x) ^ 2 + (location.y - combat_tracker.y) ^ 2) / 64
+  end
+  local state = {
+    time_minutes = now / 60,
+    x = location.x / 64 + 128,
+    y = location.y / 64 + 128,
+    alive = 1,
+    level = counters.level,
+    gold = counters.gold,
+    lh = counters.last_hits,
+    denies = counters.denies,
+    kills = counters.kills,
+    deaths = counters.deaths,
+    assists = safe_number(function() return GetHeroAssists(bot:GetPlayerID()) end, 0),
+    movement_distance = movement,
+    previous_move = last_order.name == "move" and 1 or 0,
+    previous_attack = last_order.name == "attack" and 1 or 0,
+    previous_cast = last_order.name == "cast" and 1 or 0,
+    nearest_ally_distance = ally_distance,
+    nearest_enemy_distance = enemy_distance,
+    allies_nearby = allies_nearby,
+    enemies_nearby = enemies_nearby,
+    team_id = safe_number(function() return bot:GetTeam() end, 2) == 2 and 0 or 1,
+    hero_id = hero_id,
+  }
+  local predicted, result = pcall(combat_policy.predict, state)
+  if not predicted or type(result) ~= "table" then
+    telemetry("combat_prediction_error", { error = result })
+    return nil
+  end
+  combat_tracker.time = now
+  combat_tracker.x = location.x
+  combat_tracker.y = location.y
+  combat_tracker.prediction = result
+  telemetry("combat_prediction", {
+    engage_probability = result.engage_probability,
+    threat_probability = result.threat_probability,
+  })
+  return result
+end
+
+local function conservative_combat_opportunity(prediction)
+  if prediction == nil or type(prediction.engage_probability) ~= "number"
+    or prediction.engage_probability < 0.90 then return false end
+  local mode = BOT_MODE_NONE or 0
+  local ok, enemies = pcall(function() return bot:GetNearbyHeroes(900, true, mode) end)
+  if not ok or enemies == nil or #enemies == 0 then return false end
+  local attacked = attack(weakest(enemies), "replay_combat_high_confidence")
+  if attacked then observed.fight = 1 end
+  return attacked
+end
+
 local function push()
   local ok, towers = pcall(function() return bot:GetNearbyTowers(2200, true) end)
   if not ok then
@@ -472,6 +569,8 @@ function Think()
   if retreat_for_survival() then return end
   local minute = game_minute()
   if minute ~= tracker.minute then selected_action = choose_action() end
+  local combat = combat_prediction()
+  if selected_action ~= "fight" and conservative_combat_opportunity(combat) then return end
   if selected_action ~= "fight" and safe_push_opportunity() then return end
   if selected_action == "fight" then
     if fight() then return end

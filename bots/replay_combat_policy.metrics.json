@@ -1,0 +1,164 @@
+{
+  "trajectory_dir": "artifacts\\replay-combat-trajectories",
+  "matches": 20,
+  "rows": 498230,
+  "features": [
+    "time_minutes",
+    "x",
+    "y",
+    "alive",
+    "level",
+    "gold",
+    "lh",
+    "denies",
+    "kills",
+    "deaths",
+    "assists",
+    "movement_distance",
+    "previous_move",
+    "previous_attack",
+    "previous_cast",
+    "nearest_ally_distance",
+    "nearest_enemy_distance",
+    "allies_nearby",
+    "enemies_nearby",
+    "team_id",
+    "hero_id"
+  ],
+  "feature_profile": "runtime",
+  "labels": [
+    "engage",
+    "threat"
+  ],
+  "match_ids": {
+    "train": [
+      8933988979,
+      8932835800,
+      8933879286,
+      8932657929,
+      8933575351,
+      8933374169,
+      8932523868,
+      8935143596,
+      8932181345,
+      8931852727,
+      8934184387,
+      8932413808
+    ],
+    "validation": [
+      8933453728,
+      8935039371,
+      8932085762,
+      8932318084
+    ],
+    "test": [
+      8934279386,
+      8931981851,
+      8933704579,
+      8932767341
+    ]
+  },
+  "iterations": 150,
+  "horizon_seconds": 5,
+  "thresholds": [
+    0.6500000000000002,
+    0.5000000000000002
+  ],
+  "train_seconds": 12.911290199999712,
+  "validation": {
+    "engage": {
+      "precision": 0.45770676691729323,
+      "recall": 0.5581128832012224,
+      "f1": 0.5029476311373122,
+      "average_precision": 0.4582675381266631,
+      "support": 10471,
+      "threshold": 0.6500000000000002
+    },
+    "threat": {
+      "precision": 0.4786474954283051,
+      "recall": 0.6661842499251422,
+      "f1": 0.5570555219396165,
+      "average_precision": 0.5432098702043577,
+      "support": 20038,
+      "threshold": 0.5000000000000002
+    },
+    "macro_f1": 0.5300015765384644
+  },
+  "test": {
+    "engage": {
+      "precision": 0.49062942008486565,
+      "recall": 0.6564551422319475,
+      "f1": 0.5615561682644878,
+      "average_precision": 0.5678255184212345,
+      "support": 16909,
+      "threshold": 0.6500000000000002
+    },
+    "threat": {
+      "precision": 0.5648785267330261,
+      "recall": 0.8461307538358906,
+      "f1": 0.6774740609184504,
+      "average_precision": 0.6884836042050222,
+      "support": 29980,
+      "threshold": 0.5000000000000002
+    },
+    "macro_f1": 0.6195151145914691
+  },
+  "persistence_baseline": {
+    "engage": {
+      "precision": 0.7990889474946056,
+      "recall": 0.3942279259565912,
+      "f1": 0.5279790899370322,
+      "average_precision": 0.4245622651543259,
+      "support": 16909,
+      "threshold": 0.5
+    },
+    "threat": {
+      "precision": 0.8427684903748733,
+      "recall": 0.44392928619079386,
+      "f1": 0.5815345626146989,
+      "average_precision": 0.5524100121746256,
+      "support": 29980,
+      "threshold": 0.5
+    },
+    "macro_f1": 0.5547568262758655
+  },
+  "per_match_test": {
+    "8931981851": {
+      "candidate_macro_f1": 0.6052404331323484,
+      "persistence_macro_f1": 0.5357319446713023,
+      "delta": 0.06950848846104618
+    },
+    "8932767341": {
+      "candidate_macro_f1": 0.5882592863563052,
+      "persistence_macro_f1": 0.48997065144669916,
+      "delta": 0.09828863490960604
+    },
+    "8933704579": {
+      "candidate_macro_f1": 0.6183031037327517,
+      "persistence_macro_f1": 0.5947490886352865,
+      "delta": 0.02355401509746513
+    },
+    "8934279386": {
+      "candidate_macro_f1": 0.6499337767451308,
+      "persistence_macro_f1": 0.5585828177756207,
+      "delta": 0.09135095896951007
+    }
+  },
+  "grouped_bootstrap": {
+    "matches": 4,
+    "mean_delta": 0.07067552435940685,
+    "confidence_95": [
+      0.040503251065476364,
+      0.09481979693955805
+    ],
+    "probability_positive": 1.0,
+    "samples": 5000
+  },
+  "lua_parity": {
+    "source_model": "artifacts\\replay-combat-models-runtime\\replay-combat-v1.joblib",
+    "rows": 1000,
+    "class_matches": 1000,
+    "largest_probability_error": 1.1102230246251565e-16,
+    "lua_bytes": 727296
+  }
+}

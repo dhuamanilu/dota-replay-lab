@@ -21,20 +21,24 @@ repite la presencia o ausencia de cada orden en el segundo anterior.
 python -m dota_replay_lab.train_replay_behavior --device cuda
 ```
 
-## Resultado inicial de 10 partidas
+## Resultado auditado de 20 partidas
 
-Sobre 250.310 filas, la época 17 obtuvo macro-F1 0,6227 en validación y 0,6144
-en las dos partidas de test congeladas. Persistencia obtuvo 0,5795 en ese mismo
-test. Por acción:
+Sobre 499.230 filas, la época 22 obtuvo macro-F1 0,6225 en validación y 0,6378
+en cuatro partidas de test completamente separadas. Persistencia obtuvo 0,6023
+en ese mismo test. Por acción:
 
 | Señal | MLP causal | Persistencia |
 | --- | ---: | ---: |
-| `move` | 0,8748 | 0,8395 |
-| `attack` | 0,5798 | 0,5600 |
-| `cast` | 0,3888 | 0,3391 |
+| `move` | 0,8844 | 0,8564 |
+| `attack` | 0,5961 | 0,5671 |
+| `cast` | 0,4330 | 0,3835 |
 
-La mejora inicial es consistente entre las tres salidas, pero diez partidas no
-bastan para promover el modelo al runtime. Además, una orden `attack` no revela
-por sí sola si el objetivo era un creep o un héroe, y los eventos disponibles no
-identifican el objetivo de cada orden. El checkpoint queda como candidato hasta
-superar una auditoría con más partidas y una prueba de integración separada.
+El candidato superó al baseline en cada una de las cuatro partidas de test. Un
+bootstrap de 5.000 muestras, re-muestreando partidas completas, estimó delta
+medio +0,0366, IC 95 % `[+0,0317, +0,0416]` y probabilidad positiva 1,0.
+
+Esta evidencia permite aceptar el checkpoint como mejor imitador offline de
+órdenes, pero no promoverlo al runtime principal. Una orden `attack` no revela
+por sí sola si el objetivo era un creep o un héroe, y cuatro partidas de test no
+miden win rate. La integración queda condicionada al clasificador de combate y
+a una evaluación separada del bot ejecutable.

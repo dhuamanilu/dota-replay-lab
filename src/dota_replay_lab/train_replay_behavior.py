@@ -122,7 +122,7 @@ def train_replay_behavior(
         numeric = np.nan_to_num((numeric - means) / scales)
         heroes = selected["hero_id"].to_numpy(dtype=np.int64).copy()
         teams = (selected["team"] == "Dire").to_numpy(dtype=np.int64).copy()
-        labels = selected[label_columns].to_numpy(dtype=np.float32)
+        labels = selected[label_columns].to_numpy(dtype=np.float32).copy()
         return TensorDataset(
             torch.from_numpy(numeric),
             torch.from_numpy(heroes),

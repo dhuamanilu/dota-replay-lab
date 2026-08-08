@@ -9,7 +9,12 @@ import pytest
 ROOT = Path(__file__).parents[1]
 
 
-def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False):
+def build_runtime(
+    prediction: str | None = "farm",
+    *,
+    policy_error: bool = False,
+    combat_engage_probability: float | None = None,
+):
     lupa = pytest.importorskip("lupa")
     lua = lupa.LuaRuntime(unpack_returned_tuples=True)
     bots_path = (ROOT / "bots").as_posix()
@@ -77,6 +82,7 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
     )
     lua.execute(f"function GetScriptDirectory() return {json.dumps(bots_path)} end")
     module_name = f"{bots_path}/decision_policy"
+    combat_module_name = f"{bots_path}/replay_combat_policy"
     if prediction is None:
         policy_source = (ROOT / "bots" / "decision_policy.lua").read_text(encoding="utf-8")
         lua.execute(
@@ -97,8 +103,40 @@ def build_runtime(prediction: str | None = "farm", *, policy_error: bool = False
             end
             """
         )
+    combat_probability = combat_engage_probability or 0.0
+    lua.execute(
+        f"""
+        package.preload[{json.dumps(combat_module_name)}] = function()
+          return {{ predict = function(state) return {{
+            engage_probability = {combat_probability},
+            threat_probability = 0.2,
+          }} end }}
+        end
+        """
+    )
     lua.execute((ROOT / "bots" / "bot_generic.lua").read_text(encoding="utf-8"))
     return lua
+
+
+def test_high_confidence_combat_advice_can_trigger_close_engagement() -> None:
+    lua = build_runtime("farm", combat_engage_probability=0.95)
+    lua.execute(
+        """
+        function mockBot:GetLocation() return { x = 0, y = 0 } end
+        function GetHeroAssists(player_id) return 0 end
+        local enemy = makeUnit("npc_dota_hero_axe", 900)
+        function enemy:GetLocation() return { x = 500, y = 0 } end
+        mockBot.heroes = { enemy }
+        """
+    )
+    lua.globals().Think()
+    assert lua.globals().mockBot.last_action == "attack"
+    assert lua.globals().mockBot.last_target == "npc_dota_hero_axe"
+    messages = [
+        lua.globals().TELEMETRY[index]
+        for index in range(1, len(lua.globals().TELEMETRY) + 1)
+    ]
+    assert any('"fallback":"replay_combat_high_confidence"' in message for message in messages)
 
 
 def test_valve_adapter_executes_policy_and_issues_an_action() -> None:
