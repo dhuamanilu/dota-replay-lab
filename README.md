@@ -43,3 +43,9 @@ python -m dota_replay_lab.fetch_match 1234567890
 ```
 
 El identificador anterior es solo un ejemplo; sustitúyelo por un `match_id` real de OpenDota.
+
+Para pausar la partida y comparar los diez héroes en un minuto concreto:
+
+```powershell
+python -m dota_replay_lab.inspect_state 8934279386 --minute 12
+```
