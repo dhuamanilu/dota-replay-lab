@@ -89,6 +89,11 @@ La política Lua generada se guarda en `bots/decision_policy.lua`. Su sintaxis p
 
 La política canónica actual es una GRU causal ligera. Para reproducirla con CUDA e instalar el wheel correcto de PyTorch, sigue [docs/sequence-policy.md](docs/sequence-policy.md); `export_sequence_lua` comprueba paridad contra PyTorch antes de reemplazar el Lua.
 
+La primera etapa hacia reinforcement learning construye recompensas causales, zero-sum y
+ponderación por ventaja sobre transiciones observadas. Ningún candidato superó aún el umbral
+estadístico para reemplazar la GRU vigente; protocolo, ablaciones y audit externo están en
+[docs/offline-rl.md](docs/offline-rl.md).
+
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 
 Los resultados actuales y el protocolo de evaluación están publicados en [docs/benchmark-v3.md](docs/benchmark-v3.md); el benchmark anterior permanece en [docs/benchmark-v2.md](docs/benchmark-v2.md). Se regeneran con `python -m dota_replay_lab.benchmark_report`.

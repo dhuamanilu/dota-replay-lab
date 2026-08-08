@@ -2,8 +2,11 @@ import json
 
 from dota_replay_lab.collect_matches import (
     collect_corpus,
+    cached_match_ids,
+    excluded_match_ids,
     has_minute_series,
     paginated_pro_match_ids,
+    hero_names_from_manifests,
     write_manifest,
 )
 
@@ -62,3 +65,34 @@ def test_pro_feed_pagination_walks_backwards_and_deduplicates() -> None:
 
     assert paginated_pro_match_ids(5, fetch) == [5, 4, 3, 2, 1]
     assert paths == ["proMatches", "proMatches?less_than_match_id=3"]
+
+
+def test_excluded_match_ids_combines_manifests(tmp_path) -> None:
+    first = tmp_path / "first.json"
+    second = tmp_path / "second.json"
+    first.write_text(json.dumps({"match_ids": [1, 2]}), encoding="utf-8")
+    second.write_text(json.dumps({"match_ids": [2, "3"]}), encoding="utf-8")
+    assert excluded_match_ids([first, second]) == {1, 2, 3}
+
+
+def test_cached_ids_and_catalogues_need_no_network(tmp_path) -> None:
+    matches = tmp_path / "matches"
+    matches.mkdir()
+    (matches / "20.json").write_text("{}", encoding="utf-8")
+    (matches / "10.json").write_text("{}", encoding="utf-8")
+    (matches / "notes.json").write_text("{}", encoding="utf-8")
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "hero_names": {"1": "Anti-Mage"},
+                "hero_internal_names": {"1": "npc_dota_hero_antimage"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert cached_match_ids(matches) == [20, 10]
+    assert hero_names_from_manifests([manifest]) == (
+        {1: "Anti-Mage"},
+        {1: "npc_dota_hero_antimage"},
+    )

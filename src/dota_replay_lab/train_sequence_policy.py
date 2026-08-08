@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 from typing import Any, Iterable
 
+from .offline_rl import add_advantage_weights, add_replay_rewards
 from .train_policy import LABELS, NUMERIC_FEATURES, _metrics, split_match_ids
 
 
@@ -46,6 +47,12 @@ def build_sequences(frame: Any, match_ids: Iterable[int], means: Any, scales: An
                 "team_id": 0 if rows.iloc[0]["team"] == "Radiant" else 1,
                 "numeric": numeric,
                 "labels": labels,
+                "sample_weights": rows["sample_weight"].to_numpy(dtype=np.float32)
+                if "sample_weight" in rows.columns
+                else np.ones(len(rows), dtype=np.float32),
+                "replay_rewards": rows["replay_reward"].to_numpy(dtype=np.float32)
+                if "replay_reward" in rows.columns
+                else np.zeros(len(rows), dtype=np.float32),
             }
         )
     return sequences
@@ -76,12 +83,15 @@ def make_recurrent_policy(maximum_hero_id: int) -> Any:
                 nn.Linear(64, len(LABELS)),
             )
 
-        def forward(self, numeric: Any, heroes: Any, teams: Any) -> Any:
+        def encode(self, numeric: Any, heroes: Any, teams: Any) -> Any:
             steps = numeric.shape[1]
             hero = self.hero_embedding(heroes).unsqueeze(1).expand(-1, steps, -1)
             team = self.team_embedding(teams).unsqueeze(1).expand(-1, steps, -1)
             hidden, _ = self.recurrent(torch.cat((numeric, hero, team), dim=-1))
-            return self.head(hidden)
+            return hidden
+
+        def forward(self, numeric: Any, heroes: Any, teams: Any) -> Any:
+            return self.head(self.encode(numeric, heroes, teams))
 
     import torch
 
@@ -96,6 +106,11 @@ def train_sequence_policy(
     epochs: int = 25,
     patience: int = 5,
     batch_size: int = 64,
+    outcome_weighted: bool = False,
+    team_spirit: float = 0.5,
+    advantage_beta: float = 2.0,
+    initial_checkpoint: Path | None = None,
+    auxiliary_reward_weight: float = 0.0,
 ) -> dict[str, Any]:
     """Fit a GRU using train/validation/test matches without leakage."""
 
@@ -116,6 +131,16 @@ def train_sequence_policy(
         raise ValueError(f"Unexpected labels: {', '.join(unexpected)}")
 
     splits = split_match_ids(frame["match_id"].astype(int).tolist(), seed)
+    reward_statistics = None
+    if outcome_weighted:
+        frame = add_replay_rewards(frame, team_spirit=team_spirit)
+        frame, reward_statistics = add_advantage_weights(
+            frame, splits["train"], beta=advantage_beta
+        )
+    if auxiliary_reward_weight < 0:
+        raise ValueError("auxiliary_reward_weight cannot be negative")
+    if auxiliary_reward_weight and not outcome_weighted:
+        raise ValueError("auxiliary reward prediction requires --outcome-weighted")
     means, scales = fit_normalizer(frame, splits["train"])
     split_sequences = {
         name: build_sequences(frame, match_ids, means, scales)
@@ -144,7 +169,7 @@ def train_sequence_policy(
         def __getitem__(self, index: int) -> dict[str, Any]:
             return self.rows[index]
 
-    def collate(rows: list[dict[str, Any]]) -> tuple[Any, Any, Any, Any]:
+    def collate(rows: list[dict[str, Any]]) -> tuple[Any, Any, Any, Any, Any, Any]:
         numeric = pad_sequence(
             [torch.from_numpy(row["numeric"]) for row in rows], batch_first=True
         )
@@ -155,7 +180,17 @@ def train_sequence_policy(
         )
         heroes = torch.tensor([row["hero_id"] for row in rows], dtype=torch.long)
         teams = torch.tensor([row["team_id"] for row in rows], dtype=torch.long)
-        return numeric, labels, heroes, teams
+        sample_weights = pad_sequence(
+            [torch.as_tensor(row["sample_weights"], dtype=torch.float32) for row in rows],
+            batch_first=True,
+            padding_value=0.0,
+        )
+        replay_rewards = pad_sequence(
+            [torch.from_numpy(row["replay_rewards"]) for row in rows],
+            batch_first=True,
+            padding_value=0.0,
+        )
+        return numeric, labels, heroes, teams, sample_weights, replay_rewards
 
     loaders = {
         name: DataLoader(
@@ -172,6 +207,15 @@ def train_sequence_policy(
     maximum_hero_id = int(frame["hero_id"].max())
 
     model = make_recurrent_policy(maximum_hero_id).to(torch_device)
+    reward_head = nn.Sequential(nn.LayerNorm(96), nn.Linear(96, 1)).to(torch_device)
+    if initial_checkpoint is not None:
+        # Project checkpoints include NumPy normalizer arrays, which are not in
+        # PyTorch's restricted weights-only allowlist.  Only locally generated
+        # bundles should be supplied here; never load an untrusted pickle.
+        initial = torch.load(initial_checkpoint, map_location="cpu", weights_only=False)
+        if int(initial.get("maximum_hero_id", -1)) != maximum_hero_id:
+            raise ValueError("Initial checkpoint hero vocabulary does not match the dataset")
+        model.load_state_dict(initial["state_dict"])
     train_labels = frame[frame["match_id"].isin(splits["train"])]["label"]
     counts = train_labels.value_counts()
     weights = np.array(
@@ -179,41 +223,77 @@ def train_sequence_policy(
         dtype=np.float32,
     )
     loss_function = nn.CrossEntropyLoss(
-        weight=torch.tensor(weights, device=torch_device), ignore_index=-100
+        weight=torch.tensor(weights, device=torch_device), ignore_index=-100, reduction="none"
     )
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+    optimized_parameters = list(model.parameters())
+    if auxiliary_reward_weight:
+        optimized_parameters.extend(reward_head.parameters())
+    optimizer = torch.optim.AdamW(optimized_parameters, lr=1e-3, weight_decay=1e-4)
     scaler = torch.amp.GradScaler("cuda", enabled=use_cuda)
+    reward_scale = 1.0
+    if outcome_weighted:
+        train_rewards = frame[
+            frame["match_id"].isin(splits["train"]) & frame["reward_valid"]
+        ]["replay_reward"]
+        reward_scale = max(float(train_rewards.std()), 1e-3)
 
     def run_epoch(loader: Any, training: bool) -> tuple[float, dict[str, Any]]:
         model.train(training)
         losses = []
         true_values = []
         predictions = []
-        for numeric, labels, heroes, teams in loader:
+        evaluation_weights = []
+        reward_head.train(training)
+        for numeric, labels, heroes, teams, sample_weights, replay_rewards in loader:
             numeric = numeric.to(torch_device, non_blocking=use_cuda)
             labels = labels.to(torch_device, non_blocking=use_cuda)
             heroes = heroes.to(torch_device, non_blocking=use_cuda)
             teams = teams.to(torch_device, non_blocking=use_cuda)
+            sample_weights = sample_weights.to(torch_device, non_blocking=use_cuda)
+            replay_rewards = replay_rewards.to(torch_device, non_blocking=use_cuda)
             if training:
                 optimizer.zero_grad(set_to_none=True)
             with torch.set_grad_enabled(training), torch.amp.autocast(
                 "cuda", enabled=use_cuda
             ):
-                logits = model(numeric, heroes, teams)
-                loss = loss_function(logits.reshape(-1, len(LABELS)), labels.reshape(-1))
+                hidden = model.encode(numeric, heroes, teams)
+                logits = model.head(hidden)
+                element_loss = loss_function(
+                    logits.reshape(-1, len(LABELS)), labels.reshape(-1)
+                ).reshape_as(labels)
+                valid = labels != -100
+                effective_weights = sample_weights if outcome_weighted else valid.float()
+                denominator = effective_weights[valid].sum().clamp_min(1.0)
+                loss = (element_loss[valid] * effective_weights[valid]).sum() / denominator
+                if auxiliary_reward_weight:
+                    reward_prediction = reward_head(hidden).squeeze(-1)
+                    reward_valid = sample_weights > 0
+                    reward_loss = nn.functional.smooth_l1_loss(
+                        reward_prediction[reward_valid],
+                        replay_rewards[reward_valid] / reward_scale,
+                    )
+                    loss = loss + auxiliary_reward_weight * reward_loss
             if training:
                 scaler.scale(loss).backward()
                 scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                 scaler.step(optimizer)
                 scaler.update()
-            valid = labels != -100
             true_values.extend(labels[valid].detach().cpu().tolist())
             predictions.extend(logits.argmax(dim=-1)[valid].detach().cpu().tolist())
+            evaluation_weights.extend(sample_weights[valid].detach().cpu().tolist())
             losses.append(float(loss.detach().cpu()))
         true_labels = np.array([LABELS[index] for index in true_values])
         predicted_labels = np.array([LABELS[index] for index in predictions])
-        return float(np.mean(losses)), _metrics(true_labels, predicted_labels)
+        metrics = _metrics(true_labels, predicted_labels)
+        metric_weights = np.asarray(evaluation_weights, dtype=np.float64)
+        if metric_weights.sum() > 0:
+            metrics["outcome_weighted_accuracy"] = float(
+                np.average(true_labels == predicted_labels, weights=metric_weights)
+            )
+        else:
+            metrics["outcome_weighted_accuracy"] = None
+        return float(np.mean(losses)), metrics
 
     history = []
     best_epoch = 0
@@ -265,7 +345,14 @@ def train_sequence_policy(
             "dropout": 0.2,
             "batch_size": batch_size,
             "class_weight_power": 0.5,
+            "outcome_weighted": outcome_weighted,
+            "team_spirit": team_spirit if outcome_weighted else None,
+            "advantage_beta": advantage_beta if outcome_weighted else None,
+            "auxiliary_reward_weight": auxiliary_reward_weight,
+            "reward_scale": reward_scale if outcome_weighted else None,
         },
+        "initialized_from": str(initial_checkpoint) if initial_checkpoint else None,
+        "reward_statistics": reward_statistics,
         "best_epoch": best_epoch,
         "best_validation_macro_f1": best_score,
         "train_seconds": elapsed,
@@ -303,6 +390,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--patience", type=int, default=5)
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--outcome-weighted", action="store_true")
+    parser.add_argument("--team-spirit", type=float, default=0.5)
+    parser.add_argument("--advantage-beta", type=float, default=2.0)
+    parser.add_argument("--initial-checkpoint", type=Path)
+    parser.add_argument("--auxiliary-reward-weight", type=float, default=0.0)
     return parser.parse_args()
 
 
@@ -316,6 +408,11 @@ def main() -> int:
         args.epochs,
         args.patience,
         args.batch_size,
+        args.outcome_weighted,
+        args.team_spirit,
+        args.advantage_beta,
+        args.initial_checkpoint,
+        args.auxiliary_reward_weight,
     )
     print(
         f"Best validation macro-F1: {result['best_validation_macro_f1']:.4f} "
