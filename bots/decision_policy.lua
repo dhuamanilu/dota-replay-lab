@@ -137,1006 +137,1845 @@ end
 
 function M.build_features(state)
   local f = {}
-  f[1] = state.hero_id == 2 and 1 or 0
-  f[2] = state.hero_id == 3 and 1 or 0
-  f[3] = state.hero_id == 6 and 1 or 0
-  f[4] = state.hero_id == 7 and 1 or 0
-  f[5] = state.hero_id == 9 and 1 or 0
-  f[6] = state.hero_id == 10 and 1 or 0
-  f[7] = state.hero_id == 11 and 1 or 0
-  f[8] = state.hero_id == 12 and 1 or 0
-  f[9] = state.hero_id == 13 and 1 or 0
-  f[10] = state.hero_id == 14 and 1 or 0
-  f[11] = state.hero_id == 15 and 1 or 0
-  f[12] = state.hero_id == 16 and 1 or 0
-  f[13] = state.hero_id == 17 and 1 or 0
-  f[14] = state.hero_id == 18 and 1 or 0
-  f[15] = state.hero_id == 19 and 1 or 0
-  f[16] = state.hero_id == 20 and 1 or 0
-  f[17] = state.hero_id == 21 and 1 or 0
-  f[18] = state.hero_id == 22 and 1 or 0
-  f[19] = state.hero_id == 23 and 1 or 0
-  f[20] = state.hero_id == 25 and 1 or 0
-  f[21] = state.hero_id == 26 and 1 or 0
-  f[22] = state.hero_id == 27 and 1 or 0
-  f[23] = state.hero_id == 28 and 1 or 0
-  f[24] = state.hero_id == 29 and 1 or 0
-  f[25] = state.hero_id == 30 and 1 or 0
-  f[26] = state.hero_id == 31 and 1 or 0
-  f[27] = state.hero_id == 33 and 1 or 0
-  f[28] = state.hero_id == 34 and 1 or 0
-  f[29] = state.hero_id == 36 and 1 or 0
-  f[30] = state.hero_id == 38 and 1 or 0
-  f[31] = state.hero_id == 40 and 1 or 0
-  f[32] = state.hero_id == 43 and 1 or 0
-  f[33] = state.hero_id == 45 and 1 or 0
-  f[34] = state.hero_id == 46 and 1 or 0
-  f[35] = state.hero_id == 47 and 1 or 0
-  f[36] = state.hero_id == 48 and 1 or 0
-  f[37] = state.hero_id == 51 and 1 or 0
-  f[38] = state.hero_id == 53 and 1 or 0
-  f[39] = state.hero_id == 54 and 1 or 0
-  f[40] = state.hero_id == 55 and 1 or 0
-  f[41] = state.hero_id == 56 and 1 or 0
-  f[42] = state.hero_id == 57 and 1 or 0
-  f[43] = state.hero_id == 58 and 1 or 0
-  f[44] = state.hero_id == 60 and 1 or 0
-  f[45] = state.hero_id == 61 and 1 or 0
-  f[46] = state.hero_id == 62 and 1 or 0
-  f[47] = state.hero_id == 64 and 1 or 0
-  f[48] = state.hero_id == 65 and 1 or 0
-  f[49] = state.hero_id == 67 and 1 or 0
-  f[50] = state.hero_id == 68 and 1 or 0
-  f[51] = state.hero_id == 69 and 1 or 0
-  f[52] = state.hero_id == 70 and 1 or 0
-  f[53] = state.hero_id == 71 and 1 or 0
-  f[54] = state.hero_id == 72 and 1 or 0
-  f[55] = state.hero_id == 73 and 1 or 0
-  f[56] = state.hero_id == 74 and 1 or 0
-  f[57] = state.hero_id == 75 and 1 or 0
-  f[58] = state.hero_id == 76 and 1 or 0
-  f[59] = state.hero_id == 77 and 1 or 0
-  f[60] = state.hero_id == 78 and 1 or 0
-  f[61] = state.hero_id == 79 and 1 or 0
-  f[62] = state.hero_id == 80 and 1 or 0
-  f[63] = state.hero_id == 82 and 1 or 0
-  f[64] = state.hero_id == 83 and 1 or 0
-  f[65] = state.hero_id == 85 and 1 or 0
-  f[66] = state.hero_id == 86 and 1 or 0
-  f[67] = state.hero_id == 87 and 1 or 0
-  f[68] = state.hero_id == 88 and 1 or 0
-  f[69] = state.hero_id == 89 and 1 or 0
-  f[70] = state.hero_id == 90 and 1 or 0
-  f[71] = state.hero_id == 91 and 1 or 0
-  f[72] = state.hero_id == 93 and 1 or 0
-  f[73] = state.hero_id == 96 and 1 or 0
-  f[74] = state.hero_id == 97 and 1 or 0
-  f[75] = state.hero_id == 98 and 1 or 0
-  f[76] = state.hero_id == 99 and 1 or 0
-  f[77] = state.hero_id == 100 and 1 or 0
-  f[78] = state.hero_id == 101 and 1 or 0
-  f[79] = state.hero_id == 102 and 1 or 0
-  f[80] = state.hero_id == 103 and 1 or 0
-  f[81] = state.hero_id == 105 and 1 or 0
-  f[82] = state.hero_id == 106 and 1 or 0
-  f[83] = state.hero_id == 107 and 1 or 0
-  f[84] = state.hero_id == 108 and 1 or 0
-  f[85] = state.hero_id == 109 and 1 or 0
-  f[86] = state.hero_id == 110 and 1 or 0
-  f[87] = state.hero_id == 111 and 1 or 0
-  f[88] = state.hero_id == 112 and 1 or 0
-  f[89] = state.hero_id == 114 and 1 or 0
-  f[90] = state.hero_id == 119 and 1 or 0
-  f[91] = state.hero_id == 120 and 1 or 0
-  f[92] = state.hero_id == 121 and 1 or 0
-  f[93] = state.hero_id == 123 and 1 or 0
-  f[94] = state.hero_id == 126 and 1 or 0
-  f[95] = state.hero_id == 128 and 1 or 0
-  f[96] = state.hero_id == 131 and 1 or 0
-  f[97] = state.hero_id == 135 and 1 or 0
-  f[98] = state.hero_id == 136 and 1 or 0
-  f[99] = state.hero_id == 137 and 1 or 0
-  f[100] = state.hero_id == 138 and 1 or 0
-  f[101] = state.hero_id == 145 and 1 or 0
-  f[102] = state.hero_id == 155 and 1 or 0
-  f[103] = state.team == "Dire" and 1 or 0
-  f[104] = state.team == "Radiant" and 1 or 0
-  f[105] = ((tonumber(state.state_minute) or 0) - 21.539933191618584) / 14.287639872930983
-  f[106] = ((tonumber(state.gold) or 0) - 9635.7240510173087) / 9034.2844139935041
-  f[107] = ((tonumber(state.experience) or 0) - 11837.493197692074) / 11713.94303143083
-  f[108] = ((tonumber(state.last_hits) or 0) - 131.27515942909201) / 154.61209985186045
-  f[109] = ((tonumber(state.gold_change) or 0) - 498.31621621621622) / 353.57133069077048
-  f[110] = ((tonumber(state.experience_change) or 0) - 644.963650167021) / 675.58727415574663
-  f[111] = ((tonumber(state.last_hit_change) or 0) - 6.4484968114181598) / 6.8200040488257443
-  f[112] = ((tonumber(state.team_gold_advantage) or 0) - 0) / 8225.9863618268937
-  f[113] = ((tonumber(state.team_experience_advantage) or 0) - 0) / 14174.5402571751
-  f[114] = ((tonumber(state.kills_last_minute) or 0) - 0.11955663528697237) / 0.37335754399735721
-  f[115] = ((tonumber(state.previous_fight) or 0) - 0.28745824476161552) / 0.45257706777982765
-  f[116] = ((tonumber(state.previous_push) or 0) - 0.026692985119951412) / 0.16118458259193855
-  f[117] = ((tonumber(state.previous_farm) or 0) - 0.75818402672335261) / 0.42818338167765818
+  f[1] = state.hero_id == 1 and 1 or 0
+  f[2] = state.hero_id == 2 and 1 or 0
+  f[3] = state.hero_id == 3 and 1 or 0
+  f[4] = state.hero_id == 4 and 1 or 0
+  f[5] = state.hero_id == 5 and 1 or 0
+  f[6] = state.hero_id == 6 and 1 or 0
+  f[7] = state.hero_id == 7 and 1 or 0
+  f[8] = state.hero_id == 8 and 1 or 0
+  f[9] = state.hero_id == 9 and 1 or 0
+  f[10] = state.hero_id == 10 and 1 or 0
+  f[11] = state.hero_id == 11 and 1 or 0
+  f[12] = state.hero_id == 12 and 1 or 0
+  f[13] = state.hero_id == 13 and 1 or 0
+  f[14] = state.hero_id == 14 and 1 or 0
+  f[15] = state.hero_id == 15 and 1 or 0
+  f[16] = state.hero_id == 16 and 1 or 0
+  f[17] = state.hero_id == 17 and 1 or 0
+  f[18] = state.hero_id == 18 and 1 or 0
+  f[19] = state.hero_id == 19 and 1 or 0
+  f[20] = state.hero_id == 20 and 1 or 0
+  f[21] = state.hero_id == 21 and 1 or 0
+  f[22] = state.hero_id == 22 and 1 or 0
+  f[23] = state.hero_id == 23 and 1 or 0
+  f[24] = state.hero_id == 25 and 1 or 0
+  f[25] = state.hero_id == 26 and 1 or 0
+  f[26] = state.hero_id == 27 and 1 or 0
+  f[27] = state.hero_id == 28 and 1 or 0
+  f[28] = state.hero_id == 29 and 1 or 0
+  f[29] = state.hero_id == 30 and 1 or 0
+  f[30] = state.hero_id == 31 and 1 or 0
+  f[31] = state.hero_id == 33 and 1 or 0
+  f[32] = state.hero_id == 34 and 1 or 0
+  f[33] = state.hero_id == 35 and 1 or 0
+  f[34] = state.hero_id == 36 and 1 or 0
+  f[35] = state.hero_id == 37 and 1 or 0
+  f[36] = state.hero_id == 38 and 1 or 0
+  f[37] = state.hero_id == 39 and 1 or 0
+  f[38] = state.hero_id == 40 and 1 or 0
+  f[39] = state.hero_id == 41 and 1 or 0
+  f[40] = state.hero_id == 43 and 1 or 0
+  f[41] = state.hero_id == 45 and 1 or 0
+  f[42] = state.hero_id == 46 and 1 or 0
+  f[43] = state.hero_id == 47 and 1 or 0
+  f[44] = state.hero_id == 48 and 1 or 0
+  f[45] = state.hero_id == 49 and 1 or 0
+  f[46] = state.hero_id == 50 and 1 or 0
+  f[47] = state.hero_id == 51 and 1 or 0
+  f[48] = state.hero_id == 52 and 1 or 0
+  f[49] = state.hero_id == 53 and 1 or 0
+  f[50] = state.hero_id == 54 and 1 or 0
+  f[51] = state.hero_id == 55 and 1 or 0
+  f[52] = state.hero_id == 56 and 1 or 0
+  f[53] = state.hero_id == 57 and 1 or 0
+  f[54] = state.hero_id == 58 and 1 or 0
+  f[55] = state.hero_id == 59 and 1 or 0
+  f[56] = state.hero_id == 60 and 1 or 0
+  f[57] = state.hero_id == 61 and 1 or 0
+  f[58] = state.hero_id == 62 and 1 or 0
+  f[59] = state.hero_id == 63 and 1 or 0
+  f[60] = state.hero_id == 64 and 1 or 0
+  f[61] = state.hero_id == 65 and 1 or 0
+  f[62] = state.hero_id == 66 and 1 or 0
+  f[63] = state.hero_id == 67 and 1 or 0
+  f[64] = state.hero_id == 68 and 1 or 0
+  f[65] = state.hero_id == 69 and 1 or 0
+  f[66] = state.hero_id == 70 and 1 or 0
+  f[67] = state.hero_id == 71 and 1 or 0
+  f[68] = state.hero_id == 72 and 1 or 0
+  f[69] = state.hero_id == 73 and 1 or 0
+  f[70] = state.hero_id == 74 and 1 or 0
+  f[71] = state.hero_id == 75 and 1 or 0
+  f[72] = state.hero_id == 76 and 1 or 0
+  f[73] = state.hero_id == 77 and 1 or 0
+  f[74] = state.hero_id == 78 and 1 or 0
+  f[75] = state.hero_id == 79 and 1 or 0
+  f[76] = state.hero_id == 80 and 1 or 0
+  f[77] = state.hero_id == 81 and 1 or 0
+  f[78] = state.hero_id == 82 and 1 or 0
+  f[79] = state.hero_id == 83 and 1 or 0
+  f[80] = state.hero_id == 84 and 1 or 0
+  f[81] = state.hero_id == 85 and 1 or 0
+  f[82] = state.hero_id == 86 and 1 or 0
+  f[83] = state.hero_id == 87 and 1 or 0
+  f[84] = state.hero_id == 88 and 1 or 0
+  f[85] = state.hero_id == 89 and 1 or 0
+  f[86] = state.hero_id == 90 and 1 or 0
+  f[87] = state.hero_id == 91 and 1 or 0
+  f[88] = state.hero_id == 93 and 1 or 0
+  f[89] = state.hero_id == 94 and 1 or 0
+  f[90] = state.hero_id == 96 and 1 or 0
+  f[91] = state.hero_id == 97 and 1 or 0
+  f[92] = state.hero_id == 98 and 1 or 0
+  f[93] = state.hero_id == 99 and 1 or 0
+  f[94] = state.hero_id == 100 and 1 or 0
+  f[95] = state.hero_id == 101 and 1 or 0
+  f[96] = state.hero_id == 102 and 1 or 0
+  f[97] = state.hero_id == 103 and 1 or 0
+  f[98] = state.hero_id == 104 and 1 or 0
+  f[99] = state.hero_id == 105 and 1 or 0
+  f[100] = state.hero_id == 106 and 1 or 0
+  f[101] = state.hero_id == 107 and 1 or 0
+  f[102] = state.hero_id == 108 and 1 or 0
+  f[103] = state.hero_id == 109 and 1 or 0
+  f[104] = state.hero_id == 110 and 1 or 0
+  f[105] = state.hero_id == 111 and 1 or 0
+  f[106] = state.hero_id == 112 and 1 or 0
+  f[107] = state.hero_id == 114 and 1 or 0
+  f[108] = state.hero_id == 119 and 1 or 0
+  f[109] = state.hero_id == 120 and 1 or 0
+  f[110] = state.hero_id == 121 and 1 or 0
+  f[111] = state.hero_id == 123 and 1 or 0
+  f[112] = state.hero_id == 126 and 1 or 0
+  f[113] = state.hero_id == 128 and 1 or 0
+  f[114] = state.hero_id == 129 and 1 or 0
+  f[115] = state.hero_id == 131 and 1 or 0
+  f[116] = state.hero_id == 135 and 1 or 0
+  f[117] = state.hero_id == 136 and 1 or 0
+  f[118] = state.hero_id == 137 and 1 or 0
+  f[119] = state.hero_id == 138 and 1 or 0
+  f[120] = state.hero_id == 145 and 1 or 0
+  f[121] = state.hero_id == 155 and 1 or 0
+  f[122] = state.team == "Dire" and 1 or 0
+  f[123] = state.team == "Radiant" and 1 or 0
+  f[124] = ((tonumber(state.state_minute) or 0) - 21.902024194514315) / 14.618336248566127
+  f[125] = ((tonumber(state.gold) or 0) - 9881.1512217031977) / 9314.4663961709393
+  f[126] = ((tonumber(state.experience) or 0) - 12044.48978919631) / 11919.649052390138
+  f[127] = ((tonumber(state.last_hits) or 0) - 131.17284704755062) / 155.51896043655634
+  f[128] = ((tonumber(state.gold_change) or 0) - 502.53574080728231) / 358.79117199368773
+  f[129] = ((tonumber(state.experience_change) or 0) - 642.71787639238232) / 684.9263806996446
+  f[130] = ((tonumber(state.last_hit_change) or 0) - 6.3574080728230928) / 6.7917352203066876
+  f[131] = ((tonumber(state.team_gold_advantage) or 0) - 0) / 8079.0136415647476
+  f[132] = ((tonumber(state.team_experience_advantage) or 0) - 0) / 13562.891025329587
+  f[133] = ((tonumber(state.kills_last_minute) or 0) - 0.12395496466642712) / 0.38148222359187661
+  f[134] = ((tonumber(state.previous_fight) or 0) - 0.29570008384237634) / 0.45635681681989582
+  f[135] = ((tonumber(state.previous_push) or 0) - 0.027302670978560307) / 0.1629639074641891
+  f[136] = ((tonumber(state.previous_farm) or 0) - 0.75225775541981077) / 0.43170131437205389
   return f
 end
 
 local nodes = {
-  [1] = { feature = 115, threshold = 0.46962553262710571, left = 2, right = 559 }, -- numeric__previous_fight
-  [2] = { feature = 111, threshold = -0.57895812392234802, left = 3, right = 212 }, -- numeric__last_hit_change
-  [3] = { feature = 108, threshold = -0.28312893211841583, left = 4, right = 149 }, -- numeric__last_hits
-  [4] = { feature = 105, threshold = -1.4026062488555908, left = 5, right = 36 }, -- numeric__state_minute
-  [5] = { feature = 111, threshold = -0.87221309542655945, left = 6, right = 23 }, -- numeric__last_hit_change
-  [6] = { feature = 82, threshold = 0.5, left = 7, right = 22 }, -- categorical__hero_id_106
-  [7] = { feature = 20, threshold = 0.5, left = 8, right = 21 }, -- categorical__hero_id_25
-  [8] = { feature = 9, threshold = 0.5, left = 9, right = 20 }, -- categorical__hero_id_13
-  [9] = { feature = 83, threshold = 0.5, left = 10, right = 19 }, -- categorical__hero_id_107
-  [10] = { feature = 73, threshold = 0.5, left = 11, right = 18 }, -- categorical__hero_id_96
-  [11] = { feature = 107, threshold = -1.0072178840637207, left = 12, right = 15 }, -- numeric__experience
-  [12] = { feature = 5, threshold = 0.5, left = 13, right = 14 }, -- categorical__hero_id_9
-  [13] = { label = "unknown" },
+  [1] = { feature = 134, threshold = 0.44767579436302185, left = 2, right = 883 }, -- numeric__previous_fight
+  [2] = { feature = 130, threshold = -0.7151939868927002, left = 3, right = 414 }, -- numeric__last_hit_change
+  [3] = { feature = 127, threshold = -0.43514209985733032, left = 4, right = 221 }, -- numeric__last_hits
+  [4] = { feature = 124, threshold = -1.3956460952758789, left = 5, right = 46 }, -- numeric__state_minute
+  [5] = { feature = 111, threshold = 0.5, left = 6, right = 41 }, -- categorical__hero_id_123
+  [6] = { feature = 47, threshold = 0.5, left = 7, right = 36 }, -- categorical__hero_id_51
+  [7] = { feature = 108, threshold = 0.5, left = 8, right = 31 }, -- categorical__hero_id_119
+  [8] = { feature = 115, threshold = 0.5, left = 9, right = 26 }, -- categorical__hero_id_131
+  [9] = { feature = 3, threshold = 0.5, left = 10, right = 23 }, -- categorical__hero_id_3
+  [10] = { feature = 106, threshold = 0.5, left = 11, right = 18 }, -- categorical__hero_id_112
+  [11] = { feature = 99, threshold = 0.5, left = 12, right = 15 }, -- categorical__hero_id_105
+  [12] = { feature = 94, threshold = 0.5, left = 13, right = 14 }, -- categorical__hero_id_100
+  [13] = { label = "farm" },
   [14] = { label = "unknown" },
-  [15] = { feature = 106, threshold = -1.0444350838661194, left = 16, right = 17 }, -- numeric__gold
+  [15] = { feature = 128, threshold = -0.89198333024978638, left = 16, right = 17 }, -- numeric__gold_change
   [16] = { label = "unknown" },
-  [17] = { label = "unknown" },
-  [18] = { label = "farm" },
-  [19] = { label = "farm" },
-  [20] = { label = "farm" },
-  [21] = { label = "farm" },
-  [22] = { label = "farm" },
-  [23] = { feature = 106, threshold = -1.0447672009468079, left = 24, right = 27 }, -- numeric__gold
-  [24] = { feature = 112, threshold = -0.028020955622196198, left = 25, right = 26 }, -- numeric__team_gold_advantage
+  [17] = { label = "farm" },
+  [18] = { feature = 125, threshold = -1.0433931946754456, left = 19, right = 20 }, -- numeric__gold
+  [19] = { label = "unknown" },
+  [20] = { feature = 128, threshold = -0.91009971499443054, left = 21, right = 22 }, -- numeric__gold_change
+  [21] = { label = "unknown" },
+  [22] = { label = "unknown" },
+  [23] = { feature = 127, threshold = -0.84023740887641907, left = 24, right = 25 }, -- numeric__last_hits
+  [24] = { label = "unknown" },
   [25] = { label = "farm" },
-  [26] = { label = "farm" },
-  [27] = { feature = 108, threshold = -0.83935964107513428, left = 28, right = 35 }, -- numeric__last_hits
-  [28] = { feature = 107, threshold = -1.0004311203956604, left = 29, right = 34 }, -- numeric__experience
-  [29] = { feature = 113, threshold = 0.0031394317047670484, left = 30, right = 33 }, -- numeric__team_experience_advantage
-  [30] = { feature = 112, threshold = -0.0036469791084527969, left = 31, right = 32 }, -- numeric__team_gold_advantage
-  [31] = { label = "farm" },
-  [32] = { label = "farm" },
-  [33] = { label = "farm" },
-  [34] = { label = "farm" },
-  [35] = { label = "farm" },
-  [36] = { feature = 82, threshold = 0.5, left = 37, right = 148 }, -- categorical__hero_id_106
-  [37] = { feature = 111, threshold = -0.72558560967445374, left = 38, right = 101 }, -- numeric__last_hit_change
-  [38] = { feature = 108, threshold = -0.53537309169769287, left = 39, right = 80 }, -- numeric__last_hits
-  [39] = { feature = 108, threshold = -0.7811494767665863, left = 40, right = 59 }, -- numeric__last_hits
-  [40] = { feature = 105, threshold = -1.2626251578330994, left = 41, right = 50 }, -- numeric__state_minute
-  [41] = { feature = 108, threshold = -0.82642406225204468, left = 42, right = 49 }, -- numeric__last_hits
-  [42] = { feature = 108, threshold = -0.83935964107513428, left = 43, right = 46 }, -- numeric__last_hits
-  [43] = { feature = 112, threshold = -0.07075139507651329, left = 44, right = 45 }, -- numeric__team_gold_advantage
+  [26] = { feature = 128, threshold = -0.84460198879241943, left = 27, right = 30 }, -- numeric__gold_change
+  [27] = { feature = 132, threshold = -0.0073361939284950495, left = 28, right = 29 }, -- numeric__team_experience_advantage
+  [28] = { label = "unknown" },
+  [29] = { label = "unknown" },
+  [30] = { label = "unknown" },
+  [31] = { feature = 128, threshold = -0.81673061847686768, left = 32, right = 35 }, -- numeric__gold_change
+  [32] = { feature = 131, threshold = -0.0033419920364394784, left = 33, right = 34 }, -- numeric__team_gold_advantage
+  [33] = { label = "unknown" },
+  [34] = { label = "unknown" },
+  [35] = { label = "unknown" },
+  [36] = { feature = 132, threshold = 0.010285417549312115, left = 37, right = 40 }, -- numeric__team_experience_advantage
+  [37] = { feature = 130, threshold = -0.86243176460266113, left = 38, right = 39 }, -- numeric__last_hit_change
+  [38] = { label = "unknown" },
+  [39] = { label = "unknown" },
+  [40] = { label = "unknown" },
+  [41] = { feature = 130, threshold = -0.86243176460266113, left = 42, right = 45 }, -- numeric__last_hit_change
+  [42] = { feature = 129, threshold = -0.79894405603408813, left = 43, right = 44 }, -- numeric__experience_change
+  [43] = { label = "unknown" },
   [44] = { label = "unknown" },
-  [45] = { label = "unknown" },
-  [46] = { feature = 105, threshold = -1.3326156735420227, left = 47, right = 48 }, -- numeric__state_minute
-  [47] = { label = "unknown" },
-  [48] = { label = "unknown" },
-  [49] = { label = "unknown" },
-  [50] = { feature = 70, threshold = 0.5, left = 51, right = 58 }, -- categorical__hero_id_90
-  [51] = { feature = 117, threshold = -0.60297536849975586, left = 52, right = 55 }, -- numeric__previous_farm
-  [52] = { feature = 113, threshold = 0.8550894558429718, left = 53, right = 54 }, -- numeric__team_experience_advantage
-  [53] = { label = "unknown" },
+  [45] = { label = "farm" },
+  [46] = { feature = 9, threshold = 0.5, left = 47, right = 190 }, -- categorical__hero_id_9
+  [47] = { feature = 86, threshold = 0.5, left = 48, right = 157 }, -- categorical__hero_id_90
+  [48] = { feature = 124, threshold = 0.31453481316566467, left = 49, right = 108 }, -- numeric__state_minute
+  [49] = { feature = 127, threshold = -0.62161454558372498, left = 50, right = 81 }, -- numeric__last_hits
+  [50] = { feature = 127, threshold = -0.74378612637519836, left = 51, right = 66 }, -- numeric__last_hits
+  [51] = { feature = 54, threshold = 0.5, left = 52, right = 59 }, -- categorical__hero_id_58
+  [52] = { feature = 127, threshold = -0.7952268123626709, left = 53, right = 56 }, -- numeric__last_hits
+  [53] = { feature = 124, threshold = -1.3272388577461243, left = 54, right = 55 }, -- numeric__state_minute
   [54] = { label = "unknown" },
-  [55] = { feature = 110, threshold = -0.72302079200744629, left = 56, right = 57 }, -- numeric__experience_change
-  [56] = { label = "unknown" },
-  [57] = { label = "unknown" },
+  [55] = { label = "unknown" },
+  [56] = { feature = 126, threshold = -0.81294253468513489, left = 57, right = 58 }, -- numeric__experience
+  [57] = { label = "farm" },
   [58] = { label = "unknown" },
-  [59] = { feature = 105, threshold = -0.77269116044044495, left = 60, right = 67 }, -- numeric__state_minute
-  [60] = { feature = 108, threshold = -0.76174607872962952, left = 61, right = 62 }, -- numeric__last_hits
+  [59] = { feature = 125, threshold = -0.9280887246131897, left = 60, right = 63 }, -- numeric__gold
+  [60] = { feature = 124, threshold = -1.2588316202163696, left = 61, right = 62 }, -- numeric__state_minute
   [61] = { label = "unknown" },
-  [62] = { feature = 105, threshold = -0.91267231106758118, left = 63, right = 66 }, -- numeric__state_minute
-  [63] = { feature = 107, threshold = -0.89734885096549988, left = 64, right = 65 }, -- numeric__experience
+  [62] = { label = "unknown" },
+  [63] = { feature = 125, threshold = -0.89996042847633362, left = 64, right = 65 }, -- numeric__gold
   [64] = { label = "farm" },
   [65] = { label = "farm" },
-  [66] = { label = "farm" },
-  [67] = { feature = 5, threshold = 0.5, left = 68, right = 73 }, -- categorical__hero_id_9
-  [68] = { feature = 70, threshold = 0.5, left = 69, right = 72 }, -- categorical__hero_id_90
-  [69] = { feature = 105, threshold = -0.002794947475194931, left = 70, right = 71 }, -- numeric__state_minute
-  [70] = { label = "unknown" },
-  [71] = { label = "unknown" },
+  [66] = { feature = 124, threshold = -0.1643158346414566, left = 67, right = 74 }, -- numeric__state_minute
+  [67] = { feature = 124, threshold = -0.57475927472114563, left = 68, right = 71 }, -- numeric__state_minute
+  [68] = { feature = 124, threshold = -0.64316651225090027, left = 69, right = 70 }, -- numeric__state_minute
+  [69] = { label = "farm" },
+  [70] = { label = "farm" },
+  [71] = { feature = 127, threshold = -0.68591538071632385, left = 72, right = 73 }, -- numeric__last_hits
   [72] = { label = "unknown" },
-  [73] = { feature = 105, threshold = -0.14277607575058937, left = 74, right = 77 }, -- numeric__state_minute
-  [74] = { feature = 109, threshold = -0.90735924243927002, left = 75, right = 76 }, -- numeric__gold_change
-  [75] = { label = "farm" },
+  [73] = { label = "farm" },
+  [74] = { feature = 124, threshold = -0.027501364005729556, left = 75, right = 78 }, -- numeric__state_minute
+  [75] = { feature = 131, threshold = 0.38377209007740021, left = 76, right = 77 }, -- numeric__team_gold_advantage
   [76] = { label = "unknown" },
-  [77] = { feature = 103, threshold = 0.5, left = 78, right = 79 }, -- categorical__team_Dire
-  [78] = { label = "unknown" },
+  [77] = { label = "push" },
+  [78] = { feature = 111, threshold = 0.5, left = 79, right = 80 }, -- categorical__hero_id_123
   [79] = { label = "unknown" },
-  [80] = { feature = 105, threshold = 0.27716732025146484, left = 81, right = 86 }, -- numeric__state_minute
-  [81] = { feature = 109, threshold = -0.83665215969085693, left = 82, right = 83 }, -- numeric__gold_change
-  [82] = { label = "farm" },
-  [83] = { feature = 106, threshold = -0.32550714910030365, left = 84, right = 85 }, -- numeric__gold
-  [84] = { label = "farm" },
+  [80] = { label = "unknown" },
+  [81] = { feature = 127, threshold = -0.58946409821510315, left = 82, right = 95 }, -- numeric__last_hits
+  [82] = { feature = 124, threshold = 0.17772035300731659, left = 83, right = 90 }, -- numeric__state_minute
+  [83] = { feature = 124, threshold = -0.1643158346414566, left = 84, right = 87 }, -- numeric__state_minute
+  [84] = { feature = 126, threshold = -0.54779210686683655, left = 85, right = 86 }, -- numeric__experience
   [85] = { label = "farm" },
-  [86] = { feature = 105, threshold = 0.55712959170341492, left = 87, right = 92 }, -- numeric__state_minute
-  [87] = { feature = 108, threshold = -0.46099340915679932, left = 88, right = 91 }, -- numeric__last_hits
-  [88] = { feature = 108, threshold = -0.4900985062122345, left = 89, right = 90 }, -- numeric__last_hits
-  [89] = { label = "unknown" },
-  [90] = { label = "unknown" },
-  [91] = { label = "farm" },
-  [92] = { feature = 108, threshold = -0.39308153092861176, left = 93, right = 96 }, -- numeric__last_hits
-  [93] = { feature = 110, threshold = 1.5039305686950684, left = 94, right = 95 }, -- numeric__experience_change
+  [86] = { label = "farm" },
+  [87] = { feature = 111, threshold = 0.5, left = 88, right = 89 }, -- categorical__hero_id_123
+  [88] = { label = "unknown" },
+  [89] = { label = "farm" },
+  [90] = { feature = 122, threshold = 0.5, left = 91, right = 94 }, -- categorical__team_Dire
+  [91] = { feature = 125, threshold = -0.34507088363170624, left = 92, right = 93 }, -- numeric__gold
+  [92] = { label = "unknown" },
+  [93] = { label = "unknown" },
   [94] = { label = "unknown" },
-  [95] = { label = "unknown" },
-  [96] = { feature = 106, threshold = 0.084652632474899292, left = 97, right = 98 }, -- numeric__gold
-  [97] = { label = "unknown" },
-  [98] = { feature = 105, threshold = 1.1170541048049927, left = 99, right = 100 }, -- numeric__state_minute
-  [99] = { label = "unknown" },
-  [100] = { label = "unknown" },
-  [101] = { feature = 105, threshold = -0.84268173575401306, left = 102, right = 125 }, -- numeric__state_minute
-  [102] = { feature = 108, threshold = -0.7811494767665863, left = 103, right = 118 }, -- numeric__last_hits
-  [103] = { feature = 105, threshold = -1.2626251578330994, left = 104, right = 111 }, -- numeric__state_minute
-  [104] = { feature = 108, threshold = -0.82642406225204468, left = 105, right = 110 }, -- numeric__last_hits
-  [105] = { feature = 110, threshold = -0.62828841805458069, left = 106, right = 109 }, -- numeric__experience_change
-  [106] = { feature = 105, threshold = -1.3326156735420227, left = 107, right = 108 }, -- numeric__state_minute
-  [107] = { label = "unknown" },
-  [108] = { label = "unknown" },
-  [109] = { label = "farm" },
-  [110] = { label = "farm" },
-  [111] = { feature = 108, threshold = -0.80702066421508789, left = 112, right = 115 }, -- numeric__last_hits
-  [112] = { feature = 105, threshold = -1.1926345825195312, left = 113, right = 114 }, -- numeric__state_minute
+  [95] = { feature = 124, threshold = 0.17772035300731659, left = 96, right = 101 }, -- numeric__state_minute
+  [96] = { feature = 132, threshold = 0.73984962701797485, left = 97, right = 100 }, -- numeric__team_experience_advantage
+  [97] = { feature = 128, threshold = -0.30389750003814697, left = 98, right = 99 }, -- numeric__gold_change
+  [98] = { label = "farm" },
+  [99] = { label = "farm" },
+  [100] = { label = "farm" },
+  [101] = { feature = 127, threshold = -0.51873317360877991, left = 102, right = 105 }, -- numeric__last_hits
+  [102] = { feature = 126, threshold = -0.30348962545394897, left = 103, right = 104 }, -- numeric__experience
+  [103] = { label = "farm" },
+  [104] = { label = "unknown" },
+  [105] = { feature = 132, threshold = 0.34148325026035309, left = 106, right = 107 }, -- numeric__team_experience_advantage
+  [106] = { label = "farm" },
+  [107] = { label = "farm" },
+  [108] = { feature = 127, threshold = -0.49301284551620483, left = 109, right = 134 }, -- numeric__last_hits
+  [109] = { feature = 131, threshold = 1.1841792464256287, left = 110, right = 123 }, -- numeric__team_gold_advantage
+  [110] = { feature = 127, threshold = -0.57660394906997681, left = 111, right = 116 }, -- numeric__last_hits
+  [111] = { feature = 124, threshold = 2.6403809785842896, left = 112, right = 115 }, -- numeric__state_minute
+  [112] = { feature = 131, threshold = -3.8139556646347046, left = 113, right = 114 }, -- numeric__team_gold_advantage
   [113] = { label = "unknown" },
   [114] = { label = "unknown" },
-  [115] = { feature = 110, threshold = -0.56760045886039734, left = 116, right = 117 }, -- numeric__experience_change
-  [116] = { label = "farm" },
-  [117] = { label = "unknown" },
-  [118] = { feature = 110, threshold = -0.60534542798995972, left = 119, right = 122 }, -- numeric__experience_change
-  [119] = { feature = 109, threshold = -0.85362187027931213, left = 120, right = 121 }, -- numeric__gold_change
-  [120] = { label = "farm" },
-  [121] = { label = "farm" },
-  [122] = { feature = 108, threshold = -0.74234268069267273, left = 123, right = 124 }, -- numeric__last_hits
-  [123] = { label = "farm" },
-  [124] = { label = "farm" },
-  [125] = { feature = 108, threshold = -0.51596969366073608, left = 126, right = 141 }, -- numeric__last_hits
-  [126] = { feature = 5, threshold = 0.5, left = 127, right = 138 }, -- categorical__hero_id_9
-  [127] = { feature = 109, threshold = -0.94129863381385803, left = 128, right = 131 }, -- numeric__gold_change
-  [128] = { feature = 107, threshold = -0.75512519478797913, left = 129, right = 130 }, -- numeric__experience
-  [129] = { label = "unknown" },
+  [115] = { label = "unknown" },
+  [116] = { feature = 124, threshold = 0.45134928822517395, left = 117, right = 120 }, -- numeric__state_minute
+  [117] = { feature = 131, threshold = -0.14822354167699814, left = 118, right = 119 }, -- numeric__team_gold_advantage
+  [118] = { label = "unknown" },
+  [119] = { label = "unknown" },
+  [120] = { feature = 128, threshold = -1.1177414059638977, left = 121, right = 122 }, -- numeric__gold_change
+  [121] = { label = "unknown" },
+  [122] = { label = "unknown" },
+  [123] = { feature = 127, threshold = -0.58946409821510315, left = 124, right = 129 }, -- numeric__last_hits
+  [124] = { feature = 132, threshold = 0.11631001532077789, left = 125, right = 126 }, -- numeric__team_experience_advantage
+  [125] = { label = "unknown" },
+  [126] = { feature = 131, threshold = 2.4162602424621582, left = 127, right = 128 }, -- numeric__team_gold_advantage
+  [127] = { label = "unknown" },
+  [128] = { label = "unknown" },
+  [129] = { feature = 126, threshold = -0.041695000603795052, left = 130, right = 131 }, -- numeric__experience
   [130] = { label = "unknown" },
-  [131] = { feature = 108, threshold = -0.64532569050788879, left = 132, right = 135 }, -- numeric__last_hits
-  [132] = { feature = 108, threshold = -0.70353588461875916, left = 133, right = 134 }, -- numeric__last_hits
+  [131] = { feature = 128, threshold = -0.59654682874679565, left = 132, right = 133 }, -- numeric__gold_change
+  [132] = { label = "unknown" },
   [133] = { label = "unknown" },
-  [134] = { label = "unknown" },
-  [135] = { feature = 106, threshold = -0.43885314464569092, left = 136, right = 137 }, -- numeric__gold
-  [136] = { label = "unknown" },
-  [137] = { label = "unknown" },
-  [138] = { feature = 108, threshold = -0.71000367403030396, left = 139, right = 140 }, -- numeric__last_hits
-  [139] = { label = "unknown" },
-  [140] = { label = "unknown" },
-  [141] = { feature = 105, threshold = 0.34715788066387177, left = 142, right = 143 }, -- numeric__state_minute
-  [142] = { label = "farm" },
-  [143] = { feature = 112, threshold = 0.69809257984161377, left = 144, right = 147 }, -- numeric__team_gold_advantage
-  [144] = { feature = 103, threshold = 0.5, left = 145, right = 146 }, -- categorical__team_Dire
-  [145] = { label = "unknown" },
-  [146] = { label = "unknown" },
+  [134] = { feature = 124, threshold = 0.65657100081443787, left = 135, right = 144 }, -- numeric__state_minute
+  [135] = { feature = 81, threshold = 0.5, left = 136, right = 143 }, -- categorical__hero_id_85
+  [136] = { feature = 124, threshold = 0.45134928822517395, left = 137, right = 140 }, -- numeric__state_minute
+  [137] = { feature = 131, threshold = -0.31588014960289001, left = 138, right = 139 }, -- numeric__team_gold_advantage
+  [138] = { label = "farm" },
+  [139] = { label = "farm" },
+  [140] = { feature = 125, threshold = -0.12632513046264648, left = 141, right = 142 }, -- numeric__gold
+  [141] = { label = "farm" },
+  [142] = { label = "unknown" },
+  [143] = { label = "unknown" },
+  [144] = { feature = 124, threshold = 0.86179271340370178, left = 145, right = 150 }, -- numeric__state_minute
+  [145] = { feature = 132, threshold = 1.1144747734069824, left = 146, right = 149 }, -- numeric__team_experience_advantage
+  [146] = { feature = 129, threshold = -0.82084426283836365, left = 147, right = 148 }, -- numeric__experience_change
   [147] = { label = "unknown" },
-  [148] = { label = "farm" },
-  [149] = { feature = 105, threshold = 1.1170541048049927, left = 150, right = 177 }, -- numeric__state_minute
-  [150] = { feature = 113, threshold = 1.6489070653915405, left = 151, right = 176 }, -- numeric__team_experience_advantage
-  [151] = { feature = 113, threshold = 0.68379643559455872, left = 152, right = 173 }, -- numeric__team_experience_advantage
-  [152] = { feature = 105, threshold = 0.90708240866661072, left = 153, right = 168 }, -- numeric__state_minute
-  [153] = { feature = 110, threshold = -0.19089117646217346, left = 154, right = 165 }, -- numeric__experience_change
-  [154] = { feature = 109, threshold = -1.1392784714698792, left = 155, right = 158 }, -- numeric__gold_change
-  [155] = { feature = 106, threshold = 0.21985979378223419, left = 156, right = 157 }, -- numeric__gold
-  [156] = { label = "farm" },
-  [157] = { label = "farm" },
-  [158] = { feature = 106, threshold = -0.33873452246189117, left = 159, right = 160 }, -- numeric__gold
-  [159] = { label = "farm" },
-  [160] = { feature = 111, threshold = -0.72558560967445374, left = 161, right = 162 }, -- numeric__last_hit_change
+  [148] = { label = "unknown" },
+  [149] = { label = "unknown" },
+  [150] = { feature = 129, threshold = -0.86537456512451172, left = 151, right = 154 }, -- numeric__experience_change
+  [151] = { feature = 124, threshold = 1.4774578809738159, left = 152, right = 153 }, -- numeric__state_minute
+  [152] = { label = "unknown" },
+  [153] = { label = "unknown" },
+  [154] = { feature = 131, threshold = -2.7938435077667236, left = 155, right = 156 }, -- numeric__team_gold_advantage
+  [155] = { label = "unknown" },
+  [156] = { label = "unknown" },
+  [157] = { feature = 127, threshold = -0.7952268123626709, left = 158, right = 171 }, -- numeric__last_hits
+  [158] = { feature = 124, threshold = -1.3272388577461243, left = 159, right = 162 }, -- numeric__state_minute
+  [159] = { feature = 131, threshold = -0.011078085284680128, left = 160, right = 161 }, -- numeric__team_gold_advantage
+  [160] = { label = "farm" },
   [161] = { label = "farm" },
-  [162] = { feature = 108, threshold = 0.51887816190719604, left = 163, right = 164 }, -- numeric__last_hits
-  [163] = { label = "farm" },
-  [164] = { label = "farm" },
-  [165] = { feature = 110, threshold = 0.17989733070135117, left = 166, right = 167 }, -- numeric__experience_change
-  [166] = { label = "farm" },
-  [167] = { label = "farm" },
-  [168] = { feature = 108, threshold = 0.40569165349006653, left = 169, right = 170 }, -- numeric__last_hits
-  [169] = { label = "farm" },
-  [170] = { feature = 106, threshold = 1.296038031578064, left = 171, right = 172 }, -- numeric__gold
-  [171] = { label = "farm" },
-  [172] = { label = "farm" },
-  [173] = { feature = 113, threshold = 0.92980089783668518, left = 174, right = 175 }, -- numeric__team_experience_advantage
+  [162] = { feature = 124, threshold = -0.98520269989967346, left = 163, right = 170 }, -- numeric__state_minute
+  [163] = { feature = 126, threshold = -0.97796419262886047, left = 164, right = 165 }, -- numeric__experience
+  [164] = { label = "unknown" },
+  [165] = { feature = 124, threshold = -1.190424382686615, left = 166, right = 169 }, -- numeric__state_minute
+  [166] = { feature = 127, threshold = -0.82737722992897034, left = 167, right = 168 }, -- numeric__last_hits
+  [167] = { label = "unknown" },
+  [168] = { label = "unknown" },
+  [169] = { label = "unknown" },
+  [170] = { label = "unknown" },
+  [171] = { feature = 124, threshold = -0.1643158346414566, left = 172, right = 181 }, -- numeric__state_minute
+  [172] = { feature = 131, threshold = -0.16889438033103943, left = 173, right = 176 }, -- numeric__team_gold_advantage
+  [173] = { feature = 127, threshold = -0.75021621584892273, left = 174, right = 175 }, -- numeric__last_hits
   [174] = { label = "farm" },
   [175] = { label = "farm" },
-  [176] = { label = "farm" },
-  [177] = { feature = 108, threshold = 0.29573908448219299, left = 178, right = 191 }, -- numeric__last_hits
-  [178] = { feature = 108, threshold = 0.014389821328222752, left = 179, right = 186 }, -- numeric__last_hits
-  [179] = { feature = 107, threshold = 0.70369189977645874, left = 180, right = 181 }, -- numeric__experience
-  [180] = { label = "unknown" },
-  [181] = { feature = 110, threshold = -0.57426133751869202, left = 182, right = 183 }, -- numeric__experience_change
-  [182] = { label = "unknown" },
-  [183] = { feature = 113, threshold = 0.36092881858348846, left = 184, right = 185 }, -- numeric__team_experience_advantage
+  [176] = { feature = 127, threshold = -0.76950648427009583, left = 177, right = 180 }, -- numeric__last_hits
+  [177] = { feature = 136, threshold = -0.58433398604393005, left = 178, right = 179 }, -- numeric__previous_farm
+  [178] = { label = "farm" },
+  [179] = { label = "farm" },
+  [180] = { label = "farm" },
+  [181] = { feature = 127, threshold = -0.59589418768882751, left = 182, right = 185 }, -- numeric__last_hits
+  [182] = { feature = 124, threshold = 0.10931311175227165, left = 183, right = 184 }, -- numeric__state_minute
+  [183] = { label = "farm" },
   [184] = { label = "unknown" },
-  [185] = { label = "unknown" },
-  [186] = { feature = 105, threshold = 1.7469692230224609, left = 187, right = 188 }, -- numeric__state_minute
-  [187] = { label = "farm" },
-  [188] = { feature = 112, threshold = -0.56789544224739075, left = 189, right = 190 }, -- numeric__team_gold_advantage
-  [189] = { label = "unknown" },
-  [190] = { label = "unknown" },
-  [191] = { feature = 110, threshold = -0.70673868060112, left = 192, right = 205 }, -- numeric__experience_change
-  [192] = { feature = 113, threshold = 2.1377766132354736, left = 193, right = 204 }, -- numeric__team_experience_advantage
-  [193] = { feature = 105, threshold = 1.8169597983360291, left = 194, right = 201 }, -- numeric__state_minute
-  [194] = { feature = 108, threshold = 1.8674142360687256, left = 195, right = 200 }, -- numeric__last_hits
-  [195] = { feature = 110, threshold = -0.93320828676223755, left = 196, right = 199 }, -- numeric__experience_change
-  [196] = { feature = 113, threshold = 0.38971282541751862, left = 197, right = 198 }, -- numeric__team_experience_advantage
+  [185] = { feature = 127, threshold = -0.54445353150367737, left = 186, right = 187 }, -- numeric__last_hits
+  [186] = { label = "farm" },
+  [187] = { feature = 125, threshold = -0.073504075407981873, left = 188, right = 189 }, -- numeric__gold
+  [188] = { label = "farm" },
+  [189] = { label = "farm" },
+  [190] = { feature = 125, threshold = -0.9378584623336792, left = 191, right = 206 }, -- numeric__gold
+  [191] = { feature = 124, threshold = -1.190424382686615, left = 192, right = 199 }, -- numeric__state_minute
+  [192] = { feature = 126, threshold = -0.9901709258556366, left = 193, right = 194 }, -- numeric__experience
+  [193] = { label = "farm" },
+  [194] = { feature = 124, threshold = -1.2588316202163696, left = 195, right = 196 }, -- numeric__state_minute
+  [195] = { label = "farm" },
+  [196] = { feature = 125, threshold = -0.99454447627067566, left = 197, right = 198 }, -- numeric__gold
   [197] = { label = "farm" },
   [198] = { label = "farm" },
-  [199] = { label = "farm" },
-  [200] = { label = "farm" },
-  [201] = { feature = 108, threshold = 1.9417939186096191, left = 202, right = 203 }, -- numeric__last_hits
-  [202] = { label = "farm" },
-  [203] = { label = "farm" },
-  [204] = { label = "fight" },
-  [205] = { feature = 109, threshold = 0.051428897306323051, left = 206, right = 211 }, -- numeric__gold_change
-  [206] = { feature = 107, threshold = 2.7071590423583984, left = 207, right = 210 }, -- numeric__experience
-  [207] = { feature = 105, threshold = 1.5369974970817566, left = 208, right = 209 }, -- numeric__state_minute
-  [208] = { label = "farm" },
-  [209] = { label = "fight" },
+  [199] = { feature = 127, threshold = -0.81451705098152161, left = 200, right = 203 }, -- numeric__last_hits
+  [200] = { feature = 125, threshold = -0.96566468477249146, left = 201, right = 202 }, -- numeric__gold
+  [201] = { label = "unknown" },
+  [202] = { label = "unknown" },
+  [203] = { feature = 132, threshold = 0.0040551826823502779, left = 204, right = 205 }, -- numeric__team_experience_advantage
+  [204] = { label = "farm" },
+  [205] = { label = "unknown" },
+  [206] = { feature = 131, threshold = -1.6805888414382935, left = 207, right = 208 }, -- numeric__team_gold_advantage
+  [207] = { label = "farm" },
+  [208] = { feature = 131, threshold = 1.2437161803245544, left = 209, right = 220 }, -- numeric__team_gold_advantage
+  [209] = { feature = 125, threshold = -0.92341858148574829, left = 210, right = 211 }, -- numeric__gold
   [210] = { label = "farm" },
-  [211] = { label = "farm" },
-  [212] = { feature = 113, threshold = 0.62559348344802856, left = 213, right = 426 }, -- numeric__team_experience_advantage
-  [213] = { feature = 111, threshold = -0.13907569646835327, left = 214, right = 321 }, -- numeric__last_hit_change
-  [214] = { feature = 105, threshold = -0.70270058512687683, left = 215, right = 250 }, -- numeric__state_minute
-  [215] = { feature = 105, threshold = -1.1226440072059631, left = 216, right = 225 }, -- numeric__state_minute
-  [216] = { feature = 113, threshold = 0.038731414824724197, left = 217, right = 222 }, -- numeric__team_experience_advantage
-  [217] = { feature = 109, threshold = -0.85079357028007507, left = 218, right = 221 }, -- numeric__gold_change
-  [218] = { feature = 113, threshold = -0.0070901771541684866, left = 219, right = 220 }, -- numeric__team_experience_advantage
+  [211] = { feature = 124, threshold = 0.45134928822517395, left = 212, right = 219 }, -- numeric__state_minute
+  [212] = { feature = 131, threshold = 0.42567077279090881, left = 213, right = 216 }, -- numeric__team_gold_advantage
+  [213] = { feature = 124, threshold = -0.095908598974347115, left = 214, right = 215 }, -- numeric__state_minute
+  [214] = { label = "farm" },
+  [215] = { label = "farm" },
+  [216] = { feature = 125, threshold = -0.46424035727977753, left = 217, right = 218 }, -- numeric__gold
+  [217] = { label = "farm" },
+  [218] = { label = "farm" },
   [219] = { label = "farm" },
   [220] = { label = "farm" },
-  [221] = { label = "farm" },
-  [222] = { feature = 108, threshold = -0.74881047010421753, left = 223, right = 224 }, -- numeric__last_hits
-  [223] = { label = "farm" },
-  [224] = { label = "farm" },
-  [225] = { feature = 108, threshold = -0.7876172661781311, left = 226, right = 231 }, -- numeric__last_hits
-  [226] = { feature = 111, threshold = -0.4323306530714035, left = 227, right = 230 }, -- numeric__last_hit_change
-  [227] = { feature = 112, threshold = 0.013129124185070395, left = 228, right = 229 }, -- numeric__team_gold_advantage
-  [228] = { label = "unknown" },
-  [229] = { label = "unknown" },
+  [221] = { feature = 127, threshold = -0.19722898304462433, left = 222, right = 305 }, -- numeric__last_hits
+  [222] = { feature = 124, threshold = 1.0670144557952881, left = 223, right = 248 }, -- numeric__state_minute
+  [223] = { feature = 115, threshold = 0.5, left = 224, right = 247 }, -- categorical__hero_id_131
+  [224] = { feature = 124, threshold = 0.93019995093345642, left = 225, right = 238 }, -- numeric__state_minute
+  [225] = { feature = 131, threshold = 1.8489880561828613, left = 226, right = 235 }, -- numeric__team_gold_advantage
+  [226] = { feature = 131, threshold = -2.2299752235412598, left = 227, right = 228 }, -- numeric__team_gold_advantage
+  [227] = { label = "farm" },
+  [228] = { feature = 131, threshold = 1.1927817463874817, left = 229, right = 234 }, -- numeric__team_gold_advantage
+  [229] = { feature = 132, threshold = -1.6912323236465454, left = 230, right = 231 }, -- numeric__team_experience_advantage
   [230] = { label = "farm" },
-  [231] = { feature = 113, threshold = 0.082330714911222458, left = 232, right = 247 }, -- numeric__team_experience_advantage
-  [232] = { feature = 108, threshold = -0.72293928265571594, left = 233, right = 238 }, -- numeric__last_hits
-  [233] = { feature = 106, threshold = -0.84823808073997498, left = 234, right = 237 }, -- numeric__gold
-  [234] = { feature = 106, threshold = -0.8955024778842926, left = 235, right = 236 }, -- numeric__gold
-  [235] = { label = "farm" },
+  [231] = { feature = 131, threshold = -1.256155788898468, left = 232, right = 233 }, -- numeric__team_gold_advantage
+  [232] = { label = "farm" },
+  [233] = { label = "farm" },
+  [234] = { label = "farm" },
+  [235] = { feature = 126, threshold = 0.33797222375869751, left = 236, right = 237 }, -- numeric__experience
   [236] = { label = "farm" },
   [237] = { label = "farm" },
-  [238] = { feature = 110, threshold = -0.37665547430515289, left = 239, right = 242 }, -- numeric__experience_change
-  [239] = { feature = 106, threshold = -0.66261184215545654, left = 240, right = 241 }, -- numeric__gold
+  [238] = { feature = 127, threshold = -0.37084126472473145, left = 239, right = 242 }, -- numeric__last_hits
+  [239] = { feature = 126, threshold = 0.32836621999740601, left = 240, right = 241 }, -- numeric__experience
   [240] = { label = "farm" },
   [241] = { label = "farm" },
-  [242] = { feature = 109, threshold = -0.47038942575454712, left = 243, right = 244 }, -- numeric__gold_change
-  [243] = { label = "farm" },
-  [244] = { feature = 109, threshold = -0.33887423574924469, left = 245, right = 246 }, -- numeric__gold_change
+  [242] = { feature = 127, threshold = -0.29368025064468384, left = 243, right = 246 }, -- numeric__last_hits
+  [243] = { feature = 125, threshold = 0.15833958983421326, left = 244, right = 245 }, -- numeric__gold
+  [244] = { label = "farm" },
   [245] = { label = "farm" },
   [246] = { label = "farm" },
-  [247] = { feature = 108, threshold = -0.55477648973464966, left = 248, right = 249 }, -- numeric__last_hits
-  [248] = { label = "farm" },
-  [249] = { label = "farm" },
-  [250] = { feature = 108, threshold = -0.47069510817527771, left = 251, right = 276 }, -- numeric__last_hits
-  [251] = { feature = 5, threshold = 0.5, left = 252, right = 271 }, -- categorical__hero_id_9
-  [252] = { feature = 43, threshold = 0.5, left = 253, right = 270 }, -- categorical__hero_id_58
-  [253] = { feature = 70, threshold = 0.5, left = 254, right = 269 }, -- categorical__hero_id_90
-  [254] = { feature = 105, threshold = 0.067195620387792587, left = 255, right = 262 }, -- numeric__state_minute
-  [255] = { feature = 108, threshold = -0.65179347991943359, left = 256, right = 259 }, -- numeric__last_hits
-  [256] = { feature = 111, threshold = -0.4323306530714035, left = 257, right = 258 }, -- numeric__last_hit_change
-  [257] = { label = "unknown" },
+  [247] = { label = "unknown" },
+  [248] = { feature = 124, threshold = 1.4774578809738159, left = 249, right = 276 }, -- numeric__state_minute
+  [249] = { feature = 129, threshold = -0.84931445121765137, left = 250, right = 255 }, -- numeric__experience_change
+  [250] = { feature = 127, threshold = -0.37727135419845581, left = 251, right = 252 }, -- numeric__last_hits
+  [251] = { label = "farm" },
+  [252] = { feature = 126, threshold = 0.42581038177013397, left = 253, right = 254 }, -- numeric__experience
+  [253] = { label = "farm" },
+  [254] = { label = "farm" },
+  [255] = { feature = 127, threshold = -0.33869084715843201, left = 256, right = 265 }, -- numeric__last_hits
+  [256] = { feature = 131, threshold = 0.60972791910171509, left = 257, right = 262 }, -- numeric__team_gold_advantage
+  [257] = { feature = 132, threshold = -1.2730692625045776, left = 258, right = 259 }, -- numeric__team_experience_advantage
   [258] = { label = "unknown" },
-  [259] = { feature = 105, threshold = -0.28275720030069351, left = 260, right = 261 }, -- numeric__state_minute
+  [259] = { feature = 125, threshold = 0.33263835310935974, left = 260, right = 261 }, -- numeric__gold
   [260] = { label = "farm" },
-  [261] = { label = "farm" },
-  [262] = { feature = 108, threshold = -0.58064770698547363, left = 263, right = 266 }, -- numeric__last_hits
-  [263] = { feature = 110, threshold = -0.63420918583869934, left = 264, right = 265 }, -- numeric__experience_change
+  [261] = { label = "unknown" },
+  [262] = { feature = 131, threshold = 1.6338009238243103, left = 263, right = 264 }, -- numeric__team_gold_advantage
+  [263] = { label = "unknown" },
   [264] = { label = "unknown" },
-  [265] = { label = "unknown" },
-  [266] = { feature = 105, threshold = 0.69711071252822876, left = 267, right = 268 }, -- numeric__state_minute
-  [267] = { label = "unknown" },
-  [268] = { label = "unknown" },
+  [265] = { feature = 82, threshold = 0.5, left = 266, right = 275 }, -- categorical__hero_id_86
+  [266] = { feature = 129, threshold = -0.28356021642684937, left = 267, right = 272 }, -- numeric__experience_change
+  [267] = { feature = 131, threshold = 1.0221544504165649, left = 268, right = 271 }, -- numeric__team_gold_advantage
+  [268] = { feature = 128, threshold = -0.80140137672424316, left = 269, right = 270 }, -- numeric__gold_change
   [269] = { label = "farm" },
-  [270] = { label = "farm" },
-  [271] = { feature = 107, threshold = -0.46939729154109955, left = 272, right = 275 }, -- numeric__experience
-  [272] = { feature = 109, threshold = -0.37564192712306976, left = 273, right = 274 }, -- numeric__gold_change
+  [270] = { label = "unknown" },
+  [271] = { label = "fight" },
+  [272] = { feature = 126, threshold = 0.62816530466079712, left = 273, right = 274 }, -- numeric__experience
   [273] = { label = "farm" },
   [274] = { label = "farm" },
-  [275] = { label = "farm" },
-  [276] = { feature = 105, threshold = 0.8370918333530426, left = 277, right = 300 }, -- numeric__state_minute
-  [277] = { feature = 108, threshold = -0.41895271837711334, left = 278, right = 281 }, -- numeric__last_hits
-  [278] = { feature = 107, threshold = -0.21282272040843964, left = 279, right = 280 }, -- numeric__experience
-  [279] = { label = "farm" },
-  [280] = { label = "farm" },
-  [281] = { feature = 112, threshold = 0.48176592588424683, left = 282, right = 295 }, -- numeric__team_gold_advantage
-  [282] = { feature = 107, threshold = -0.3685772716999054, left = 283, right = 288 }, -- numeric__experience
-  [283] = { feature = 110, threshold = -0.51727387309074402, left = 284, right = 285 }, -- numeric__experience_change
-  [284] = { label = "farm" },
-  [285] = { feature = 107, threshold = -0.47908660769462585, left = 286, right = 287 }, -- numeric__experience
-  [286] = { label = "farm" },
-  [287] = { label = "farm" },
-  [288] = { feature = 109, threshold = -0.23988430947065353, left = 289, right = 292 }, -- numeric__gold_change
-  [289] = { feature = 109, threshold = -0.7970561683177948, left = 290, right = 291 }, -- numeric__gold_change
-  [290] = { label = "farm" },
-  [291] = { label = "farm" },
-  [292] = { feature = 109, threshold = -0.18049035221338272, left = 293, right = 294 }, -- numeric__gold_change
-  [293] = { label = "farm" },
-  [294] = { label = "farm" },
-  [295] = { feature = 112, threshold = 0.60059666633605957, left = 296, right = 297 }, -- numeric__team_gold_advantage
-  [296] = { label = "farm" },
-  [297] = { feature = 112, threshold = 0.7751653790473938, left = 298, right = 299 }, -- numeric__team_gold_advantage
-  [298] = { label = "farm" },
-  [299] = { label = "farm" },
-  [300] = { feature = 108, threshold = -0.29606454074382782, left = 301, right = 304 }, -- numeric__last_hits
-  [301] = { feature = 110, threshold = -0.41514050960540771, left = 302, right = 303 }, -- numeric__experience_change
-  [302] = { label = "unknown" },
+  [275] = { label = "unknown" },
+  [276] = { feature = 124, threshold = 2.5719736814498901, left = 277, right = 302 }, -- numeric__state_minute
+  [277] = { feature = 124, threshold = 1.6826795935630798, left = 278, right = 287 }, -- numeric__state_minute
+  [278] = { feature = 127, threshold = -0.30654042959213257, left = 279, right = 284 }, -- numeric__last_hits
+  [279] = { feature = 126, threshold = 0.81546109914779663, left = 280, right = 283 }, -- numeric__experience
+  [280] = { feature = 131, threshold = -0.21927180886268616, left = 281, right = 282 }, -- numeric__team_gold_advantage
+  [281] = { label = "unknown" },
+  [282] = { label = "unknown" },
+  [283] = { label = "unknown" },
+  [284] = { feature = 126, threshold = 0.75409182906150818, left = 285, right = 286 }, -- numeric__experience
+  [285] = { label = "farm" },
+  [286] = { label = "unknown" },
+  [287] = { feature = 125, threshold = 0.953285813331604, left = 288, right = 297 }, -- numeric__gold
+  [288] = { feature = 127, threshold = -0.25509974360466003, left = 289, right = 296 }, -- numeric__last_hits
+  [289] = { feature = 125, threshold = 0.75638779997825623, left = 290, right = 293 }, -- numeric__gold
+  [290] = { feature = 126, threshold = 0.67753759026527405, left = 291, right = 292 }, -- numeric__experience
+  [291] = { label = "unknown" },
+  [292] = { label = "unknown" },
+  [293] = { feature = 127, threshold = -0.35798108577728271, left = 294, right = 295 }, -- numeric__last_hits
+  [294] = { label = "unknown" },
+  [295] = { label = "unknown" },
+  [296] = { label = "unknown" },
+  [297] = { feature = 126, threshold = 1.6893123388290405, left = 298, right = 301 }, -- numeric__experience
+  [298] = { feature = 128, threshold = -0.69967091083526611, left = 299, right = 300 }, -- numeric__gold_change
+  [299] = { label = "unknown" },
+  [300] = { label = "unknown" },
+  [301] = { label = "unknown" },
+  [302] = { feature = 129, threshold = -0.62812280654907227, left = 303, right = 304 }, -- numeric__experience_change
   [303] = { label = "unknown" },
-  [304] = { feature = 105, threshold = 1.7469692230224609, left = 305, right = 314 }, -- numeric__state_minute
-  [305] = { feature = 112, threshold = -2.2275748252868652, left = 306, right = 307 }, -- numeric__team_gold_advantage
-  [306] = { label = "farm" },
-  [307] = { feature = 103, threshold = 0.5, left = 308, right = 311 }, -- categorical__team_Dire
-  [308] = { feature = 113, threshold = -0.69741237163543701, left = 309, right = 310 }, -- numeric__team_experience_advantage
-  [309] = { label = "farm" },
-  [310] = { label = "farm" },
-  [311] = { feature = 110, threshold = -0.62384781241416931, left = 312, right = 313 }, -- numeric__experience_change
+  [304] = { label = "farm" },
+  [305] = { feature = 124, threshold = 1.6142723560333252, left = 306, right = 363 }, -- numeric__state_minute
+  [306] = { feature = 132, threshold = 3.6586962938308716, left = 307, right = 362 }, -- numeric__team_experience_advantage
+  [307] = { feature = 131, threshold = 1.0534083247184753, left = 308, right = 339 }, -- numeric__team_gold_advantage
+  [308] = { feature = 124, threshold = 1.0670144557952881, left = 309, right = 320 }, -- numeric__state_minute
+  [309] = { feature = 131, threshold = -1.6229704022407532, left = 310, right = 317 }, -- numeric__team_gold_advantage
+  [310] = { feature = 132, threshold = -1.0628265142440796, left = 311, right = 316 }, -- numeric__team_experience_advantage
+  [311] = { feature = 129, threshold = -0.84493440389633179, left = 312, right = 313 }, -- numeric__experience_change
   [312] = { label = "farm" },
-  [313] = { label = "farm" },
-  [314] = { feature = 108, threshold = 0.16314920037984848, left = 315, right = 316 }, -- numeric__last_hits
-  [315] = { label = "unknown" },
-  [316] = { feature = 111, threshold = -0.4323306530714035, left = 317, right = 318 }, -- numeric__last_hit_change
-  [317] = { label = "farm" },
-  [318] = { feature = 105, threshold = 2.1669125556945801, left = 319, right = 320 }, -- numeric__state_minute
+  [313] = { feature = 132, threshold = -1.6224785447120667, left = 314, right = 315 }, -- numeric__team_experience_advantage
+  [314] = { label = "farm" },
+  [315] = { label = "farm" },
+  [316] = { label = "farm" },
+  [317] = { feature = 125, threshold = -0.35634367167949677, left = 318, right = 319 }, -- numeric__gold
+  [318] = { label = "farm" },
   [319] = { label = "farm" },
-  [320] = { label = "farm" },
-  [321] = { feature = 93, threshold = 0.5, left = 322, right = 419 }, -- categorical__hero_id_123
-  [322] = { feature = 106, threshold = 1.6366848349571228, left = 323, right = 384 }, -- numeric__gold
-  [323] = { feature = 112, threshold = 0.12022874131798744, left = 324, right = 353 }, -- numeric__team_gold_advantage
-  [324] = { feature = 59, threshold = 0.5, left = 325, right = 348 }, -- categorical__hero_id_77
-  [325] = { feature = 105, threshold = 0.34715788066387177, left = 326, right = 335 }, -- numeric__state_minute
-  [326] = { feature = 81, threshold = 0.5, left = 327, right = 334 }, -- categorical__hero_id_105
-  [327] = { feature = 113, threshold = 0.043281827121973038, left = 328, right = 331 }, -- numeric__team_experience_advantage
-  [328] = { feature = 108, threshold = -0.58711549639701843, left = 329, right = 330 }, -- numeric__last_hits
+  [320] = { feature = 127, threshold = 0.5100802481174469, left = 321, right = 330 }, -- numeric__last_hits
+  [321] = { feature = 126, threshold = 0.5782896876335144, left = 322, right = 325 }, -- numeric__experience
+  [322] = { feature = 128, threshold = -0.73451009392738342, left = 323, right = 324 }, -- numeric__gold_change
+  [323] = { label = "farm" },
+  [324] = { label = "farm" },
+  [325] = { feature = 131, threshold = -1.6393090486526489, left = 326, right = 327 }, -- numeric__team_gold_advantage
+  [326] = { label = "farm" },
+  [327] = { feature = 129, threshold = -0.92450502514839172, left = 328, right = 329 }, -- numeric__experience_change
+  [328] = { label = "farm" },
   [329] = { label = "farm" },
-  [330] = { label = "farm" },
-  [331] = { feature = 108, threshold = -0.65826129913330078, left = 332, right = 333 }, -- numeric__last_hits
-  [332] = { label = "farm" },
+  [330] = { feature = 132, threshold = 1.3672969341278076, left = 331, right = 338 }, -- numeric__team_experience_advantage
+  [331] = { feature = 128, threshold = -1.120528519153595, left = 332, right = 335 }, -- numeric__gold_change
+  [332] = { feature = 129, threshold = -0.88143467903137207, left = 333, right = 334 }, -- numeric__experience_change
   [333] = { label = "farm" },
   [334] = { label = "farm" },
-  [335] = { feature = 108, threshold = -0.28959673643112183, left = 336, right = 343 }, -- numeric__last_hits
-  [336] = { feature = 104, threshold = 0.5, left = 337, right = 340 }, -- categorical__team_Radiant
-  [337] = { feature = 111, threshold = 0.0075517855584621429, left = 338, right = 339 }, -- numeric__last_hit_change
-  [338] = { label = "unknown" },
-  [339] = { label = "unknown" },
-  [340] = { feature = 108, threshold = -0.45129171013832092, left = 341, right = 342 }, -- numeric__last_hits
-  [341] = { label = "unknown" },
+  [335] = { feature = 129, threshold = 0.78881779313087463, left = 336, right = 337 }, -- numeric__experience_change
+  [336] = { label = "farm" },
+  [337] = { label = "farm" },
+  [338] = { label = "farm" },
+  [339] = { feature = 129, threshold = -0.84931445121765137, left = 340, right = 345 }, -- numeric__experience_change
+  [340] = { feature = 131, threshold = 2.3255313634872437, left = 341, right = 344 }, -- numeric__team_gold_advantage
+  [341] = { feature = 132, threshold = 0.70803487300872803, left = 342, right = 343 }, -- numeric__team_experience_advantage
   [342] = { label = "farm" },
-  [343] = { feature = 41, threshold = 0.5, left = 344, right = 347 }, -- categorical__hero_id_56
-  [344] = { feature = 105, threshold = 0.4871390163898468, left = 345, right = 346 }, -- numeric__state_minute
-  [345] = { label = "farm" },
-  [346] = { label = "farm" },
-  [347] = { label = "farm" },
-  [348] = { feature = 107, threshold = 0.12984583899378777, left = 349, right = 352 }, -- numeric__experience
-  [349] = { feature = 108, threshold = -0.52243751287460327, left = 350, right = 351 }, -- numeric__last_hits
+  [343] = { label = "farm" },
+  [344] = { label = "farm" },
+  [345] = { feature = 124, threshold = 1.0670144557952881, left = 346, right = 355 }, -- numeric__state_minute
+  [346] = { feature = 126, threshold = 0.9028378427028656, left = 347, right = 352 }, -- numeric__experience
+  [347] = { feature = 129, threshold = 0.095312613993883133, left = 348, right = 351 }, -- numeric__experience_change
+  [348] = { feature = 128, threshold = -0.58957898616790771, left = 349, right = 350 }, -- numeric__gold_change
+  [349] = { label = "farm" },
   [350] = { label = "farm" },
-  [351] = { label = "push" },
-  [352] = { label = "farm" },
-  [353] = { feature = 116, threshold = 2.936428539454937, left = 354, right = 377 }, -- numeric__previous_push
-  [354] = { feature = 108, threshold = -0.12790175899863243, left = 355, right = 364 }, -- numeric__last_hits
-  [355] = { feature = 105, threshold = 0.41714844107627869, left = 356, right = 363 }, -- numeric__state_minute
-  [356] = { feature = 105, threshold = -0.91267231106758118, left = 357, right = 360 }, -- numeric__state_minute
-  [357] = { feature = 107, threshold = -0.75597885251045227, left = 358, right = 359 }, -- numeric__experience
-  [358] = { label = "farm" },
-  [359] = { label = "farm" },
-  [360] = { feature = 108, threshold = -0.62268838286399841, left = 361, right = 362 }, -- numeric__last_hits
+  [351] = { label = "farm" },
+  [352] = { feature = 129, threshold = -0.47774167358875275, left = 353, right = 354 }, -- numeric__experience_change
+  [353] = { label = "farm" },
+  [354] = { label = "farm" },
+  [355] = { feature = 128, threshold = -0.8083692193031311, left = 356, right = 357 }, -- numeric__gold_change
+  [356] = { label = "fight" },
+  [357] = { feature = 132, threshold = 1.1472848653793335, left = 358, right = 359 }, -- numeric__team_experience_advantage
+  [358] = { label = "fight" },
+  [359] = { feature = 136, threshold = -0.58433398604393005, left = 360, right = 361 }, -- numeric__previous_farm
+  [360] = { label = "farm" },
   [361] = { label = "farm" },
-  [362] = { label = "farm" },
-  [363] = { label = "unknown" },
-  [364] = { feature = 108, threshold = 0.85520368814468384, left = 365, right = 370 }, -- numeric__last_hits
-  [365] = { feature = 36, threshold = 0.5, left = 366, right = 369 }, -- categorical__hero_id_48
-  [366] = { feature = 20, threshold = 0.5, left = 367, right = 368 }, -- categorical__hero_id_25
-  [367] = { label = "farm" },
+  [362] = { label = "fight" },
+  [363] = { feature = 127, threshold = 0.21429640054702759, left = 364, right = 387 }, -- numeric__last_hits
+  [364] = { feature = 126, threshold = 1.0902594327926636, left = 365, right = 370 }, -- numeric__experience
+  [365] = { feature = 129, threshold = -0.85661453008651733, left = 366, right = 367 }, -- numeric__experience_change
+  [366] = { label = "farm" },
+  [367] = { feature = 129, threshold = -0.46752159297466278, left = 368, right = 369 }, -- numeric__experience_change
   [368] = { label = "farm" },
   [369] = { label = "farm" },
-  [370] = { feature = 109, threshold = 0.38516636192798615, left = 371, right = 374 }, -- numeric__gold_change
-  [371] = { feature = 112, threshold = 0.38961891829967499, left = 372, right = 373 }, -- numeric__team_gold_advantage
-  [372] = { label = "farm" },
-  [373] = { label = "farm" },
-  [374] = { feature = 112, threshold = 0.80403730273246765, left = 375, right = 376 }, -- numeric__team_gold_advantage
-  [375] = { label = "farm" },
-  [376] = { label = "farm" },
-  [377] = { feature = 108, threshold = 0.84873589873313904, left = 378, right = 383 }, -- numeric__last_hits
-  [378] = { feature = 105, threshold = -0.6327100396156311, left = 379, right = 380 }, -- numeric__state_minute
+  [370] = { feature = 129, threshold = -0.27407015860080719, left = 371, right = 382 }, -- numeric__experience_change
+  [371] = { feature = 132, threshold = -0.12364620342850685, left = 372, right = 375 }, -- numeric__team_experience_advantage
+  [372] = { feature = 127, threshold = -0.033261842094361782, left = 373, right = 374 }, -- numeric__last_hits
+  [373] = { label = "unknown" },
+  [374] = { label = "farm" },
+  [375] = { feature = 132, threshold = 0.58460989594459534, left = 376, right = 377 }, -- numeric__team_experience_advantage
+  [376] = { label = "unknown" },
+  [377] = { feature = 131, threshold = 2.0870741605758667, left = 378, right = 381 }, -- numeric__team_gold_advantage
+  [378] = { feature = 131, threshold = 0.65076011419296265, left = 379, right = 380 }, -- numeric__team_gold_advantage
   [379] = { label = "farm" },
-  [380] = { feature = 106, threshold = -0.27802135050296783, left = 381, right = 382 }, -- numeric__gold
-  [381] = { label = "farm" },
-  [382] = { label = "farm" },
-  [383] = { label = "push" },
-  [384] = { feature = 113, threshold = -0.76499837636947632, left = 385, right = 400 }, -- numeric__team_experience_advantage
-  [385] = { feature = 112, threshold = -0.3943600058555603, left = 386, right = 399 }, -- numeric__team_gold_advantage
-  [386] = { feature = 105, threshold = 2.4468748569488525, left = 387, right = 396 }, -- numeric__state_minute
-  [387] = { feature = 105, threshold = 2.0969220399856567, left = 388, right = 395 }, -- numeric__state_minute
-  [388] = { feature = 112, threshold = -1.2727348804473877, left = 389, right = 392 }, -- numeric__team_gold_advantage
-  [389] = { feature = 111, threshold = 2.6468464136123657, left = 390, right = 391 }, -- numeric__last_hit_change
-  [390] = { label = "farm" },
-  [391] = { label = "farm" },
-  [392] = { feature = 107, threshold = 1.7406185865402222, left = 393, right = 394 }, -- numeric__experience
+  [380] = { label = "unknown" },
+  [381] = { label = "unknown" },
+  [382] = { feature = 129, threshold = 0.58222624659538269, left = 383, right = 384 }, -- numeric__experience_change
+  [383] = { label = "farm" },
+  [384] = { feature = 124, threshold = 2.0931230783462524, left = 385, right = 386 }, -- numeric__state_minute
+  [385] = { label = "unknown" },
+  [386] = { label = "farm" },
+  [387] = { feature = 124, threshold = 3.0508242845535278, left = 388, right = 411 }, -- numeric__state_minute
+  [388] = { feature = 129, threshold = -0.3339305967092514, left = 389, right = 402 }, -- numeric__experience_change
+  [389] = { feature = 128, threshold = 0.25492338091135025, left = 390, right = 401 }, -- numeric__gold_change
+  [390] = { feature = 124, threshold = 1.6826795935630798, left = 391, right = 396 }, -- numeric__state_minute
+  [391] = { feature = 129, threshold = -0.82522428035736084, left = 392, right = 395 }, -- numeric__experience_change
+  [392] = { feature = 126, threshold = 1.7813872098922729, left = 393, right = 394 }, -- numeric__experience
   [393] = { label = "farm" },
-  [394] = { label = "fight" },
-  [395] = { label = "fight" },
-  [396] = { feature = 113, threshold = -1.2186991572380066, left = 397, right = 398 }, -- numeric__team_experience_advantage
-  [397] = { label = "farm" },
+  [394] = { label = "farm" },
+  [395] = { label = "farm" },
+  [396] = { feature = 127, threshold = 4.0209060907363892, left = 397, right = 400 }, -- numeric__last_hits
+  [397] = { feature = 127, threshold = 1.0180569291114807, left = 398, right = 399 }, -- numeric__last_hits
   [398] = { label = "farm" },
-  [399] = { label = "fight" },
-  [400] = { feature = 105, threshold = 1.2570352554321289, left = 401, right = 404 }, -- numeric__state_minute
-  [401] = { feature = 113, threshold = -0.034392649307847023, left = 402, right = 403 }, -- numeric__team_experience_advantage
-  [402] = { label = "farm" },
-  [403] = { label = "push" },
-  [404] = { feature = 116, threshold = 2.936428539454937, left = 405, right = 418 }, -- numeric__previous_push
-  [405] = { feature = 113, threshold = 0.16430868208408356, left = 406, right = 411 }, -- numeric__team_experience_advantage
-  [406] = { feature = 109, threshold = 1.9803183078765869, left = 407, right = 410 }, -- numeric__gold_change
-  [407] = { feature = 106, threshold = 1.9820911884307861, left = 408, right = 409 }, -- numeric__gold
+  [399] = { label = "farm" },
+  [400] = { label = "farm" },
+  [401] = { label = "farm" },
+  [402] = { feature = 131, threshold = 1.2461917400360107, left = 403, right = 410 }, -- numeric__team_gold_advantage
+  [403] = { feature = 124, threshold = 1.8194940686225891, left = 404, right = 405 }, -- numeric__state_minute
+  [404] = { label = "farm" },
+  [405] = { feature = 127, threshold = 1.0277020335197449, left = 406, right = 407 }, -- numeric__last_hits
+  [406] = { label = "farm" },
+  [407] = { feature = 136, threshold = -0.58433398604393005, left = 408, right = 409 }, -- numeric__previous_farm
   [408] = { label = "farm" },
   [409] = { label = "farm" },
   [410] = { label = "farm" },
-  [411] = { feature = 112, threshold = 0.51325152814388275, left = 412, right = 415 }, -- numeric__team_gold_advantage
-  [412] = { feature = 112, threshold = 0.26756669580936432, left = 413, right = 414 }, -- numeric__team_gold_advantage
+  [411] = { feature = 131, threshold = -1.1900586485862732, left = 412, right = 413 }, -- numeric__team_gold_advantage
+  [412] = { label = "fight" },
   [413] = { label = "farm" },
-  [414] = { label = "fight" },
-  [415] = { feature = 108, threshold = 2.7890756130218506, left = 416, right = 417 }, -- numeric__last_hits
-  [416] = { label = "farm" },
-  [417] = { label = "farm" },
-  [418] = { label = "farm" },
-  [419] = { feature = 112, threshold = 0.20240733772516251, left = 420, right = 425 }, -- numeric__team_gold_advantage
-  [420] = { feature = 111, threshold = 0.15417926385998726, left = 421, right = 424 }, -- numeric__last_hit_change
-  [421] = { feature = 108, threshold = -0.45129171013832092, left = 422, right = 423 }, -- numeric__last_hits
-  [422] = { label = "farm" },
-  [423] = { label = "farm" },
-  [424] = { label = "unknown" },
-  [425] = { label = "unknown" },
-  [426] = { feature = 108, threshold = -0.34780693054199219, left = 427, right = 444 }, -- numeric__last_hits
-  [427] = { feature = 105, threshold = -0.002794947475194931, left = 428, right = 429 }, -- numeric__state_minute
-  [428] = { label = "push" },
-  [429] = { feature = 108, threshold = -0.45775951445102692, left = 430, right = 439 }, -- numeric__last_hits
-  [430] = { feature = 106, threshold = -0.10899856314063072, left = 431, right = 436 }, -- numeric__gold
-  [431] = { feature = 106, threshold = -0.21658871322870255, left = 432, right = 435 }, -- numeric__gold
-  [432] = { feature = 108, threshold = -0.62268838286399841, left = 433, right = 434 }, -- numeric__last_hits
-  [433] = { label = "unknown" },
-  [434] = { label = "unknown" },
-  [435] = { label = "unknown" },
-  [436] = { feature = 113, threshold = 1.6861217021942139, left = 437, right = 438 }, -- numeric__team_experience_advantage
-  [437] = { label = "unknown" },
-  [438] = { label = "unknown" },
-  [439] = { feature = 105, threshold = 0.62712016701698303, left = 440, right = 441 }, -- numeric__state_minute
+  [414] = { feature = 130, threshold = -0.42071840167045593, left = 415, right = 684 }, -- numeric__last_hit_change
+  [415] = { feature = 127, threshold = -0.4608624279499054, left = 416, right = 607 }, -- numeric__last_hits
+  [416] = { feature = 124, threshold = -0.1643158346414566, left = 417, right = 504 }, -- numeric__state_minute
+  [417] = { feature = 124, threshold = -1.2588316202163696, left = 418, right = 449 }, -- numeric__state_minute
+  [418] = { feature = 128, threshold = -0.97838455438613892, left = 419, right = 432 }, -- numeric__gold_change
+  [419] = { feature = 127, threshold = -0.81451705098152161, left = 420, right = 431 }, -- numeric__last_hits
+  [420] = { feature = 128, threshold = -1.0257658958435059, left = 421, right = 428 }, -- numeric__gold_change
+  [421] = { feature = 126, threshold = -0.9847177267074585, left = 422, right = 425 }, -- numeric__experience
+  [422] = { feature = 126, threshold = -0.98870274424552917, left = 423, right = 424 }, -- numeric__experience
+  [423] = { label = "unknown" },
+  [424] = { label = "farm" },
+  [425] = { feature = 126, threshold = -0.97456642985343933, left = 426, right = 427 }, -- numeric__experience
+  [426] = { label = "unknown" },
+  [427] = { label = "unknown" },
+  [428] = { feature = 125, threshold = -1.0184857249259949, left = 429, right = 430 }, -- numeric__gold
+  [429] = { label = "farm" },
+  [430] = { label = "unknown" },
+  [431] = { label = "farm" },
+  [432] = { feature = 128, threshold = -0.96166172623634338, left = 433, right = 434 }, -- numeric__gold_change
+  [433] = { label = "farm" },
+  [434] = { feature = 128, threshold = -0.9031318724155426, left = 435, right = 442 }, -- numeric__gold_change
+  [435] = { feature = 128, threshold = -0.9226418137550354, left = 436, right = 439 }, -- numeric__gold_change
+  [436] = { feature = 131, threshold = -0.096979662775993347, left = 437, right = 438 }, -- numeric__team_gold_advantage
+  [437] = { label = "farm" },
+  [438] = { label = "farm" },
+  [439] = { feature = 124, threshold = -1.3272388577461243, left = 440, right = 441 }, -- numeric__state_minute
   [440] = { label = "farm" },
-  [441] = { feature = 107, threshold = 0.44126959145069122, left = 442, right = 443 }, -- numeric__experience
-  [442] = { label = "unknown" },
-  [443] = { label = "unknown" },
-  [444] = { feature = 109, threshold = 1.2251666188240051, left = 445, right = 518 }, -- numeric__gold_change
-  [445] = { feature = 105, threshold = 1.1170541048049927, left = 446, right = 493 }, -- numeric__state_minute
-  [446] = { feature = 109, threshold = 0.70759069919586182, left = 447, right = 474 }, -- numeric__gold_change
-  [447] = { feature = 105, threshold = -0.14277607575058937, left = 448, right = 451 }, -- numeric__state_minute
-  [448] = { feature = 108, threshold = 0.092003408819437027, left = 449, right = 450 }, -- numeric__last_hits
-  [449] = { label = "farm" },
-  [450] = { label = "fight" },
-  [451] = { feature = 105, threshold = 0.34715788066387177, left = 452, right = 461 }, -- numeric__state_minute
-  [452] = { feature = 105, threshold = 0.067195620387792587, left = 453, right = 456 }, -- numeric__state_minute
-  [453] = { feature = 106, threshold = 0.18532469123601913, left = 454, right = 455 }, -- numeric__gold
-  [454] = { label = "farm" },
-  [455] = { label = "farm" },
-  [456] = { feature = 106, threshold = 0.50554928183555603, left = 457, right = 460 }, -- numeric__gold
-  [457] = { feature = 109, threshold = 0.36112596094608307, left = 458, right = 459 }, -- numeric__gold_change
+  [441] = { label = "farm" },
+  [442] = { feature = 132, threshold = 0.032257134094834328, left = 443, right = 448 }, -- numeric__team_experience_advantage
+  [443] = { feature = 128, threshold = -0.86689907312393188, left = 444, right = 447 }, -- numeric__gold_change
+  [444] = { feature = 126, threshold = -0.96936494112014771, left = 445, right = 446 }, -- numeric__experience
+  [445] = { label = "farm" },
+  [446] = { label = "farm" },
+  [447] = { label = "farm" },
+  [448] = { label = "farm" },
+  [449] = { feature = 127, threshold = -0.75021621584892273, left = 450, right = 481 }, -- numeric__last_hits
+  [450] = { feature = 126, threshold = -0.80627289414405823, left = 451, right = 470 }, -- numeric__experience
+  [451] = { feature = 127, threshold = -0.80165687203407288, left = 452, right = 459 }, -- numeric__last_hits
+  [452] = { feature = 9, threshold = 0.5, left = 453, right = 458 }, -- categorical__hero_id_9
+  [453] = { feature = 86, threshold = 0.5, left = 454, right = 457 }, -- categorical__hero_id_90
+  [454] = { feature = 125, threshold = -0.91676226258277893, left = 455, right = 456 }, -- numeric__gold
+  [455] = { label = "unknown" },
+  [456] = { label = "unknown" },
+  [457] = { label = "farm" },
   [458] = { label = "farm" },
-  [459] = { label = "farm" },
-  [460] = { label = "farm" },
-  [461] = { feature = 105, threshold = 0.55712959170341492, left = 462, right = 467 }, -- numeric__state_minute
-  [462] = { feature = 106, threshold = 0.46055401861667633, left = 463, right = 464 }, -- numeric__gold
+  [459] = { feature = 3, threshold = 0.5, left = 460, right = 467 }, -- categorical__hero_id_3
+  [460] = { feature = 127, threshold = -0.7952268123626709, left = 461, right = 464 }, -- numeric__last_hits
+  [461] = { feature = 131, threshold = -0.17198881506919861, left = 462, right = 463 }, -- numeric__team_gold_advantage
+  [462] = { label = "farm" },
   [463] = { label = "farm" },
-  [464] = { feature = 108, threshold = 0.64823415875434875, left = 465, right = 466 }, -- numeric__last_hits
-  [465] = { label = "fight" },
+  [464] = { feature = 127, threshold = -0.77593657374382019, left = 465, right = 466 }, -- numeric__last_hits
+  [465] = { label = "farm" },
   [466] = { label = "farm" },
-  [467] = { feature = 109, threshold = 0.35971181094646454, left = 468, right = 471 }, -- numeric__gold_change
-  [468] = { feature = 108, threshold = 0.50594253838062286, left = 469, right = 470 }, -- numeric__last_hits
-  [469] = { label = "farm" },
-  [470] = { label = "farm" },
-  [471] = { feature = 112, threshold = 0.5966457724571228, left = 472, right = 473 }, -- numeric__team_gold_advantage
-  [472] = { label = "farm" },
-  [473] = { label = "farm" },
-  [474] = { feature = 113, threshold = 0.97290635108947754, left = 475, right = 482 }, -- numeric__team_experience_advantage
-  [475] = { feature = 111, threshold = 0.88731667399406433, left = 476, right = 477 }, -- numeric__last_hit_change
-  [476] = { label = "farm" },
-  [477] = { feature = 112, threshold = 0.81589001417160034, left = 478, right = 481 }, -- numeric__team_gold_advantage
-  [478] = { feature = 108, threshold = 0.91664779186248779, left = 479, right = 480 }, -- numeric__last_hits
+  [467] = { feature = 132, threshold = -0.010432878974825144, left = 468, right = 469 }, -- numeric__team_experience_advantage
+  [468] = { label = "unknown" },
+  [469] = { label = "unknown" },
+  [470] = { feature = 86, threshold = 0.5, left = 471, right = 480 }, -- categorical__hero_id_90
+  [471] = { feature = 9, threshold = 0.5, left = 472, right = 479 }, -- categorical__hero_id_9
+  [472] = { feature = 111, threshold = 0.5, left = 473, right = 476 }, -- categorical__hero_id_123
+  [473] = { feature = 126, threshold = -0.75329312682151794, left = 474, right = 475 }, -- numeric__experience
+  [474] = { label = "unknown" },
+  [475] = { label = "unknown" },
+  [476] = { feature = 127, threshold = -0.77593657374382019, left = 477, right = 478 }, -- numeric__last_hits
+  [477] = { label = "unknown" },
+  [478] = { label = "farm" },
   [479] = { label = "farm" },
   [480] = { label = "farm" },
-  [481] = { label = "farm" },
-  [482] = { feature = 106, threshold = 0.62005752325057983, left = 483, right = 486 }, -- numeric__gold
-  [483] = { feature = 108, threshold = 0.39922386407852173, left = 484, right = 485 }, -- numeric__last_hits
-  [484] = { label = "farm" },
-  [485] = { label = "farm" },
-  [486] = { feature = 105, threshold = 0.62712016701698303, left = 487, right = 490 }, -- numeric__state_minute
-  [487] = { feature = 106, threshold = 0.93745952844619751, left = 488, right = 489 }, -- numeric__gold
-  [488] = { label = "push" },
-  [489] = { label = "push" },
-  [490] = { feature = 110, threshold = 0.32051573693752289, left = 491, right = 492 }, -- numeric__experience_change
-  [491] = { label = "farm" },
-  [492] = { label = "farm" },
-  [493] = { feature = 108, threshold = 0.037027118727564812, left = 494, right = 499 }, -- numeric__last_hits
-  [494] = { feature = 110, threshold = 0.26574857532978058, left = 495, right = 498 }, -- numeric__experience_change
-  [495] = { feature = 107, threshold = 1.0637755990028381, left = 496, right = 497 }, -- numeric__experience
-  [496] = { label = "fight" },
-  [497] = { label = "unknown" },
-  [498] = { label = "farm" },
-  [499] = { feature = 105, threshold = 2.3768842220306396, left = 500, right = 517 }, -- numeric__state_minute
-  [500] = { feature = 105, threshold = 2.0969220399856567, left = 501, right = 516 }, -- numeric__state_minute
-  [501] = { feature = 113, threshold = 1.3202544450759888, left = 502, right = 509 }, -- numeric__team_experience_advantage
-  [502] = { feature = 105, threshold = 1.327025830745697, left = 503, right = 506 }, -- numeric__state_minute
-  [503] = { feature = 105, threshold = 1.2570352554321289, left = 504, right = 505 }, -- numeric__state_minute
-  [504] = { label = "fight" },
-  [505] = { label = "fight" },
-  [506] = { feature = 109, threshold = 0.39082293212413788, left = 507, right = 508 }, -- numeric__gold_change
-  [507] = { label = "fight" },
-  [508] = { label = "farm" },
-  [509] = { feature = 113, threshold = 2.4983879327774048, left = 510, right = 513 }, -- numeric__team_experience_advantage
-  [510] = { feature = 112, threshold = 1.696392297744751, left = 511, right = 512 }, -- numeric__team_gold_advantage
-  [511] = { label = "farm" },
-  [512] = { label = "farm" },
-  [513] = { feature = 109, threshold = 0.71890383958816528, left = 514, right = 515 }, -- numeric__gold_change
-  [514] = { label = "fight" },
-  [515] = { label = "farm" },
-  [516] = { label = "fight" },
-  [517] = { label = "farm" },
-  [518] = { feature = 116, threshold = 2.936428539454937, left = 519, right = 552 }, -- numeric__previous_push
-  [519] = { feature = 105, threshold = 1.0470635294914246, left = 520, right = 539 }, -- numeric__state_minute
-  [520] = { feature = 111, threshold = 2.3535914421081543, left = 521, right = 534 }, -- numeric__last_hit_change
-  [521] = { feature = 108, threshold = 0.84873589873313904, left = 522, right = 527 }, -- numeric__last_hits
-  [522] = { feature = 110, threshold = 1.0347091555595398, left = 523, right = 526 }, -- numeric__experience_change
-  [523] = { feature = 113, threshold = 1.1956295967102051, left = 524, right = 525 }, -- numeric__team_experience_advantage
-  [524] = { label = "farm" },
-  [525] = { label = "farm" },
-  [526] = { label = "push" },
-  [527] = { feature = 109, threshold = 1.4344595670700073, left = 528, right = 529 }, -- numeric__gold_change
+  [481] = { feature = 47, threshold = 0.5, left = 482, right = 501 }, -- categorical__hero_id_51
+  [482] = { feature = 108, threshold = 0.5, left = 483, right = 498 }, -- categorical__hero_id_119
+  [483] = { feature = 124, threshold = -0.50635203719139099, left = 484, right = 491 }, -- numeric__state_minute
+  [484] = { feature = 124, threshold = -0.71157374978065491, left = 485, right = 488 }, -- numeric__state_minute
+  [485] = { feature = 128, threshold = -0.25372904539108276, left = 486, right = 487 }, -- numeric__gold_change
+  [486] = { label = "farm" },
+  [487] = { label = "farm" },
+  [488] = { feature = 127, threshold = -0.74378612637519836, left = 489, right = 490 }, -- numeric__last_hits
+  [489] = { label = "farm" },
+  [490] = { label = "farm" },
+  [491] = { feature = 127, threshold = -0.69234547019004822, left = 492, right = 495 }, -- numeric__last_hits
+  [492] = { feature = 111, threshold = 0.5, left = 493, right = 494 }, -- categorical__hero_id_123
+  [493] = { label = "farm" },
+  [494] = { label = "farm" },
+  [495] = { feature = 131, threshold = 0.85047510266304016, left = 496, right = 497 }, -- numeric__team_gold_advantage
+  [496] = { label = "farm" },
+  [497] = { label = "farm" },
+  [498] = { feature = 127, threshold = -0.73092594742774963, left = 499, right = 500 }, -- numeric__last_hits
+  [499] = { label = "unknown" },
+  [500] = { label = "unknown" },
+  [501] = { feature = 129, threshold = -0.48723174631595612, left = 502, right = 503 }, -- numeric__experience_change
+  [502] = { label = "farm" },
+  [503] = { label = "unknown" },
+  [504] = { feature = 127, threshold = -0.62161454558372498, left = 505, right = 554 }, -- numeric__last_hits
+  [505] = { feature = 124, threshold = 0.17772035300731659, left = 506, right = 535 }, -- numeric__state_minute
+  [506] = { feature = 111, threshold = 0.5, left = 507, right = 530 }, -- categorical__hero_id_123
+  [507] = { feature = 127, threshold = -0.68591538071632385, left = 508, right = 519 }, -- numeric__last_hits
+  [508] = { feature = 124, threshold = -0.095908598974347115, left = 509, right = 514 }, -- numeric__state_minute
+  [509] = { feature = 131, threshold = 0.20707973837852478, left = 510, right = 513 }, -- numeric__team_gold_advantage
+  [510] = { feature = 127, threshold = -0.71163573861122131, left = 511, right = 512 }, -- numeric__last_hits
+  [511] = { label = "unknown" },
+  [512] = { label = "unknown" },
+  [513] = { label = "push" },
+  [514] = { feature = 131, threshold = 0.92925947904586792, left = 515, right = 518 }, -- numeric__team_gold_advantage
+  [515] = { feature = 126, threshold = -0.56377413868904114, left = 516, right = 517 }, -- numeric__experience
+  [516] = { label = "unknown" },
+  [517] = { label = "unknown" },
+  [518] = { label = "unknown" },
+  [519] = { feature = 124, threshold = -0.095908598974347115, left = 520, right = 523 }, -- numeric__state_minute
+  [520] = { feature = 132, threshold = 0.044717604294419289, left = 521, right = 522 }, -- numeric__team_experience_advantage
+  [521] = { label = "farm" },
+  [522] = { label = "push" },
+  [523] = { feature = 130, threshold = -0.56795619428157806, left = 524, right = 527 }, -- numeric__last_hit_change
+  [524] = { feature = 124, threshold = -0.027501364005729556, left = 525, right = 526 }, -- numeric__state_minute
+  [525] = { label = "unknown" },
+  [526] = { label = "unknown" },
+  [527] = { feature = 131, threshold = -0.46602222323417664, left = 528, right = 529 }, -- numeric__team_gold_advantage
   [528] = { label = "farm" },
-  [529] = { feature = 107, threshold = 1.0680013298988342, left = 530, right = 533 }, -- numeric__experience
-  [530] = { feature = 112, threshold = 1.1320223212242126, left = 531, right = 532 }, -- numeric__team_gold_advantage
-  [531] = { label = "push" },
-  [532] = { label = "push" },
-  [533] = { label = "push" },
-  [534] = { feature = 106, threshold = 1.0113447308540344, left = 535, right = 536 }, -- numeric__gold
-  [535] = { label = "farm" },
-  [536] = { feature = 110, threshold = 1.6090243458747864, left = 537, right = 538 }, -- numeric__experience_change
-  [537] = { label = "farm" },
-  [538] = { label = "fight" },
-  [539] = { feature = 108, threshold = 1.1979970335960388, left = 540, right = 541 }, -- numeric__last_hits
-  [540] = { label = "farm" },
-  [541] = { feature = 29, threshold = 0.5, left = 542, right = 551 }, -- categorical__hero_id_36
-  [542] = { feature = 110, threshold = 2.0775055885314941, left = 543, right = 550 }, -- numeric__experience_change
-  [543] = { feature = 113, threshold = 1.3270977139472961, left = 544, right = 547 }, -- numeric__team_experience_advantage
-  [544] = { feature = 106, threshold = 1.822809100151062, left = 545, right = 546 }, -- numeric__gold
-  [545] = { label = "farm" },
-  [546] = { label = "fight" },
-  [547] = { feature = 107, threshold = 2.1052267551422119, left = 548, right = 549 }, -- numeric__experience
-  [548] = { label = "farm" },
-  [549] = { label = "fight" },
-  [550] = { label = "farm" },
-  [551] = { label = "farm" },
-  [552] = { feature = 112, threshold = 2.4409230947494507, left = 553, right = 558 }, -- numeric__team_gold_advantage
-  [553] = { feature = 113, threshold = 1.0930160284042358, left = 554, right = 555 }, -- numeric__team_experience_advantage
-  [554] = { label = "push" },
-  [555] = { feature = 105, threshold = 0.97707298398017883, left = 556, right = 557 }, -- numeric__state_minute
-  [556] = { label = "push" },
-  [557] = { label = "push" },
-  [558] = { label = "push" },
-  [559] = { feature = 114, threshold = 1.0189785957336426, left = 560, right = 691 }, -- numeric__kills_last_minute
-  [560] = { feature = 110, threshold = -0.93468847870826721, left = 561, right = 604 }, -- numeric__experience_change
-  [561] = { feature = 108, threshold = -0.42218661308288574, left = 562, right = 581 }, -- numeric__last_hits
-  [562] = { feature = 106, threshold = 0.013590002432465553, left = 563, right = 578 }, -- numeric__gold
-  [563] = { feature = 108, threshold = -0.83289185166358948, left = 564, right = 565 }, -- numeric__last_hits
-  [564] = { label = "unknown" },
-  [565] = { feature = 109, threshold = -0.95826834440231323, left = 566, right = 571 }, -- numeric__gold_change
-  [566] = { feature = 108, threshold = -0.7940850555896759, left = 567, right = 568 }, -- numeric__last_hits
-  [567] = { label = "fight" },
-  [568] = { feature = 113, threshold = -0.37193447351455688, left = 569, right = 570 }, -- numeric__team_experience_advantage
-  [569] = { label = "fight" },
-  [570] = { label = "fight" },
-  [571] = { feature = 108, threshold = -0.60005110502243042, left = 572, right = 577 }, -- numeric__last_hits
-  [572] = { feature = 108, threshold = -0.75527828931808472, left = 573, right = 574 }, -- numeric__last_hits
-  [573] = { label = "unknown" },
-  [574] = { feature = 104, threshold = 0.5, left = 575, right = 576 }, -- categorical__team_Radiant
-  [575] = { label = "fight" },
-  [576] = { label = "unknown" },
-  [577] = { label = "fight" },
-  [578] = { feature = 105, threshold = 1.327025830745697, left = 579, right = 580 }, -- numeric__state_minute
+  [529] = { label = "unknown" },
+  [530] = { feature = 127, threshold = -0.69877555966377258, left = 531, right = 532 }, -- numeric__last_hits
+  [531] = { label = "unknown" },
+  [532] = { feature = 127, threshold = -0.66662511229515076, left = 533, right = 534 }, -- numeric__last_hits
+  [533] = { label = "farm" },
+  [534] = { label = "farm" },
+  [535] = { feature = 125, threshold = -0.45581261813640594, left = 536, right = 539 }, -- numeric__gold
+  [536] = { feature = 127, threshold = -0.68591538071632385, left = 537, right = 538 }, -- numeric__last_hits
+  [537] = { label = "unknown" },
+  [538] = { label = "unknown" },
+  [539] = { feature = 131, threshold = 2.2981147766113281, left = 540, right = 553 }, -- numeric__team_gold_advantage
+  [540] = { feature = 130, threshold = -0.56795619428157806, left = 541, right = 546 }, -- numeric__last_hit_change
+  [541] = { feature = 127, threshold = -0.62804463505744934, left = 542, right = 545 }, -- numeric__last_hits
+  [542] = { feature = 125, threshold = -0.42564447224140167, left = 543, right = 544 }, -- numeric__gold
+  [543] = { label = "unknown" },
+  [544] = { label = "unknown" },
+  [545] = { label = "unknown" },
+  [546] = { feature = 127, threshold = -0.66019502282142639, left = 547, right = 550 }, -- numeric__last_hits
+  [547] = { feature = 129, threshold = -0.65805301070213318, left = 548, right = 549 }, -- numeric__experience_change
+  [548] = { label = "unknown" },
+  [549] = { label = "unknown" },
+  [550] = { feature = 126, threshold = -0.22441849857568741, left = 551, right = 552 }, -- numeric__experience
+  [551] = { label = "unknown" },
+  [552] = { label = "unknown" },
+  [553] = { label = "unknown" },
+  [554] = { feature = 124, threshold = 0.38294205069541931, left = 555, right = 576 }, -- numeric__state_minute
+  [555] = { feature = 127, threshold = -0.59589418768882751, left = 556, right = 565 }, -- numeric__last_hits
+  [556] = { feature = 130, threshold = -0.56795619428157806, left = 557, right = 562 }, -- numeric__last_hit_change
+  [557] = { feature = 124, threshold = -0.027501364005729556, left = 558, right = 559 }, -- numeric__state_minute
+  [558] = { label = "farm" },
+  [559] = { feature = 124, threshold = 0.17772035300731659, left = 560, right = 561 }, -- numeric__state_minute
+  [560] = { label = "unknown" },
+  [561] = { label = "unknown" },
+  [562] = { feature = 131, threshold = -0.35375605523586273, left = 563, right = 564 }, -- numeric__team_gold_advantage
+  [563] = { label = "farm" },
+  [564] = { label = "farm" },
+  [565] = { feature = 124, threshold = 0.31453481316566467, left = 566, right = 573 }, -- numeric__state_minute
+  [566] = { feature = 127, threshold = -0.51873317360877991, left = 567, right = 572 }, -- numeric__last_hits
+  [567] = { feature = 125, threshold = -0.27748784422874451, left = 568, right = 571 }, -- numeric__gold
+  [568] = { feature = 131, threshold = 0.62334343791007996, left = 569, right = 570 }, -- numeric__team_gold_advantage
+  [569] = { label = "farm" },
+  [570] = { label = "farm" },
+  [571] = { label = "farm" },
+  [572] = { label = "farm" },
+  [573] = { feature = 131, threshold = 0.052234098315238953, left = 574, right = 575 }, -- numeric__team_gold_advantage
+  [574] = { label = "farm" },
+  [575] = { label = "unknown" },
+  [576] = { feature = 127, threshold = -0.51230308413505554, left = 577, right = 594 }, -- numeric__last_hits
+  [577] = { feature = 126, threshold = -0.17777283489704132, left = 578, right = 581 }, -- numeric__experience
+  [578] = { feature = 127, threshold = -0.57017388939857483, left = 579, right = 580 }, -- numeric__last_hits
   [579] = { label = "unknown" },
-  [580] = { label = "unknown" },
-  [581] = { feature = 105, threshold = 1.6069880723953247, left = 582, right = 597 }, -- numeric__state_minute
-  [582] = { feature = 112, threshold = -1.3161339163780212, left = 583, right = 586 }, -- numeric__team_gold_advantage
-  [583] = { feature = 112, threshold = -1.60965496301651, left = 584, right = 585 }, -- numeric__team_gold_advantage
-  [584] = { label = "farm" },
-  [585] = { label = "farm" },
-  [586] = { feature = 105, threshold = 0.34715788066387177, left = 587, right = 588 }, -- numeric__state_minute
-  [587] = { label = "farm" },
-  [588] = { feature = 107, threshold = 0.78982856869697571, left = 589, right = 592 }, -- numeric__experience
-  [589] = { feature = 109, threshold = -0.87341985106468201, left = 590, right = 591 }, -- numeric__gold_change
-  [590] = { label = "fight" },
-  [591] = { label = "fight" },
-  [592] = { feature = 107, threshold = 1.5948521494865417, left = 593, right = 596 }, -- numeric__experience
-  [593] = { feature = 107, threshold = 1.135442316532135, left = 594, right = 595 }, -- numeric__experience
-  [594] = { label = "fight" },
-  [595] = { label = "farm" },
-  [596] = { label = "fight" },
-  [597] = { feature = 107, threshold = 3.9645922183990479, left = 598, right = 603 }, -- numeric__experience
-  [598] = { feature = 109, threshold = -0.98230874538421631, left = 599, right = 602 }, -- numeric__gold_change
-  [599] = { feature = 107, threshold = 1.9112272262573242, left = 600, right = 601 }, -- numeric__experience
-  [600] = { label = "fight" },
-  [601] = { label = "unknown" },
-  [602] = { label = "unknown" },
-  [603] = { label = "fight" },
-  [604] = { feature = 110, threshold = 2.4667965173721313, left = 605, right = 674 }, -- numeric__experience_change
-  [605] = { feature = 109, threshold = 2.2079951763153076, left = 606, right = 667 }, -- numeric__gold_change
-  [606] = { feature = 111, threshold = -0.57895812392234802, left = 607, right = 646 }, -- numeric__last_hit_change
-  [607] = { feature = 109, threshold = -0.087156999856233597, left = 608, right = 627 }, -- numeric__gold_change
-  [608] = { feature = 113, threshold = -2.1573539972305298, left = 609, right = 614 }, -- numeric__team_experience_advantage
-  [609] = { feature = 107, threshold = -0.057281583547592163, left = 610, right = 611 }, -- numeric__experience
-  [610] = { label = "fight" },
-  [611] = { feature = 106, threshold = 0.29402174055576324, left = 612, right = 613 }, -- numeric__gold
-  [612] = { label = "fight" },
-  [613] = { label = "fight" },
-  [614] = { feature = 105, threshold = 1.7469692230224609, left = 615, right = 624 }, -- numeric__state_minute
-  [615] = { feature = 15, threshold = 0.5, left = 616, right = 623 }, -- categorical__hero_id_19
-  [616] = { feature = 108, threshold = -0.83935964107513428, left = 617, right = 620 }, -- numeric__last_hits
-  [617] = { feature = 110, threshold = -0.64679083228111267, left = 618, right = 619 }, -- numeric__experience_change
-  [618] = { label = "fight" },
-  [619] = { label = "fight" },
-  [620] = { feature = 113, threshold = -1.1894212961196899, left = 621, right = 622 }, -- numeric__team_experience_advantage
-  [621] = { label = "fight" },
-  [622] = { label = "fight" },
-  [623] = { label = "fight" },
-  [624] = { feature = 113, threshold = 0.17753661796450615, left = 625, right = 626 }, -- numeric__team_experience_advantage
-  [625] = { label = "fight" },
-  [626] = { label = "fight" },
-  [627] = { feature = 108, threshold = -0.63239008188247681, left = 628, right = 637 }, -- numeric__last_hits
-  [628] = { feature = 105, threshold = 0.69711071252822876, left = 629, right = 634 }, -- numeric__state_minute
-  [629] = { feature = 105, threshold = 0.34715788066387177, left = 630, right = 633 }, -- numeric__state_minute
-  [630] = { feature = 107, threshold = -0.42393866181373596, left = 631, right = 632 }, -- numeric__experience
-  [631] = { label = "fight" },
-  [632] = { label = "fight" },
-  [633] = { label = "fight" },
-  [634] = { feature = 112, threshold = 0.86749476194381714, left = 635, right = 636 }, -- numeric__team_gold_advantage
-  [635] = { label = "unknown" },
-  [636] = { label = "unknown" },
-  [637] = { feature = 110, threshold = -0.73856282234191895, left = 638, right = 639 }, -- numeric__experience_change
-  [638] = { label = "fight" },
-  [639] = { feature = 107, threshold = 1.3945779800415039, left = 640, right = 645 }, -- numeric__experience
-  [640] = { feature = 112, threshold = 2.1582822799682617, left = 641, right = 644 }, -- numeric__team_gold_advantage
-  [641] = { feature = 105, threshold = 0.34715788066387177, left = 642, right = 643 }, -- numeric__state_minute
-  [642] = { label = "fight" },
-  [643] = { label = "fight" },
-  [644] = { label = "fight" },
-  [645] = { label = "fight" },
-  [646] = { feature = 65, threshold = 0.5, left = 647, right = 666 }, -- categorical__hero_id_85
-  [647] = { feature = 112, threshold = 2.6811981201171875, left = 648, right = 665 }, -- numeric__team_gold_advantage
-  [648] = { feature = 113, threshold = -1.4168360829353333, left = 649, right = 656 }, -- numeric__team_experience_advantage
-  [649] = { feature = 105, threshold = 0.41714845597743988, left = 650, right = 651 }, -- numeric__state_minute
-  [650] = { label = "fight" },
-  [651] = { feature = 108, threshold = -0.36397641897201538, left = 652, right = 653 }, -- numeric__last_hits
-  [652] = { label = "fight" },
-  [653] = { feature = 110, threshold = -0.64161014556884766, left = 654, right = 655 }, -- numeric__experience_change
-  [654] = { label = "fight" },
-  [655] = { label = "fight" },
-  [656] = { feature = 85, threshold = 0.5, left = 657, right = 664 }, -- categorical__hero_id_109
-  [657] = { feature = 116, threshold = 2.936428539454937, left = 658, right = 661 }, -- numeric__previous_push
-  [658] = { feature = 108, threshold = -0.66472908854484558, left = 659, right = 660 }, -- numeric__last_hits
-  [659] = { label = "fight" },
-  [660] = { label = "fight" },
-  [661] = { feature = 108, threshold = 1.1915292739868164, left = 662, right = 663 }, -- numeric__last_hits
-  [662] = { label = "fight" },
-  [663] = { label = "fight" },
-  [664] = { label = "fight" },
-  [665] = { label = "fight" },
-  [666] = { label = "fight" },
-  [667] = { feature = 113, threshold = 0.90084049105644226, left = 668, right = 671 }, -- numeric__team_experience_advantage
-  [668] = { feature = 109, threshold = 2.6322376728057861, left = 669, right = 670 }, -- numeric__gold_change
-  [669] = { label = "fight" },
-  [670] = { label = "fight" },
-  [671] = { feature = 111, threshold = 1.7670814990997314, left = 672, right = 673 }, -- numeric__last_hit_change
-  [672] = { label = "push" },
-  [673] = { label = "fight" },
-  [674] = { feature = 109, threshold = 2.5686013698577881, left = 675, right = 688 }, -- numeric__gold_change
-  [675] = { feature = 108, threshold = -0.45775951445102692, left = 676, right = 677 }, -- numeric__last_hits
-  [676] = { label = "unknown" },
-  [677] = { feature = 113, threshold = 2.1331908702850342, left = 678, right = 687 }, -- numeric__team_experience_advantage
-  [678] = { feature = 112, threshold = 0.31534212827682495, left = 679, right = 684 }, -- numeric__team_gold_advantage
-  [679] = { feature = 110, threshold = 4.1135118007659912, left = 680, right = 683 }, -- numeric__experience_change
-  [680] = { feature = 107, threshold = 1.1836327910423279, left = 681, right = 682 }, -- numeric__experience
-  [681] = { label = "fight" },
-  [682] = { label = "fight" },
-  [683] = { label = "fight" },
-  [684] = { feature = 113, threshold = 1.1170732378959656, left = 685, right = 686 }, -- numeric__team_experience_advantage
-  [685] = { label = "fight" },
-  [686] = { label = "fight" },
-  [687] = { label = "fight" },
-  [688] = { feature = 106, threshold = 1.7945833206176758, left = 689, right = 690 }, -- numeric__gold
-  [689] = { label = "fight" },
-  [690] = { label = "push" },
-  [691] = { feature = 108, threshold = -0.67766469717025757, left = 692, right = 741 }, -- numeric__last_hits
-  [692] = { feature = 111, threshold = -0.57895812392234802, left = 693, right = 732 }, -- numeric__last_hit_change
-  [693] = { feature = 108, threshold = -0.80702066421508789, left = 694, right = 711 }, -- numeric__last_hits
-  [694] = { feature = 109, threshold = 0.12637841701507568, left = 695, right = 710 }, -- numeric__gold_change
-  [695] = { feature = 106, threshold = -1.0170948505401611, left = 696, right = 697 }, -- numeric__gold
-  [696] = { label = "unknown" },
-  [697] = { feature = 108, threshold = -0.83935964107513428, left = 698, right = 699 }, -- numeric__last_hits
-  [698] = { label = "unknown" },
-  [699] = { feature = 113, threshold = 0.073864828795194626, left = 700, right = 707 }, -- numeric__team_experience_advantage
-  [700] = { feature = 113, threshold = -0.035274513065814972, left = 701, right = 702 }, -- numeric__team_experience_advantage
-  [701] = { label = "unknown" },
-  [702] = { feature = 108, threshold = -0.82642406225204468, left = 703, right = 706 }, -- numeric__last_hits
-  [703] = { feature = 112, threshold = 0.040663816034793854, left = 704, right = 705 }, -- numeric__team_gold_advantage
-  [704] = { label = "unknown" },
-  [705] = { label = "unknown" },
-  [706] = { label = "unknown" },
-  [707] = { feature = 106, threshold = -0.84215015172958374, left = 708, right = 709 }, -- numeric__gold
-  [708] = { label = "unknown" },
+  [580] = { label = "farm" },
+  [581] = { feature = 127, threshold = -0.5573137104511261, left = 582, right = 587 }, -- numeric__last_hits
+  [582] = { feature = 125, threshold = -0.21242775768041611, left = 583, right = 584 }, -- numeric__gold
+  [583] = { label = "unknown" },
+  [584] = { feature = 132, threshold = 2.0179694890975952, left = 585, right = 586 }, -- numeric__team_experience_advantage
+  [585] = { label = "unknown" },
+  [586] = { label = "unknown" },
+  [587] = { feature = 124, threshold = 1.1354216933250427, left = 588, right = 591 }, -- numeric__state_minute
+  [588] = { feature = 131, threshold = 1.1295314431190491, left = 589, right = 590 }, -- numeric__team_gold_advantage
+  [589] = { label = "unknown" },
+  [590] = { label = "unknown" },
+  [591] = { feature = 126, threshold = 0.96777266263961792, left = 592, right = 593 }, -- numeric__experience
+  [592] = { label = "unknown" },
+  [593] = { label = "unknown" },
+  [594] = { feature = 125, threshold = 0.10015053302049637, left = 595, right = 602 }, -- numeric__gold
+  [595] = { feature = 130, threshold = -0.56795619428157806, left = 596, right = 599 }, -- numeric__last_hit_change
+  [596] = { feature = 125, threshold = -0.13147841393947601, left = 597, right = 598 }, -- numeric__gold
+  [597] = { label = "farm" },
+  [598] = { label = "unknown" },
+  [599] = { feature = 128, threshold = -0.48645494878292084, left = 600, right = 601 }, -- numeric__gold_change
+  [600] = { label = "farm" },
+  [601] = { label = "farm" },
+  [602] = { feature = 132, threshold = -0.82452920079231262, left = 603, right = 604 }, -- numeric__team_experience_advantage
+  [603] = { label = "unknown" },
+  [604] = { feature = 127, threshold = -0.48658277094364166, left = 605, right = 606 }, -- numeric__last_hits
+  [605] = { label = "unknown" },
+  [606] = { label = "unknown" },
+  [607] = { feature = 115, threshold = 0.5, left = 608, right = 681 }, -- categorical__hero_id_131
+  [608] = { feature = 131, threshold = 1.0359556674957275, left = 609, right = 650 }, -- numeric__team_gold_advantage
+  [609] = { feature = 124, threshold = 2.7087881565093994, left = 610, right = 647 }, -- numeric__state_minute
+  [610] = { feature = 127, threshold = -0.2422395795583725, left = 611, right = 630 }, -- numeric__last_hits
+  [611] = { feature = 124, threshold = 1.5458651185035706, left = 612, right = 627 }, -- numeric__state_minute
+  [612] = { feature = 124, threshold = 1.1354216933250427, left = 613, right = 620 }, -- numeric__state_minute
+  [613] = { feature = 129, threshold = -0.29159027338027954, left = 614, right = 617 }, -- numeric__experience_change
+  [614] = { feature = 132, threshold = -1.7286137938499451, left = 615, right = 616 }, -- numeric__team_experience_advantage
+  [615] = { label = "farm" },
+  [616] = { label = "farm" },
+  [617] = { feature = 126, threshold = 0.0010495452443137765, left = 618, right = 619 }, -- numeric__experience
+  [618] = { label = "farm" },
+  [619] = { label = "farm" },
+  [620] = { feature = 130, threshold = -0.56795619428157806, left = 621, right = 624 }, -- numeric__last_hit_change
+  [621] = { feature = 127, threshold = -0.37084126472473145, left = 622, right = 623 }, -- numeric__last_hits
+  [622] = { label = "unknown" },
+  [623] = { label = "farm" },
+  [624] = { feature = 126, threshold = 0.45949424803256989, left = 625, right = 626 }, -- numeric__experience
+  [625] = { label = "farm" },
+  [626] = { label = "farm" },
+  [627] = { feature = 132, threshold = -1.3054738640785217, left = 628, right = 629 }, -- numeric__team_experience_advantage
+  [628] = { label = "farm" },
+  [629] = { label = "unknown" },
+  [630] = { feature = 124, threshold = 1.0670144557952881, left = 631, right = 638 }, -- numeric__state_minute
+  [631] = { feature = 126, threshold = -0.48046630620956421, left = 632, right = 633 }, -- numeric__experience
+  [632] = { label = "farm" },
+  [633] = { feature = 113, threshold = 0.5, left = 634, right = 637 }, -- categorical__hero_id_128
+  [634] = { feature = 129, threshold = 0.43987518548965454, left = 635, right = 636 }, -- numeric__experience_change
+  [635] = { label = "farm" },
+  [636] = { label = "farm" },
+  [637] = { label = "farm" },
+  [638] = { feature = 9, threshold = 0.5, left = 639, right = 646 }, -- categorical__hero_id_9
+  [639] = { feature = 122, threshold = 0.5, left = 640, right = 643 }, -- categorical__team_Dire
+  [640] = { feature = 129, threshold = -0.3981710821390152, left = 641, right = 642 }, -- numeric__experience_change
+  [641] = { label = "farm" },
+  [642] = { label = "farm" },
+  [643] = { feature = 131, threshold = -1.7493472099304199, left = 644, right = 645 }, -- numeric__team_gold_advantage
+  [644] = { label = "farm" },
+  [645] = { label = "farm" },
+  [646] = { label = "farm" },
+  [647] = { feature = 129, threshold = -0.43321134150028229, left = 648, right = 649 }, -- numeric__experience_change
+  [648] = { label = "farm" },
+  [649] = { label = "farm" },
+  [650] = { feature = 127, threshold = -0.31297050416469574, left = 651, right = 660 }, -- numeric__last_hits
+  [651] = { feature = 124, threshold = 0.99860718846321106, left = 652, right = 655 }, -- numeric__state_minute
+  [652] = { feature = 132, threshold = 1.3384314775466919, left = 653, right = 654 }, -- numeric__team_experience_advantage
+  [653] = { label = "farm" },
+  [654] = { label = "farm" },
+  [655] = { feature = 129, threshold = -0.15726927667856216, left = 656, right = 659 }, -- numeric__experience_change
+  [656] = { feature = 127, threshold = -0.37084126472473145, left = 657, right = 658 }, -- numeric__last_hits
+  [657] = { label = "unknown" },
+  [658] = { label = "farm" },
+  [659] = { label = "farm" },
+  [660] = { feature = 128, threshold = 0.52109494805335999, left = 661, right = 674 }, -- numeric__gold_change
+  [661] = { feature = 2, threshold = 0.5, left = 662, right = 673 }, -- categorical__hero_id_2
+  [662] = { feature = 132, threshold = 1.0133901238441467, left = 663, right = 668 }, -- numeric__team_experience_advantage
+  [663] = { feature = 131, threshold = 1.594130277633667, left = 664, right = 667 }, -- numeric__team_gold_advantage
+  [664] = { feature = 124, threshold = 0.69077461957931519, left = 665, right = 666 }, -- numeric__state_minute
+  [665] = { label = "farm" },
+  [666] = { label = "farm" },
+  [667] = { label = "farm" },
+  [668] = { feature = 132, threshold = 4.0938174724578857, left = 669, right = 672 }, -- numeric__team_experience_advantage
+  [669] = { feature = 127, threshold = -0.27438999712467194, left = 670, right = 671 }, -- numeric__last_hits
+  [670] = { label = "farm" },
+  [671] = { label = "farm" },
+  [672] = { label = "farm" },
+  [673] = { label = "farm" },
+  [674] = { feature = 127, threshold = 0.053544294089078903, left = 675, right = 676 }, -- numeric__last_hits
+  [675] = { label = "farm" },
+  [676] = { feature = 135, threshold = 2.9006259515881538, left = 677, right = 680 }, -- numeric__previous_push
+  [677] = { feature = 132, threshold = 1.9296402335166931, left = 678, right = 679 }, -- numeric__team_experience_advantage
+  [678] = { label = "farm" },
+  [679] = { label = "farm" },
+  [680] = { label = "farm" },
+  [681] = { feature = 131, threshold = 0.0060650967061519623, left = 682, right = 683 }, -- numeric__team_gold_advantage
+  [682] = { label = "unknown" },
+  [683] = { label = "farm" },
+  [684] = { feature = 131, threshold = 1.0768022537231445, left = 685, right = 760 }, -- numeric__team_gold_advantage
+  [685] = { feature = 108, threshold = 0.5, left = 686, right = 743 }, -- categorical__hero_id_119
+  [686] = { feature = 94, threshold = 0.5, left = 687, right = 730 }, -- categorical__hero_id_100
+  [687] = { feature = 25, threshold = 0.5, left = 688, right = 725 }, -- categorical__hero_id_26
+  [688] = { feature = 47, threshold = 0.5, left = 689, right = 712 }, -- categorical__hero_id_51
+  [689] = { feature = 3, threshold = 0.5, left = 690, right = 705 }, -- categorical__hero_id_3
+  [690] = { feature = 115, threshold = 0.5, left = 691, right = 698 }, -- categorical__hero_id_131
+  [691] = { feature = 135, threshold = 2.9006259515881538, left = 692, right = 695 }, -- numeric__previous_push
+  [692] = { feature = 29, threshold = 0.5, left = 693, right = 694 }, -- categorical__hero_id_30
+  [693] = { label = "farm" },
+  [694] = { label = "unknown" },
+  [695] = { feature = 125, threshold = 0.6444651186466217, left = 696, right = 697 }, -- numeric__gold
+  [696] = { label = "farm" },
+  [697] = { label = "farm" },
+  [698] = { feature = 124, threshold = -0.30113032460212708, left = 699, right = 702 }, -- numeric__state_minute
+  [699] = { feature = 127, threshold = -0.75021621584892273, left = 700, right = 701 }, -- numeric__last_hits
+  [700] = { label = "farm" },
+  [701] = { label = "farm" },
+  [702] = { feature = 127, threshold = -0.33869084715843201, left = 703, right = 704 }, -- numeric__last_hits
+  [703] = { label = "unknown" },
+  [704] = { label = "farm" },
+  [705] = { feature = 130, threshold = 0.020994918420910835, left = 706, right = 711 }, -- numeric__last_hit_change
+  [706] = { feature = 126, threshold = -0.78857100009918213, left = 707, right = 708 }, -- numeric__experience
+  [707] = { label = "unknown" },
+  [708] = { feature = 127, threshold = -0.64411985874176025, left = 709, right = 710 }, -- numeric__last_hits
   [709] = { label = "unknown" },
   [710] = { label = "unknown" },
-  [711] = { feature = 105, threshold = -0.84268173575401306, left = 712, right = 715 }, -- numeric__state_minute
-  [712] = { feature = 106, threshold = -0.87220236659049988, left = 713, right = 714 }, -- numeric__gold
-  [713] = { label = "fight" },
-  [714] = { label = "fight" },
-  [715] = { feature = 105, threshold = -0.14277607575058937, left = 716, right = 727 }, -- numeric__state_minute
-  [716] = { feature = 106, threshold = -0.61711850762367249, left = 717, right = 726 }, -- numeric__gold
-  [717] = { feature = 108, threshold = -0.75527828931808472, left = 718, right = 723 }, -- numeric__last_hits
-  [718] = { feature = 108, threshold = -0.7940850555896759, left = 719, right = 720 }, -- numeric__last_hits
+  [711] = { label = "farm" },
+  [712] = { feature = 124, threshold = -0.50635203719139099, left = 713, right = 716 }, -- numeric__state_minute
+  [713] = { feature = 131, threshold = -0.04666411317884922, left = 714, right = 715 }, -- numeric__team_gold_advantage
+  [714] = { label = "farm" },
+  [715] = { label = "farm" },
+  [716] = { feature = 127, threshold = -0.49301284551620483, left = 717, right = 724 }, -- numeric__last_hits
+  [717] = { feature = 130, threshold = -0.1262428592890501, left = 718, right = 721 }, -- numeric__last_hit_change
+  [718] = { feature = 124, threshold = 0.040905871661379933, left = 719, right = 720 }, -- numeric__state_minute
   [719] = { label = "unknown" },
-  [720] = { feature = 112, threshold = -0.11141520738601685, left = 721, right = 722 }, -- numeric__team_gold_advantage
-  [721] = { label = "unknown" },
-  [722] = { label = "unknown" },
-  [723] = { feature = 106, threshold = -0.68253594636917114, left = 724, right = 725 }, -- numeric__gold
-  [724] = { label = "fight" },
-  [725] = { label = "unknown" },
-  [726] = { label = "fight" },
-  [727] = { feature = 110, threshold = 0.33827805519104004, left = 728, right = 729 }, -- numeric__experience_change
+  [720] = { label = "unknown" },
+  [721] = { feature = 125, threshold = -0.28221167623996735, left = 722, right = 723 }, -- numeric__gold
+  [722] = { label = "farm" },
+  [723] = { label = "unknown" },
+  [724] = { label = "farm" },
+  [725] = { feature = 124, threshold = -0.30113032460212708, left = 726, right = 727 }, -- numeric__state_minute
+  [726] = { label = "farm" },
+  [727] = { feature = 125, threshold = -0.40433354675769806, left = 728, right = 729 }, -- numeric__gold
   [728] = { label = "unknown" },
-  [729] = { feature = 112, threshold = 0.44341187179088593, left = 730, right = 731 }, -- numeric__team_gold_advantage
-  [730] = { label = "unknown" },
-  [731] = { label = "unknown" },
-  [732] = { feature = 105, threshold = -1.1226440072059631, left = 733, right = 738 }, -- numeric__state_minute
-  [733] = { feature = 105, threshold = -1.1926345825195312, left = 734, right = 737 }, -- numeric__state_minute
-  [734] = { feature = 112, threshold = 0.072149403393268585, left = 735, right = 736 }, -- numeric__team_gold_advantage
+  [729] = { label = "unknown" },
+  [730] = { feature = 124, threshold = -0.23272307962179184, left = 731, right = 736 }, -- numeric__state_minute
+  [731] = { feature = 127, threshold = -0.71163573861122131, left = 732, right = 735 }, -- numeric__last_hits
+  [732] = { feature = 126, threshold = -0.78416654467582703, left = 733, right = 734 }, -- numeric__experience
+  [733] = { label = "farm" },
+  [734] = { label = "unknown" },
   [735] = { label = "farm" },
-  [736] = { label = "farm" },
-  [737] = { label = "farm" },
-  [738] = { feature = 105, threshold = -0.84268173575401306, left = 739, right = 740 }, -- numeric__state_minute
-  [739] = { label = "fight" },
-  [740] = { label = "fight" },
-  [741] = { feature = 106, threshold = 0.54063785076141357, left = 742, right = 807 }, -- numeric__gold
-  [742] = { feature = 105, threshold = 0.55712959170341492, left = 743, right = 800 }, -- numeric__state_minute
-  [743] = { feature = 114, threshold = 3.6973763704299927, left = 744, right = 793 }, -- numeric__kills_last_minute
-  [744] = { feature = 105, threshold = 0.34715788066387177, left = 745, right = 788 }, -- numeric__state_minute
-  [745] = { feature = 112, threshold = -0.056285042315721512, left = 746, right = 763 }, -- numeric__team_gold_advantage
-  [746] = { feature = 113, threshold = 0.028854550793766975, left = 747, right = 762 }, -- numeric__team_experience_advantage
-  [747] = { feature = 105, threshold = -0.56271949410438538, left = 748, right = 755 }, -- numeric__state_minute
-  [748] = { feature = 112, threshold = -0.15572600811719894, left = 749, right = 752 }, -- numeric__team_gold_advantage
-  [749] = { feature = 111, threshold = -0.13907569646835327, left = 750, right = 751 }, -- numeric__last_hit_change
+  [736] = { feature = 127, threshold = -0.48015269637107849, left = 737, right = 742 }, -- numeric__last_hits
+  [737] = { feature = 124, threshold = 0.10931311175227165, left = 738, right = 739 }, -- numeric__state_minute
+  [738] = { label = "unknown" },
+  [739] = { feature = 127, threshold = -0.58303400874137878, left = 740, right = 741 }, -- numeric__last_hits
+  [740] = { label = "unknown" },
+  [741] = { label = "unknown" },
+  [742] = { label = "farm" },
+  [743] = { feature = 126, threshold = -0.56524229049682617, left = 744, right = 751 }, -- numeric__experience
+  [744] = { feature = 127, threshold = -0.75664630532264709, left = 745, right = 748 }, -- numeric__last_hits
+  [745] = { feature = 126, threshold = -0.81818598508834839, left = 746, right = 747 }, -- numeric__experience
+  [746] = { label = "farm" },
+  [747] = { label = "unknown" },
+  [748] = { feature = 128, threshold = -0.39029872417449951, left = 749, right = 750 }, -- numeric__gold_change
+  [749] = { label = "farm" },
   [750] = { label = "farm" },
-  [751] = { label = "farm" },
-  [752] = { feature = 112, threshold = -0.10211541131138802, left = 753, right = 754 }, -- numeric__team_gold_advantage
-  [753] = { label = "farm" },
-  [754] = { label = "farm" },
-  [755] = { feature = 105, threshold = -0.21276663988828659, left = 756, right = 759 }, -- numeric__state_minute
-  [756] = { feature = 112, threshold = -0.60412207245826721, left = 757, right = 758 }, -- numeric__team_gold_advantage
-  [757] = { label = "fight" },
-  [758] = { label = "farm" },
-  [759] = { feature = 108, threshold = -0.40601712465286255, left = 760, right = 761 }, -- numeric__last_hits
-  [760] = { label = "unknown" },
-  [761] = { label = "farm" },
-  [762] = { label = "fight" },
-  [763] = { feature = 105, threshold = -0.14277607575058937, left = 764, right = 777 }, -- numeric__state_minute
-  [764] = { feature = 105, threshold = -0.6327100396156311, left = 765, right = 772 }, -- numeric__state_minute
-  [765] = { feature = 113, threshold = 0.099544674158096313, left = 766, right = 769 }, -- numeric__team_experience_advantage
-  [766] = { feature = 105, threshold = -0.84268173575401306, left = 767, right = 768 }, -- numeric__state_minute
-  [767] = { label = "fight" },
-  [768] = { label = "farm" },
-  [769] = { feature = 109, threshold = 0.36254009604454041, left = 770, right = 771 }, -- numeric__gold_change
-  [770] = { label = "farm" },
-  [771] = { label = "push" },
-  [772] = { feature = 113, threshold = 0.66615918278694153, left = 773, right = 776 }, -- numeric__team_experience_advantage
-  [773] = { feature = 107, threshold = -0.52650874853134155, left = 774, right = 775 }, -- numeric__experience
-  [774] = { label = "farm" },
-  [775] = { label = "fight" },
-  [776] = { label = "fight" },
-  [777] = { feature = 108, threshold = -0.42865441739559174, left = 778, right = 781 }, -- numeric__last_hits
-  [778] = { feature = 107, threshold = -0.27667824923992157, left = 779, right = 780 }, -- numeric__experience
-  [779] = { label = "push" },
-  [780] = { label = "unknown" },
-  [781] = { feature = 113, threshold = 0.58241748809814453, left = 782, right = 785 }, -- numeric__team_experience_advantage
-  [782] = { feature = 109, threshold = 0.97769179940223694, left = 783, right = 784 }, -- numeric__gold_change
-  [783] = { label = "farm" },
+  [751] = { feature = 127, threshold = -0.58946409821510315, left = 752, right = 755 }, -- numeric__last_hits
+  [752] = { feature = 124, threshold = -0.027501364005729556, left = 753, right = 754 }, -- numeric__state_minute
+  [753] = { label = "unknown" },
+  [754] = { label = "unknown" },
+  [755] = { feature = 131, threshold = -0.9015333354473114, left = 756, right = 757 }, -- numeric__team_gold_advantage
+  [756] = { label = "farm" },
+  [757] = { feature = 129, threshold = 0.31431424617767334, left = 758, right = 759 }, -- numeric__experience_change
+  [758] = { label = "unknown" },
+  [759] = { label = "unknown" },
+  [760] = { feature = 135, threshold = 2.9006259515881538, left = 761, right = 852 }, -- numeric__previous_push
+  [761] = { feature = 127, threshold = -0.41585184633731842, left = 762, right = 793 }, -- numeric__last_hits
+  [762] = { feature = 124, threshold = 0.38294205069541931, left = 763, right = 774 }, -- numeric__state_minute
+  [763] = { feature = 127, threshold = -0.55088362097740173, left = 764, right = 771 }, -- numeric__last_hits
+  [764] = { feature = 126, threshold = -0.30755853652954102, left = 765, right = 768 }, -- numeric__experience
+  [765] = { feature = 124, threshold = -0.23272307962179184, left = 766, right = 767 }, -- numeric__state_minute
+  [766] = { label = "fight" },
+  [767] = { label = "farm" },
+  [768] = { feature = 128, threshold = 0.020803909050300717, left = 769, right = 770 }, -- numeric__gold_change
+  [769] = { label = "farm" },
+  [770] = { label = "unknown" },
+  [771] = { feature = 126, threshold = -0.1699286475777626, left = 772, right = 773 }, -- numeric__experience
+  [772] = { label = "farm" },
+  [773] = { label = "farm" },
+  [774] = { feature = 127, threshold = -0.5573137104511261, left = 775, right = 780 }, -- numeric__last_hits
+  [775] = { feature = 131, threshold = 2.2062718868255615, left = 776, right = 779 }, -- numeric__team_gold_advantage
+  [776] = { feature = 128, threshold = -0.20356059074401855, left = 777, right = 778 }, -- numeric__gold_change
+  [777] = { label = "unknown" },
+  [778] = { label = "unknown" },
+  [779] = { label = "unknown" },
+  [780] = { feature = 124, threshold = 1.272236168384552, left = 781, right = 790 }, -- numeric__state_minute
+  [781] = { feature = 129, threshold = -0.047038452699780464, left = 782, right = 785 }, -- numeric__experience_change
+  [782] = { feature = 127, threshold = -0.4608624279499054, left = 783, right = 784 }, -- numeric__last_hits
+  [783] = { label = "unknown" },
   [784] = { label = "farm" },
-  [785] = { feature = 109, threshold = 1.8728435635566711, left = 786, right = 787 }, -- numeric__gold_change
-  [786] = { label = "fight" },
-  [787] = { label = "farm" },
-  [788] = { feature = 109, threshold = 1.0851665735244751, left = 789, right = 792 }, -- numeric__gold_change
-  [789] = { feature = 110, threshold = 0.86966758966445923, left = 790, right = 791 }, -- numeric__experience_change
-  [790] = { label = "fight" },
-  [791] = { label = "fight" },
-  [792] = { label = "fight" },
-  [793] = { feature = 108, threshold = 0.41539336740970612, left = 794, right = 799 }, -- numeric__last_hits
-  [794] = { feature = 107, threshold = -0.6149076521396637, left = 795, right = 796 }, -- numeric__experience
-  [795] = { label = "fight" },
-  [796] = { feature = 105, threshold = -0.072785511612892151, left = 797, right = 798 }, -- numeric__state_minute
-  [797] = { label = "fight" },
+  [785] = { feature = 131, threshold = 2.2471803426742554, left = 786, right = 789 }, -- numeric__team_gold_advantage
+  [786] = { feature = 129, threshold = 0.45812532305717468, left = 787, right = 788 }, -- numeric__experience_change
+  [787] = { label = "unknown" },
+  [788] = { label = "farm" },
+  [789] = { label = "farm" },
+  [790] = { feature = 129, threshold = 0.15736307948827744, left = 791, right = 792 }, -- numeric__experience_change
+  [791] = { label = "unknown" },
+  [792] = { label = "unknown" },
+  [793] = { feature = 24, threshold = 0.5, left = 794, right = 837 }, -- categorical__hero_id_25
+  [794] = { feature = 130, threshold = 1.6406104564666748, left = 795, right = 816 }, -- numeric__last_hit_change
+  [795] = { feature = 132, threshold = 3.8297513723373413, left = 796, right = 807 }, -- numeric__team_experience_advantage
+  [796] = { feature = 124, threshold = -0.23272307962179184, left = 797, right = 800 }, -- numeric__state_minute
+  [797] = { feature = 131, threshold = 1.3687933087348938, left = 798, right = 799 }, -- numeric__team_gold_advantage
   [798] = { label = "fight" },
-  [799] = { label = "fight" },
-  [800] = { feature = 108, threshold = -0.45129171013832092, left = 801, right = 804 }, -- numeric__last_hits
-  [801] = { feature = 117, threshold = -0.60297536849975586, left = 802, right = 803 }, -- numeric__previous_farm
-  [802] = { label = "unknown" },
-  [803] = { label = "unknown" },
-  [804] = { feature = 109, threshold = 0.85890388488769531, left = 805, right = 806 }, -- numeric__gold_change
-  [805] = { label = "unknown" },
-  [806] = { label = "fight" },
-  [807] = { feature = 112, threshold = 0.095186151564121246, left = 808, right = 839 }, -- numeric__team_gold_advantage
-  [808] = { feature = 111, threshold = 1.0339441299438477, left = 809, right = 832 }, -- numeric__last_hit_change
-  [809] = { feature = 105, threshold = 1.1870446801185608, left = 810, right = 821 }, -- numeric__state_minute
-  [810] = { feature = 114, threshold = 3.6973763704299927, left = 811, right = 820 }, -- numeric__kills_last_minute
-  [811] = { feature = 107, threshold = 0.83656775951385498, left = 812, right = 817 }, -- numeric__experience
-  [812] = { feature = 105, threshold = 0.41714844107627869, left = 813, right = 814 }, -- numeric__state_minute
-  [813] = { label = "fight" },
-  [814] = { feature = 105, threshold = 0.55712959170341492, left = 815, right = 816 }, -- numeric__state_minute
-  [815] = { label = "fight" },
-  [816] = { label = "fight" },
-  [817] = { feature = 106, threshold = 1.028501570224762, left = 818, right = 819 }, -- numeric__gold
-  [818] = { label = "farm" },
-  [819] = { label = "fight" },
-  [820] = { label = "fight" },
-  [821] = { feature = 109, threshold = 0.75708568096160889, left = 822, right = 823 }, -- numeric__gold_change
-  [822] = { label = "fight" },
-  [823] = { feature = 113, threshold = -0.067127399146556854, left = 824, right = 831 }, -- numeric__team_experience_advantage
-  [824] = { feature = 108, threshold = 0.7517189085483551, left = 825, right = 826 }, -- numeric__last_hits
+  [799] = { label = "farm" },
+  [800] = { feature = 132, threshold = -0.1019694097340107, left = 801, right = 804 }, -- numeric__team_experience_advantage
+  [801] = { feature = 131, threshold = 1.5750685334205627, left = 802, right = 803 }, -- numeric__team_gold_advantage
+  [802] = { label = "farm" },
+  [803] = { label = "fight" },
+  [804] = { feature = 11, threshold = 0.5, left = 805, right = 806 }, -- categorical__hero_id_11
+  [805] = { label = "farm" },
+  [806] = { label = "farm" },
+  [807] = { feature = 124, threshold = 1.9563085436820984, left = 808, right = 811 }, -- numeric__state_minute
+  [808] = { feature = 124, threshold = 1.4090506434440613, left = 809, right = 810 }, -- numeric__state_minute
+  [809] = { label = "fight" },
+  [810] = { label = "fight" },
+  [811] = { feature = 131, threshold = 3.0099589824676514, left = 812, right = 813 }, -- numeric__team_gold_advantage
+  [812] = { label = "farm" },
+  [813] = { feature = 130, threshold = 0.16823269426822662, left = 814, right = 815 }, -- numeric__last_hit_change
+  [814] = { label = "farm" },
+  [815] = { label = "farm" },
+  [816] = { feature = 131, threshold = 2.1281063556671143, left = 817, right = 826 }, -- numeric__team_gold_advantage
+  [817] = { feature = 124, threshold = 2.982417106628418, left = 818, right = 825 }, -- numeric__state_minute
+  [818] = { feature = 124, threshold = 1.3406434059143066, left = 819, right = 822 }, -- numeric__state_minute
+  [819] = { feature = 127, threshold = 1.005196750164032, left = 820, right = 821 }, -- numeric__last_hits
+  [820] = { label = "farm" },
+  [821] = { label = "farm" },
+  [822] = { feature = 128, threshold = 2.5083233118057251, left = 823, right = 824 }, -- numeric__gold_change
+  [823] = { label = "farm" },
+  [824] = { label = "farm" },
   [825] = { label = "fight" },
-  [826] = { feature = 114, threshold = 3.6973763704299927, left = 827, right = 830 }, -- numeric__kills_last_minute
-  [827] = { feature = 106, threshold = 1.9031143188476562, left = 828, right = 829 }, -- numeric__gold
+  [826] = { feature = 132, threshold = 1.7884092330932617, left = 827, right = 830 }, -- numeric__team_experience_advantage
+  [827] = { feature = 129, threshold = 1.1662306785583496, left = 828, right = 829 }, -- numeric__experience_change
   [828] = { label = "fight" },
   [829] = { label = "fight" },
-  [830] = { label = "fight" },
-  [831] = { label = "fight" },
-  [832] = { feature = 109, threshold = 3.2134499549865723, left = 833, right = 838 }, -- numeric__gold_change
-  [833] = { feature = 113, threshold = -0.48520092666149139, left = 834, right = 837 }, -- numeric__team_experience_advantage
-  [834] = { feature = 106, threshold = 1.4246038198471069, left = 835, right = 836 }, -- numeric__gold
-  [835] = { label = "fight" },
-  [836] = { label = "fight" },
-  [837] = { label = "fight" },
-  [838] = { label = "push" },
-  [839] = { feature = 108, threshold = 0.83580029010772705, left = 840, right = 849 }, -- numeric__last_hits
-  [840] = { feature = 105, threshold = 0.34715788066387177, left = 841, right = 842 }, -- numeric__state_minute
-  [841] = { label = "fight" },
-  [842] = { feature = 109, threshold = 0.92678269743919373, left = 843, right = 844 }, -- numeric__gold_change
+  [830] = { feature = 132, threshold = 2.5574561357498169, left = 831, right = 834 }, -- numeric__team_experience_advantage
+  [831] = { feature = 129, threshold = 1.119510293006897, left = 832, right = 833 }, -- numeric__experience_change
+  [832] = { label = "farm" },
+  [833] = { label = "fight" },
+  [834] = { feature = 132, threshold = 3.634918212890625, left = 835, right = 836 }, -- numeric__team_experience_advantage
+  [835] = { label = "farm" },
+  [836] = { label = "farm" },
+  [837] = { feature = 124, threshold = 1.4090506434440613, left = 838, right = 849 }, -- numeric__state_minute
+  [838] = { feature = 129, threshold = 2.0028167963027954, left = 839, right = 848 }, -- numeric__experience_change
+  [839] = { feature = 126, threshold = 0.50005753338336945, left = 840, right = 841 }, -- numeric__experience
+  [840] = { label = "farm" },
+  [841] = { feature = 124, threshold = 0.65657100081443787, left = 842, right = 845 }, -- numeric__state_minute
+  [842] = { feature = 125, threshold = 0.91844755411148071, left = 843, right = 844 }, -- numeric__gold
   [843] = { label = "fight" },
-  [844] = { feature = 107, threshold = 0.9356377124786377, left = 845, right = 848 }, -- numeric__experience
-  [845] = { feature = 108, threshold = 0.60942736268043518, left = 846, right = 847 }, -- numeric__last_hits
-  [846] = { label = "fight" },
+  [844] = { label = "fight" },
+  [845] = { feature = 125, threshold = 1.5327070951461792, left = 846, right = 847 }, -- numeric__gold
+  [846] = { label = "farm" },
   [847] = { label = "fight" },
-  [848] = { label = "fight" },
-  [849] = { feature = 109, threshold = 1.6098132133483887, left = 850, right = 861 }, -- numeric__gold_change
-  [850] = { feature = 105, threshold = 1.1170541048049927, left = 851, right = 858 }, -- numeric__state_minute
-  [851] = { feature = 113, threshold = 1.1314299702644348, left = 852, right = 855 }, -- numeric__team_experience_advantage
-  [852] = { feature = 106, threshold = 0.98405978083610535, left = 853, right = 854 }, -- numeric__gold
-  [853] = { label = "fight" },
-  [854] = { label = "fight" },
-  [855] = { feature = 106, threshold = 1.1095262765884399, left = 856, right = 857 }, -- numeric__gold
-  [856] = { label = "fight" },
-  [857] = { label = "push" },
-  [858] = { feature = 109, threshold = 1.1162776350975037, left = 859, right = 860 }, -- numeric__gold_change
-  [859] = { label = "fight" },
-  [860] = { label = "fight" },
-  [861] = { feature = 29, threshold = 0.5, left = 862, right = 879 }, -- categorical__hero_id_36
-  [862] = { feature = 105, threshold = 1.5369974970817566, left = 863, right = 872 }, -- numeric__state_minute
-  [863] = { feature = 109, threshold = 2.1966819763183594, left = 864, right = 867 }, -- numeric__gold_change
-  [864] = { feature = 107, threshold = 1.1715531349182129, left = 865, right = 866 }, -- numeric__experience
-  [865] = { label = "push" },
-  [866] = { label = "fight" },
-  [867] = { feature = 112, threshold = 2.6582221984863281, left = 868, right = 871 }, -- numeric__team_gold_advantage
-  [868] = { feature = 113, threshold = 0.72965329885482788, left = 869, right = 870 }, -- numeric__team_experience_advantage
+  [848] = { label = "farm" },
+  [849] = { feature = 131, threshold = 2.8700286149978638, left = 850, right = 851 }, -- numeric__team_gold_advantage
+  [850] = { label = "farm" },
+  [851] = { label = "farm" },
+  [852] = { feature = 127, threshold = 0.65797218680381775, left = 853, right = 860 }, -- numeric__last_hits
+  [853] = { feature = 128, threshold = 1.5551226139068604, left = 854, right = 859 }, -- numeric__gold_change
+  [854] = { feature = 128, threshold = 0.72176876664161682, left = 855, right = 856 }, -- numeric__gold_change
+  [855] = { label = "farm" },
+  [856] = { feature = 126, threshold = 0.33365161716938019, left = 857, right = 858 }, -- numeric__experience
+  [857] = { label = "farm" },
+  [858] = { label = "farm" },
+  [859] = { label = "farm" },
+  [860] = { feature = 128, threshold = 0.99212101101875305, left = 861, right = 864 }, -- numeric__gold_change
+  [861] = { feature = 124, threshold = 1.0670144557952881, left = 862, right = 863 }, -- numeric__state_minute
+  [862] = { label = "fight" },
+  [863] = { label = "farm" },
+  [864] = { feature = 130, threshold = 2.5240371227264404, left = 865, right = 878 }, -- numeric__last_hit_change
+  [865] = { feature = 126, threshold = 3.3607122898101807, left = 866, right = 877 }, -- numeric__experience
+  [866] = { feature = 131, threshold = 2.9824804067611694, left = 867, right = 874 }, -- numeric__team_gold_advantage
+  [867] = { feature = 127, threshold = 2.7284592390060425, left = 868, right = 871 }, -- numeric__last_hits
+  [868] = { feature = 126, threshold = 1.8576058745384216, left = 869, right = 870 }, -- numeric__experience
   [869] = { label = "push" },
   [870] = { label = "push" },
-  [871] = { label = "push" },
-  [872] = { feature = 109, threshold = 3.303955078125, left = 873, right = 876 }, -- numeric__gold_change
-  [873] = { feature = 108, threshold = 2.4495161771774292, left = 874, right = 875 }, -- numeric__last_hits
-  [874] = { label = "fight" },
-  [875] = { label = "fight" },
-  [876] = { feature = 113, threshold = 1.2232142686843872, left = 877, right = 878 }, -- numeric__team_experience_advantage
-  [877] = { label = "push" },
-  [878] = { label = "fight" },
-  [879] = { label = "farm" },
+  [871] = { feature = 129, threshold = 0.26029385626316071, left = 872, right = 873 }, -- numeric__experience_change
+  [872] = { label = "push" },
+  [873] = { label = "push" },
+  [874] = { feature = 125, threshold = 2.1085854768753052, left = 875, right = 876 }, -- numeric__gold
+  [875] = { label = "farm" },
+  [876] = { label = "push" },
+  [877] = { label = "farm" },
+  [878] = { feature = 125, threshold = 2.6475321054458618, left = 879, right = 882 }, -- numeric__gold
+  [879] = { feature = 126, threshold = 1.3739926218986511, left = 880, right = 881 }, -- numeric__experience
+  [880] = { label = "push" },
+  [881] = { label = "fight" },
+  [882] = { label = "push" },
+  [883] = { feature = 133, threshold = 0.98574714362621307, left = 884, right = 1141 }, -- numeric__kills_last_minute
+  [884] = { feature = 129, threshold = -0.91720494627952576, left = 885, right = 1030 }, -- numeric__experience_change
+  [885] = { feature = 127, threshold = -0.087917555123567581, left = 886, right = 959 }, -- numeric__last_hits
+  [886] = { feature = 127, threshold = -0.48658277094364166, left = 887, right = 934 }, -- numeric__last_hits
+  [887] = { feature = 125, threshold = -1.0488148927688599, left = 888, right = 895 }, -- numeric__gold
+  [888] = { feature = 125, threshold = -1.0582089424133301, left = 889, right = 892 }, -- numeric__gold
+  [889] = { feature = 123, threshold = 0.5, left = 890, right = 891 }, -- categorical__team_Radiant
+  [890] = { label = "fight" },
+  [891] = { label = "fight" },
+  [892] = { feature = 125, threshold = -1.0555248856544495, left = 893, right = 894 }, -- numeric__gold
+  [893] = { label = "farm" },
+  [894] = { label = "farm" },
+  [895] = { feature = 124, threshold = 0.86179271340370178, left = 896, right = 917 }, -- numeric__state_minute
+  [896] = { feature = 131, threshold = -1.5193067789077759, left = 897, right = 904 }, -- numeric__team_gold_advantage
+  [897] = { feature = 127, threshold = -0.74378612637519836, left = 898, right = 899 }, -- numeric__last_hits
+  [898] = { label = "fight" },
+  [899] = { feature = 128, threshold = -0.84878271818161011, left = 900, right = 903 }, -- numeric__gold_change
+  [900] = { feature = 132, threshold = -1.4952933192253113, left = 901, right = 902 }, -- numeric__team_experience_advantage
+  [901] = { label = "fight" },
+  [902] = { label = "fight" },
+  [903] = { label = "fight" },
+  [904] = { feature = 127, threshold = -0.57660394906997681, left = 905, right = 912 }, -- numeric__last_hits
+  [905] = { feature = 81, threshold = 0.5, left = 906, right = 911 }, -- categorical__hero_id_85
+  [906] = { feature = 126, threshold = -0.943776935338974, left = 907, right = 908 }, -- numeric__experience
+  [907] = { label = "fight" },
+  [908] = { feature = 106, threshold = 0.5, left = 909, right = 910 }, -- categorical__hero_id_112
+  [909] = { label = "fight" },
+  [910] = { label = "fight" },
+  [911] = { label = "fight" },
+  [912] = { feature = 126, threshold = -0.37488435208797455, left = 913, right = 914 }, -- numeric__experience
+  [913] = { label = "fight" },
+  [914] = { feature = 132, threshold = 0.68414616584777832, left = 915, right = 916 }, -- numeric__team_experience_advantage
+  [915] = { label = "fight" },
+  [916] = { label = "fight" },
+  [917] = { feature = 132, threshold = -1.5449508428573608, left = 918, right = 925 }, -- numeric__team_experience_advantage
+  [918] = { feature = 125, threshold = 0.29151952266693115, left = 919, right = 924 }, -- numeric__gold
+  [919] = { feature = 127, threshold = -0.60875436663627625, left = 920, right = 923 }, -- numeric__last_hits
+  [920] = { feature = 132, threshold = -2.353296160697937, left = 921, right = 922 }, -- numeric__team_experience_advantage
+  [921] = { label = "fight" },
+  [922] = { label = "unknown" },
+  [923] = { label = "fight" },
+  [924] = { label = "unknown" },
+  [925] = { feature = 128, threshold = 0.013836069032549858, left = 926, right = 933 }, -- numeric__gold_change
+  [926] = { feature = 125, threshold = 0.64902791380882263, left = 927, right = 932 }, -- numeric__gold
+  [927] = { feature = 124, threshold = 1.6826795935630798, left = 928, right = 931 }, -- numeric__state_minute
+  [928] = { feature = 126, threshold = 0.06015363335609436, left = 929, right = 930 }, -- numeric__experience
+  [929] = { label = "fight" },
+  [930] = { label = "fight" },
+  [931] = { label = "fight" },
+  [932] = { label = "fight" },
+  [933] = { label = "unknown" },
+  [934] = { feature = 124, threshold = 0.38294205069541931, left = 935, right = 940 }, -- numeric__state_minute
+  [935] = { feature = 128, threshold = -1.113560676574707, left = 936, right = 937 }, -- numeric__gold_change
+  [936] = { label = "fight" },
+  [937] = { feature = 124, threshold = 0.17772035300731659, left = 938, right = 939 }, -- numeric__state_minute
+  [938] = { label = "farm" },
+  [939] = { label = "farm" },
+  [940] = { feature = 128, threshold = -0.15339212119579315, left = 941, right = 956 }, -- numeric__gold_change
+  [941] = { feature = 132, threshold = -1.070347011089325, left = 942, right = 945 }, -- numeric__team_experience_advantage
+  [942] = { feature = 125, threshold = 0.46383213996887207, left = 943, right = 944 }, -- numeric__gold
+  [943] = { label = "fight" },
+  [944] = { label = "farm" },
+  [945] = { feature = 124, threshold = 1.1354216933250427, left = 946, right = 951 }, -- numeric__state_minute
+  [946] = { feature = 132, threshold = 0.23033437132835388, left = 947, right = 950 }, -- numeric__team_experience_advantage
+  [947] = { feature = 131, threshold = -0.1938355416059494, left = 948, right = 949 }, -- numeric__team_gold_advantage
+  [948] = { label = "fight" },
+  [949] = { label = "fight" },
+  [950] = { label = "fight" },
+  [951] = { feature = 125, threshold = 0.76282939314842224, left = 952, right = 955 }, -- numeric__gold
+  [952] = { feature = 128, threshold = -0.59515327215194702, left = 953, right = 954 }, -- numeric__gold_change
+  [953] = { label = "fight" },
+  [954] = { label = "fight" },
+  [955] = { label = "fight" },
+  [956] = { feature = 126, threshold = 0.67388814687728882, left = 957, right = 958 }, -- numeric__experience
+  [957] = { label = "fight" },
+  [958] = { label = "unknown" },
+  [959] = { feature = 124, threshold = 1.8879013061523438, left = 960, right = 1013 }, -- numeric__state_minute
+  [960] = { feature = 131, threshold = 1.2837582230567932, left = 961, right = 1006 }, -- numeric__team_gold_advantage
+  [961] = { feature = 128, threshold = -1.1316770315170288, left = 962, right = 969 }, -- numeric__gold_change
+  [962] = { feature = 127, threshold = 0.76085355877876282, left = 963, right = 968 }, -- numeric__last_hits
+  [963] = { feature = 124, threshold = 0.38294205069541931, left = 964, right = 967 }, -- numeric__state_minute
+  [964] = { feature = 127, threshold = 0.23358665406703949, left = 965, right = 966 }, -- numeric__last_hits
+  [965] = { label = "farm" },
+  [966] = { label = "farm" },
+  [967] = { label = "fight" },
+  [968] = { label = "farm" },
+  [969] = { feature = 124, threshold = 1.2038289308547974, left = 970, right = 989 }, -- numeric__state_minute
+  [970] = { feature = 125, threshold = 0.71532264351844788, left = 971, right = 984 }, -- numeric__gold
+  [971] = { feature = 124, threshold = 0.31453481316566467, left = 972, right = 977 }, -- numeric__state_minute
+  [972] = { feature = 130, threshold = -0.86243176460266113, left = 973, right = 976 }, -- numeric__last_hit_change
+  [973] = { feature = 124, threshold = -0.1643158346414566, left = 974, right = 975 }, -- numeric__state_minute
+  [974] = { label = "farm" },
+  [975] = { label = "farm" },
+  [976] = { label = "farm" },
+  [977] = { feature = 127, threshold = 0.57438111305236816, left = 978, right = 981 }, -- numeric__last_hits
+  [978] = { feature = 132, threshold = -1.510334312915802, left = 979, right = 980 }, -- numeric__team_experience_advantage
+  [979] = { label = "farm" },
+  [980] = { label = "farm" },
+  [981] = { feature = 131, threshold = -1.7373407483100891, left = 982, right = 983 }, -- numeric__team_gold_advantage
+  [982] = { label = "farm" },
+  [983] = { label = "farm" },
+  [984] = { feature = 130, threshold = -0.86243176460266113, left = 985, right = 988 }, -- numeric__last_hit_change
+  [985] = { feature = 126, threshold = 1.6094442009925842, left = 986, right = 987 }, -- numeric__experience
+  [986] = { label = "farm" },
+  [987] = { label = "farm" },
+  [988] = { label = "farm" },
+  [989] = { feature = 132, threshold = -0.58324587345123291, left = 990, right = 997 }, -- numeric__team_experience_advantage
+  [990] = { feature = 131, threshold = -2.7246519327163696, left = 991, right = 992 }, -- numeric__team_gold_advantage
+  [991] = { label = "fight" },
+  [992] = { feature = 128, threshold = -0.80279496312141418, left = 993, right = 996 }, -- numeric__gold_change
+  [993] = { feature = 126, threshold = 1.6820134520530701, left = 994, right = 995 }, -- numeric__experience
+  [994] = { label = "farm" },
+  [995] = { label = "farm" },
+  [996] = { label = "farm" },
+  [997] = { feature = 125, threshold = 1.7299808859825134, left = 998, right = 1003 }, -- numeric__gold
+  [998] = { feature = 127, threshold = 1.3717115521430969, left = 999, right = 1002 }, -- numeric__last_hits
+  [999] = { feature = 125, threshold = 1.2484181523323059, left = 1000, right = 1001 }, -- numeric__gold
+  [1000] = { label = "farm" },
+  [1001] = { label = "farm" },
+  [1002] = { label = "farm" },
+  [1003] = { feature = 132, threshold = 0.12088130787014961, left = 1004, right = 1005 }, -- numeric__team_experience_advantage
+  [1004] = { label = "farm" },
+  [1005] = { label = "fight" },
+  [1006] = { feature = 122, threshold = 0.5, left = 1007, right = 1010 }, -- categorical__team_Dire
+  [1007] = { feature = 128, threshold = -0.72057440876960754, left = 1008, right = 1009 }, -- numeric__gold_change
+  [1008] = { label = "fight" },
+  [1009] = { label = "farm" },
+  [1010] = { feature = 128, threshold = -0.6439281702041626, left = 1011, right = 1012 }, -- numeric__gold_change
+  [1011] = { label = "fight" },
+  [1012] = { label = "fight" },
+  [1013] = { feature = 132, threshold = -2.5514471530914307, left = 1014, right = 1015 }, -- numeric__team_experience_advantage
+  [1014] = { label = "farm" },
+  [1015] = { feature = 124, threshold = 2.6403809785842896, left = 1016, right = 1023 }, -- numeric__state_minute
+  [1016] = { feature = 124, threshold = 2.2983447313308716, left = 1017, right = 1022 }, -- numeric__state_minute
+  [1017] = { feature = 132, threshold = -0.64882922172546387, left = 1018, right = 1019 }, -- numeric__team_experience_advantage
+  [1018] = { label = "fight" },
+  [1019] = { feature = 125, threshold = 2.8146377801895142, left = 1020, right = 1021 }, -- numeric__gold
+  [1020] = { label = "fight" },
+  [1021] = { label = "fight" },
+  [1022] = { label = "farm" },
+  [1023] = { feature = 124, threshold = 3.7348967790603638, left = 1024, right = 1029 }, -- numeric__state_minute
+  [1024] = { feature = 125, threshold = 3.8895785808563232, left = 1025, right = 1026 }, -- numeric__gold
+  [1025] = { label = "fight" },
+  [1026] = { feature = 132, threshold = -1.0687249302864075, left = 1027, right = 1028 }, -- numeric__team_experience_advantage
+  [1027] = { label = "fight" },
+  [1028] = { label = "fight" },
+  [1029] = { label = "fight" },
+  [1030] = { feature = 124, threshold = -1.3956460952758789, left = 1031, right = 1034 }, -- numeric__state_minute
+  [1031] = { feature = 130, threshold = -0.7151939868927002, left = 1032, right = 1033 }, -- numeric__last_hit_change
+  [1032] = { label = "farm" },
+  [1033] = { label = "farm" },
+  [1034] = { feature = 128, threshold = 2.9654138088226318, left = 1035, right = 1126 }, -- numeric__gold_change
+  [1035] = { feature = 129, threshold = -0.85880455374717712, left = 1036, right = 1069 }, -- numeric__experience_change
+  [1036] = { feature = 127, threshold = 0.16285572201013565, left = 1037, right = 1054 }, -- numeric__last_hits
+  [1037] = { feature = 126, threshold = 0.9045996367931366, left = 1038, right = 1053 }, -- numeric__experience
+  [1038] = { feature = 127, threshold = -0.29368025064468384, left = 1039, right = 1048 }, -- numeric__last_hits
+  [1039] = { feature = 128, threshold = -0.071171596646308899, left = 1040, right = 1047 }, -- numeric__gold_change
+  [1040] = { feature = 127, threshold = -0.42228192090988159, left = 1041, right = 1044 }, -- numeric__last_hits
+  [1041] = { feature = 126, threshold = -0.9435671865940094, left = 1042, right = 1043 }, -- numeric__experience
+  [1042] = { label = "fight" },
+  [1043] = { label = "fight" },
+  [1044] = { feature = 126, threshold = -0.15717659145593643, left = 1045, right = 1046 }, -- numeric__experience
+  [1045] = { label = "fight" },
+  [1046] = { label = "fight" },
+  [1047] = { label = "fight" },
+  [1048] = { feature = 126, threshold = -0.37949857115745544, left = 1049, right = 1050 }, -- numeric__experience
+  [1049] = { label = "fight" },
+  [1050] = { feature = 132, threshold = -1.2537518739700317, left = 1051, right = 1052 }, -- numeric__team_experience_advantage
+  [1051] = { label = "fight" },
+  [1052] = { label = "fight" },
+  [1053] = { label = "fight" },
+  [1054] = { feature = 124, threshold = 0.31453481316566467, left = 1055, right = 1060 }, -- numeric__state_minute
+  [1055] = { feature = 128, threshold = -0.82509204745292664, left = 1056, right = 1059 }, -- numeric__gold_change
+  [1056] = { feature = 132, threshold = -0.73778519034385681, left = 1057, right = 1058 }, -- numeric__team_experience_advantage
+  [1057] = { label = "farm" },
+  [1058] = { label = "fight" },
+  [1059] = { label = "fight" },
+  [1060] = { feature = 132, threshold = -1.2990961670875549, left = 1061, right = 1064 }, -- numeric__team_experience_advantage
+  [1061] = { feature = 124, threshold = 1.0670144557952881, left = 1062, right = 1063 }, -- numeric__state_minute
+  [1062] = { label = "fight" },
+  [1063] = { label = "fight" },
+  [1064] = { feature = 128, threshold = -0.87386694550514221, left = 1065, right = 1068 }, -- numeric__gold_change
+  [1065] = { feature = 129, threshold = -0.89165478944778442, left = 1066, right = 1067 }, -- numeric__experience_change
+  [1066] = { label = "fight" },
+  [1067] = { label = "fight" },
+  [1068] = { label = "fight" },
+  [1069] = { feature = 129, threshold = 3.5256083011627197, left = 1070, right = 1103 }, -- numeric__experience_change
+  [1070] = { feature = 128, threshold = 2.4163477420806885, left = 1071, right = 1092 }, -- numeric__gold_change
+  [1071] = { feature = 131, threshold = 2.946832537651062, left = 1072, right = 1083 }, -- numeric__team_gold_advantage
+  [1072] = { feature = 131, threshold = -2.8185371160507202, left = 1073, right = 1078 }, -- numeric__team_gold_advantage
+  [1073] = { feature = 124, threshold = 0.51975652575492859, left = 1074, right = 1075 }, -- numeric__state_minute
+  [1074] = { label = "fight" },
+  [1075] = { feature = 126, threshold = -0.12915563583374023, left = 1076, right = 1077 }, -- numeric__experience
+  [1076] = { label = "fight" },
+  [1077] = { label = "fight" },
+  [1078] = { feature = 124, threshold = 3.1876388788223267, left = 1079, right = 1082 }, -- numeric__state_minute
+  [1079] = { feature = 69, threshold = 0.5, left = 1080, right = 1081 }, -- categorical__hero_id_73
+  [1080] = { label = "fight" },
+  [1081] = { label = "fight" },
+  [1082] = { label = "fight" },
+  [1083] = { feature = 132, threshold = 2.2573727369308472, left = 1084, right = 1085 }, -- numeric__team_experience_advantage
+  [1084] = { label = "fight" },
+  [1085] = { feature = 124, threshold = 0.99860718846321106, left = 1086, right = 1089 }, -- numeric__state_minute
+  [1086] = { feature = 129, threshold = 0.93700891733169556, left = 1087, right = 1088 }, -- numeric__experience_change
+  [1087] = { label = "fight" },
+  [1088] = { label = "fight" },
+  [1089] = { feature = 128, threshold = 1.6206203103065491, left = 1090, right = 1091 }, -- numeric__gold_change
+  [1090] = { label = "fight" },
+  [1091] = { label = "fight" },
+  [1092] = { feature = 130, threshold = 0.60994601249694824, left = 1093, right = 1094 }, -- numeric__last_hit_change
+  [1093] = { label = "fight" },
+  [1094] = { feature = 131, threshold = -0.91787195205688477, left = 1095, right = 1096 }, -- numeric__team_gold_advantage
+  [1095] = { label = "fight" },
+  [1096] = { feature = 126, threshold = 1.2619088292121887, left = 1097, right = 1100 }, -- numeric__experience
+  [1097] = { feature = 127, threshold = 0.61939170956611633, left = 1098, right = 1099 }, -- numeric__last_hits
+  [1098] = { label = "fight" },
+  [1099] = { label = "fight" },
+  [1100] = { feature = 129, threshold = 2.163418173789978, left = 1101, right = 1102 }, -- numeric__experience_change
+  [1101] = { label = "fight" },
+  [1102] = { label = "fight" },
+  [1103] = { feature = 128, threshold = 1.3210030794143677, left = 1104, right = 1111 }, -- numeric__gold_change
+  [1104] = { feature = 127, threshold = -0.58624905347824097, left = 1105, right = 1106 }, -- numeric__last_hits
+  [1105] = { label = "fight" },
+  [1106] = { feature = 132, threshold = 1.3693245649337769, left = 1107, right = 1108 }, -- numeric__team_experience_advantage
+  [1107] = { label = "fight" },
+  [1108] = { feature = 128, threshold = 0.98375958204269409, left = 1109, right = 1110 }, -- numeric__gold_change
+  [1109] = { label = "fight" },
+  [1110] = { label = "fight" },
+  [1111] = { feature = 124, threshold = 1.1354216933250427, left = 1112, right = 1117 }, -- numeric__state_minute
+  [1112] = { feature = 132, threshold = 1.2433927059173584, left = 1113, right = 1116 }, -- numeric__team_experience_advantage
+  [1113] = { feature = 132, threshold = 0.0054929275065660477, left = 1114, right = 1115 }, -- numeric__team_experience_advantage
+  [1114] = { label = "fight" },
+  [1115] = { label = "fight" },
+  [1116] = { label = "farm" },
+  [1117] = { feature = 131, threshold = 2.0401623249053955, left = 1118, right = 1125 }, -- numeric__team_gold_advantage
+  [1118] = { feature = 130, threshold = -0.1262428592890501, left = 1119, right = 1122 }, -- numeric__last_hit_change
+  [1119] = { feature = 129, threshold = 4.2030532360076904, left = 1120, right = 1121 }, -- numeric__experience_change
+  [1120] = { label = "fight" },
+  [1121] = { label = "fight" },
+  [1122] = { feature = 126, threshold = 1.5401468873023987, left = 1123, right = 1124 }, -- numeric__experience
+  [1123] = { label = "fight" },
+  [1124] = { label = "fight" },
+  [1125] = { label = "fight" },
+  [1126] = { feature = 127, threshold = 1.9761394262313843, left = 1127, right = 1134 }, -- numeric__last_hits
+  [1127] = { feature = 126, threshold = 1.56573486328125, left = 1128, right = 1131 }, -- numeric__experience
+  [1128] = { feature = 126, threshold = 1.0052317678928375, left = 1129, right = 1130 }, -- numeric__experience
+  [1129] = { label = "fight" },
+  [1130] = { label = "fight" },
+  [1131] = { feature = 128, threshold = 3.8684459924697876, left = 1132, right = 1133 }, -- numeric__gold_change
+  [1132] = { label = "fight" },
+  [1133] = { label = "fight" },
+  [1134] = { feature = 135, threshold = 2.9006259515881538, left = 1135, right = 1138 }, -- numeric__previous_push
+  [1135] = { feature = 123, threshold = 0.5, left = 1136, right = 1137 }, -- categorical__team_Radiant
+  [1136] = { label = "fight" },
+  [1137] = { label = "fight" },
+  [1138] = { feature = 126, threshold = 2.2357209920883179, left = 1139, right = 1140 }, -- numeric__experience
+  [1139] = { label = "push" },
+  [1140] = { label = "push" },
+  [1141] = { feature = 124, threshold = -0.64316651225090027, left = 1142, right = 1311 }, -- numeric__state_minute
+  [1142] = { feature = 130, threshold = -0.7151939868927002, left = 1143, right = 1234 }, -- numeric__last_hit_change
+  [1143] = { feature = 127, threshold = -0.80808696150779724, left = 1144, right = 1195 }, -- numeric__last_hits
+  [1144] = { feature = 124, threshold = -1.3272388577461243, left = 1145, right = 1164 }, -- numeric__state_minute
+  [1145] = { feature = 136, threshold = -0.58433398604393005, left = 1146, right = 1161 }, -- numeric__previous_farm
+  [1146] = { feature = 125, threshold = -1.0185931324958801, left = 1147, right = 1154 }, -- numeric__gold
+  [1147] = { feature = 132, threshold = 0.0073361939284950495, left = 1148, right = 1151 }, -- numeric__team_experience_advantage
+  [1148] = { feature = 123, threshold = 0.5, left = 1149, right = 1150 }, -- categorical__team_Radiant
+  [1149] = { label = "farm" },
+  [1150] = { label = "farm" },
+  [1151] = { feature = 123, threshold = 0.5, left = 1152, right = 1153 }, -- categorical__team_Radiant
+  [1152] = { label = "farm" },
+  [1153] = { label = "unknown" },
+  [1154] = { feature = 128, threshold = -0.078139439225196838, left = 1155, right = 1160 }, -- numeric__gold_change
+  [1155] = { feature = 131, threshold = 0.0089738680981099606, left = 1156, right = 1157 }, -- numeric__team_gold_advantage
+  [1156] = { label = "unknown" },
+  [1157] = { feature = 129, threshold = -0.71572345495223999, left = 1158, right = 1159 }, -- numeric__experience_change
+  [1158] = { label = "unknown" },
+  [1159] = { label = "unknown" },
+  [1160] = { label = "unknown" },
+  [1161] = { feature = 126, threshold = -0.9888705313205719, left = 1162, right = 1163 }, -- numeric__experience
+  [1162] = { label = "farm" },
+  [1163] = { label = "farm" },
+  [1164] = { feature = 133, threshold = 3.6071013212203979, left = 1165, right = 1192 }, -- numeric__kills_last_minute
+  [1165] = { feature = 125, threshold = -0.90038987994194031, left = 1166, right = 1181 }, -- numeric__gold
+  [1166] = { feature = 124, threshold = -1.2588316202163696, left = 1167, right = 1172 }, -- numeric__state_minute
+  [1167] = { feature = 130, threshold = -0.86243176460266113, left = 1168, right = 1171 }, -- numeric__last_hit_change
+  [1168] = { feature = 128, threshold = -0.4697321355342865, left = 1169, right = 1170 }, -- numeric__gold_change
+  [1169] = { label = "unknown" },
+  [1170] = { label = "unknown" },
+  [1171] = { label = "unknown" },
+  [1172] = { feature = 127, threshold = -0.81451705098152161, left = 1173, right = 1178 }, -- numeric__last_hits
+  [1173] = { feature = 128, threshold = -0.61884394288063049, left = 1174, right = 1175 }, -- numeric__gold_change
+  [1174] = { label = "unknown" },
+  [1175] = { feature = 125, threshold = -0.9622291624546051, left = 1176, right = 1177 }, -- numeric__gold
+  [1176] = { label = "unknown" },
+  [1177] = { label = "unknown" },
+  [1178] = { feature = 132, threshold = 0.0027648971881717443, left = 1179, right = 1180 }, -- numeric__team_experience_advantage
+  [1179] = { label = "unknown" },
+  [1180] = { label = "unknown" },
+  [1181] = { feature = 124, threshold = -0.98520269989967346, left = 1182, right = 1183 }, -- numeric__state_minute
+  [1182] = { label = "fight" },
+  [1183] = { feature = 136, threshold = -0.58433398604393005, left = 1184, right = 1189 }, -- numeric__previous_farm
+  [1184] = { feature = 125, threshold = -0.79689493775367737, left = 1185, right = 1188 }, -- numeric__gold
+  [1185] = { feature = 129, threshold = -0.5558522641658783, left = 1186, right = 1187 }, -- numeric__experience_change
+  [1186] = { label = "unknown" },
+  [1187] = { label = "unknown" },
+  [1188] = { label = "unknown" },
+  [1189] = { feature = 129, threshold = -0.31933048367500305, left = 1190, right = 1191 }, -- numeric__experience_change
+  [1190] = { label = "unknown" },
+  [1191] = { label = "fight" },
+  [1192] = { feature = 126, threshold = -0.91567206382751465, left = 1193, right = 1194 }, -- numeric__experience
+  [1193] = { label = "fight" },
+  [1194] = { label = "fight" },
+  [1195] = { feature = 127, threshold = -0.70520564913749695, left = 1196, right = 1219 }, -- numeric__last_hits
+  [1196] = { feature = 9, threshold = 0.5, left = 1197, right = 1216 }, -- categorical__hero_id_9
+  [1197] = { feature = 126, threshold = -0.93345782160758972, left = 1198, right = 1199 }, -- numeric__experience
+  [1198] = { label = "farm" },
+  [1199] = { feature = 126, threshold = -0.76680025458335876, left = 1200, right = 1211 }, -- numeric__experience
+  [1200] = { feature = 131, threshold = -0.1913599967956543, left = 1201, right = 1204 }, -- numeric__team_gold_advantage
+  [1201] = { feature = 129, threshold = -0.40182110667228699, left = 1202, right = 1203 }, -- numeric__experience_change
+  [1202] = { label = "fight" },
+  [1203] = { label = "fight" },
+  [1204] = { feature = 131, threshold = 0.13052336126565933, left = 1205, right = 1208 }, -- numeric__team_gold_advantage
+  [1205] = { feature = 131, threshold = -0.065106958150863647, left = 1206, right = 1207 }, -- numeric__team_gold_advantage
+  [1206] = { label = "fight" },
+  [1207] = { label = "fight" },
+  [1208] = { feature = 130, threshold = -0.86243176460266113, left = 1209, right = 1210 }, -- numeric__last_hit_change
+  [1209] = { label = "fight" },
+  [1210] = { label = "fight" },
+  [1211] = { feature = 127, threshold = -0.75021621584892273, left = 1212, right = 1215 }, -- numeric__last_hits
+  [1212] = { feature = 126, threshold = -0.73684969544410706, left = 1213, right = 1214 }, -- numeric__experience
+  [1213] = { label = "fight" },
+  [1214] = { label = "fight" },
+  [1215] = { label = "fight" },
+  [1216] = { feature = 125, threshold = -0.86404857039451599, left = 1217, right = 1218 }, -- numeric__gold
+  [1217] = { label = "fight" },
+  [1218] = { label = "farm" },
+  [1219] = { feature = 133, threshold = 3.6071013212203979, left = 1220, right = 1233 }, -- numeric__kills_last_minute
+  [1220] = { feature = 124, threshold = -0.77998098731040955, left = 1221, right = 1230 }, -- numeric__state_minute
+  [1221] = { feature = 127, threshold = -0.64733490347862244, left = 1222, right = 1223 }, -- numeric__last_hits
+  [1222] = { label = "farm" },
+  [1223] = { feature = 129, threshold = -0.44197140634059906, left = 1224, right = 1227 }, -- numeric__experience_change
+  [1224] = { feature = 126, threshold = -0.71407216787338257, left = 1225, right = 1226 }, -- numeric__experience
+  [1225] = { label = "farm" },
+  [1226] = { label = "farm" },
+  [1227] = { feature = 129, threshold = -0.19595956057310104, left = 1228, right = 1229 }, -- numeric__experience_change
+  [1228] = { label = "farm" },
+  [1229] = { label = "farm" },
+  [1230] = { feature = 132, threshold = 0.027095993049442768, left = 1231, right = 1232 }, -- numeric__team_experience_advantage
+  [1231] = { label = "farm" },
+  [1232] = { label = "fight" },
+  [1233] = { label = "fight" },
+  [1234] = { feature = 133, threshold = 3.6071013212203979, left = 1235, right = 1294 }, -- numeric__kills_last_minute
+  [1235] = { feature = 130, threshold = -0.56795619428157806, left = 1236, right = 1261 }, -- numeric__last_hit_change
+  [1236] = { feature = 124, threshold = -1.190424382686615, left = 1237, right = 1242 }, -- numeric__state_minute
+  [1237] = { feature = 124, threshold = -1.2588316202163696, left = 1238, right = 1241 }, -- numeric__state_minute
+  [1238] = { feature = 131, threshold = -0.002784993383102119, left = 1239, right = 1240 }, -- numeric__team_gold_advantage
+  [1239] = { label = "farm" },
+  [1240] = { label = "farm" },
+  [1241] = { label = "farm" },
+  [1242] = { feature = 127, threshold = -0.71163573861122131, left = 1243, right = 1254 }, -- numeric__last_hits
+  [1243] = { feature = 127, threshold = -0.80808696150779724, left = 1244, right = 1247 }, -- numeric__last_hits
+  [1244] = { feature = 131, threshold = 0.068139504641294479, left = 1245, right = 1246 }, -- numeric__team_gold_advantage
+  [1245] = { label = "fight" },
+  [1246] = { label = "unknown" },
+  [1247] = { feature = 132, threshold = 0.05179574154317379, left = 1248, right = 1253 }, -- numeric__team_experience_advantage
+  [1248] = { feature = 127, threshold = -0.78236666321754456, left = 1249, right = 1250 }, -- numeric__last_hits
+  [1249] = { label = "fight" },
+  [1250] = { feature = 128, threshold = -0.12273362651467323, left = 1251, right = 1252 }, -- numeric__gold_change
+  [1251] = { label = "farm" },
+  [1252] = { label = "fight" },
+  [1253] = { label = "fight" },
+  [1254] = { feature = 132, threshold = 0.055039888247847557, left = 1255, right = 1260 }, -- numeric__team_experience_advantage
+  [1255] = { feature = 129, threshold = -0.5244620144367218, left = 1256, right = 1257 }, -- numeric__experience_change
+  [1256] = { label = "farm" },
+  [1257] = { feature = 132, threshold = -0.082983780652284622, left = 1258, right = 1259 }, -- numeric__team_experience_advantage
+  [1258] = { label = "farm" },
+  [1259] = { label = "farm" },
+  [1260] = { label = "farm" },
+  [1261] = { feature = 126, threshold = -0.52983856201171875, left = 1262, right = 1285 }, -- numeric__experience
+  [1262] = { feature = 112, threshold = 0.5, left = 1263, right = 1284 }, -- categorical__hero_id_126
+  [1263] = { feature = 132, threshold = 0.087260156869888306, left = 1264, right = 1275 }, -- numeric__team_experience_advantage
+  [1264] = { feature = 128, threshold = -0.18544419854879379, left = 1265, right = 1270 }, -- numeric__gold_change
+  [1265] = { feature = 124, threshold = -1.190424382686615, left = 1266, right = 1267 }, -- numeric__state_minute
+  [1266] = { label = "farm" },
+  [1267] = { feature = 127, threshold = -0.74378612637519836, left = 1268, right = 1269 }, -- numeric__last_hits
+  [1268] = { label = "farm" },
+  [1269] = { label = "farm" },
+  [1270] = { feature = 31, threshold = 0.5, left = 1271, right = 1274 }, -- categorical__hero_id_33
+  [1271] = { feature = 124, threshold = -0.91679546236991882, left = 1272, right = 1273 }, -- numeric__state_minute
+  [1272] = { label = "farm" },
+  [1273] = { label = "farm" },
+  [1274] = { label = "farm" },
+  [1275] = { feature = 127, threshold = -0.72449588775634766, left = 1276, right = 1279 }, -- numeric__last_hits
+  [1276] = { feature = 126, threshold = -0.79448562860488892, left = 1277, right = 1278 }, -- numeric__experience
+  [1277] = { label = "farm" },
+  [1278] = { label = "fight" },
+  [1279] = { feature = 132, threshold = 0.32367731630802155, left = 1280, right = 1283 }, -- numeric__team_experience_advantage
+  [1280] = { feature = 131, threshold = 0.029892263002693653, left = 1281, right = 1282 }, -- numeric__team_gold_advantage
+  [1281] = { label = "farm" },
+  [1282] = { label = "farm" },
+  [1283] = { label = "farm" },
+  [1284] = { label = "fight" },
+  [1285] = { feature = 127, threshold = -0.33869084715843201, left = 1286, right = 1289 }, -- numeric__last_hits
+  [1286] = { feature = 130, threshold = 0.16823269426822662, left = 1287, right = 1288 }, -- numeric__last_hit_change
+  [1287] = { label = "fight" },
+  [1288] = { label = "fight" },
+  [1289] = { feature = 131, threshold = -0.023084500804543495, left = 1290, right = 1291 }, -- numeric__team_gold_advantage
+  [1290] = { label = "farm" },
+  [1291] = { feature = 125, threshold = -0.4555978924036026, left = 1292, right = 1293 }, -- numeric__gold
+  [1292] = { label = "fight" },
+  [1293] = { label = "farm" },
+  [1294] = { feature = 126, threshold = -0.90086460113525391, left = 1295, right = 1296 }, -- numeric__experience
+  [1295] = { label = "farm" },
+  [1296] = { feature = 126, threshold = -0.5483374297618866, left = 1297, right = 1310 }, -- numeric__experience
+  [1297] = { feature = 131, threshold = 0.0022279947297647595, left = 1298, right = 1301 }, -- numeric__team_gold_advantage
+  [1298] = { feature = 132, threshold = -0.019649202935397625, left = 1299, right = 1300 }, -- numeric__team_experience_advantage
+  [1299] = { label = "fight" },
+  [1300] = { label = "farm" },
+  [1301] = { feature = 127, threshold = -0.42871201038360596, left = 1302, right = 1309 }, -- numeric__last_hits
+  [1302] = { feature = 126, threshold = -0.64993438124656677, left = 1303, right = 1308 }, -- numeric__experience
+  [1303] = { feature = 132, threshold = 0.17164482176303864, left = 1304, right = 1307 }, -- numeric__team_experience_advantage
+  [1304] = { feature = 128, threshold = 0.57265695929527283, left = 1305, right = 1306 }, -- numeric__gold_change
+  [1305] = { label = "fight" },
+  [1306] = { label = "fight" },
+  [1307] = { label = "farm" },
+  [1308] = { label = "fight" },
+  [1309] = { label = "farm" },
+  [1310] = { label = "fight" },
+  [1311] = { feature = 126, threshold = 0.63571590185165405, left = 1312, right = 1517 }, -- numeric__experience
+  [1312] = { feature = 130, threshold = -0.56795619428157806, left = 1313, right = 1394 }, -- numeric__last_hit_change
+  [1313] = { feature = 127, threshold = -0.21651923656463623, left = 1314, right = 1351 }, -- numeric__last_hits
+  [1314] = { feature = 3, threshold = 0.5, left = 1315, right = 1346 }, -- categorical__hero_id_3
+  [1315] = { feature = 47, threshold = 0.5, left = 1316, right = 1337 }, -- categorical__hero_id_51
+  [1316] = { feature = 127, threshold = -0.62161454558372498, left = 1317, right = 1330 }, -- numeric__last_hits
+  [1317] = { feature = 124, threshold = 0.040905871661379933, left = 1318, right = 1323 }, -- numeric__state_minute
+  [1318] = { feature = 127, threshold = -0.80808696150779724, left = 1319, right = 1320 }, -- numeric__last_hits
+  [1319] = { label = "unknown" },
+  [1320] = { feature = 124, threshold = -0.1643158346414566, left = 1321, right = 1322 }, -- numeric__state_minute
+  [1321] = { label = "fight" },
+  [1322] = { label = "fight" },
+  [1323] = { feature = 127, threshold = -0.75021621584892273, left = 1324, right = 1327 }, -- numeric__last_hits
+  [1324] = { feature = 132, threshold = 0.018432648619636893, left = 1325, right = 1326 }, -- numeric__team_experience_advantage
+  [1325] = { label = "unknown" },
+  [1326] = { label = "unknown" },
+  [1327] = { feature = 132, threshold = -0.73671606183052063, left = 1328, right = 1329 }, -- numeric__team_experience_advantage
+  [1328] = { label = "fight" },
+  [1329] = { label = "fight" },
+  [1330] = { feature = 126, threshold = -0.54267451167106628, left = 1331, right = 1332 }, -- numeric__experience
+  [1331] = { label = "farm" },
+  [1332] = { feature = 132, threshold = 2.0113705992698669, left = 1333, right = 1336 }, -- numeric__team_experience_advantage
+  [1333] = { feature = 124, threshold = 0.31453481316566467, left = 1334, right = 1335 }, -- numeric__state_minute
+  [1334] = { label = "fight" },
+  [1335] = { label = "fight" },
+  [1336] = { label = "fight" },
+  [1337] = { feature = 124, threshold = -0.1643158346414566, left = 1338, right = 1341 }, -- numeric__state_minute
+  [1338] = { feature = 132, threshold = -0.005419198889285326, left = 1339, right = 1340 }, -- numeric__team_experience_advantage
+  [1339] = { label = "fight" },
+  [1340] = { label = "fight" },
+  [1341] = { feature = 126, threshold = -0.0094792881282046437, left = 1342, right = 1345 }, -- numeric__experience
+  [1342] = { feature = 128, threshold = 0.37337669730186462, left = 1343, right = 1344 }, -- numeric__gold_change
+  [1343] = { label = "unknown" },
+  [1344] = { label = "unknown" },
+  [1345] = { label = "fight" },
+  [1346] = { feature = 128, threshold = 0.6061025857925415, left = 1347, right = 1350 }, -- numeric__gold_change
+  [1347] = { feature = 129, threshold = 0.017202029004693031, left = 1348, right = 1349 }, -- numeric__experience_change
+  [1348] = { label = "unknown" },
+  [1349] = { label = "unknown" },
+  [1350] = { label = "fight" },
+  [1351] = { feature = 129, threshold = 0.53404590487480164, left = 1352, right = 1375 }, -- numeric__experience_change
+  [1352] = { feature = 131, threshold = 0.94739288091659546, left = 1353, right = 1372 }, -- numeric__team_gold_advantage
+  [1353] = { feature = 131, threshold = -0.86947494745254517, left = 1354, right = 1357 }, -- numeric__team_gold_advantage
+  [1354] = { feature = 131, threshold = -1.4464637041091919, left = 1355, right = 1356 }, -- numeric__team_gold_advantage
+  [1355] = { label = "fight" },
+  [1356] = { label = "fight" },
+  [1357] = { feature = 127, threshold = 0.053544294089078903, left = 1358, right = 1365 }, -- numeric__last_hits
+  [1358] = { feature = 126, threshold = -0.30932033061981201, left = 1359, right = 1362 }, -- numeric__experience
+  [1359] = { feature = 129, threshold = -0.25143998861312866, left = 1360, right = 1361 }, -- numeric__experience_change
+  [1360] = { label = "farm" },
+  [1361] = { label = "fight" },
+  [1362] = { feature = 124, threshold = -0.095908598974347115, left = 1363, right = 1364 }, -- numeric__state_minute
+  [1363] = { label = "fight" },
+  [1364] = { label = "farm" },
+  [1365] = { feature = 126, threshold = 0.30508534610271454, left = 1366, right = 1369 }, -- numeric__experience
+  [1366] = { feature = 124, threshold = -0.1643158346414566, left = 1367, right = 1368 }, -- numeric__state_minute
+  [1367] = { label = "farm" },
+  [1368] = { label = "farm" },
+  [1369] = { feature = 128, threshold = 0.22565844655036926, left = 1370, right = 1371 }, -- numeric__gold_change
+  [1370] = { label = "fight" },
+  [1371] = { label = "farm" },
+  [1372] = { feature = 124, threshold = 0.10931311175227165, left = 1373, right = 1374 }, -- numeric__state_minute
+  [1373] = { label = "fight" },
+  [1374] = { label = "fight" },
+  [1375] = { feature = 132, threshold = 0.24869329482316971, left = 1376, right = 1387 }, -- numeric__team_experience_advantage
+  [1376] = { feature = 124, threshold = 0.31453481316566467, left = 1377, right = 1384 }, -- numeric__state_minute
+  [1377] = { feature = 125, threshold = -0.071625277400016785, left = 1378, right = 1379 }, -- numeric__gold
+  [1378] = { label = "fight" },
+  [1379] = { feature = 126, threshold = 0.051931915804743767, left = 1380, right = 1381 }, -- numeric__experience
+  [1380] = { label = "farm" },
+  [1381] = { feature = 131, threshold = -0.27026814222335815, left = 1382, right = 1383 }, -- numeric__team_gold_advantage
+  [1382] = { label = "fight" },
+  [1383] = { label = "farm" },
+  [1384] = { feature = 126, threshold = 0.36687406897544861, left = 1385, right = 1386 }, -- numeric__experience
+  [1385] = { label = "fight" },
+  [1386] = { label = "fight" },
+  [1387] = { feature = 129, threshold = 0.795387864112854, left = 1388, right = 1389 }, -- numeric__experience_change
+  [1388] = { label = "fight" },
+  [1389] = { feature = 131, threshold = 0.66171443462371826, left = 1390, right = 1391 }, -- numeric__team_gold_advantage
+  [1390] = { label = "fight" },
+  [1391] = { feature = 129, threshold = 1.2114909887313843, left = 1392, right = 1393 }, -- numeric__experience_change
+  [1392] = { label = "fight" },
+  [1393] = { label = "fight" },
+  [1394] = { feature = 131, threshold = 0.67823874950408936, left = 1395, right = 1476 }, -- numeric__team_gold_advantage
+  [1395] = { feature = 133, threshold = 3.6071013212203979, left = 1396, right = 1451 }, -- numeric__kills_last_minute
+  [1396] = { feature = 124, threshold = -0.095908598974347115, left = 1397, right = 1424 }, -- numeric__state_minute
+  [1397] = { feature = 132, threshold = 0.14602343738079071, left = 1398, right = 1413 }, -- numeric__team_experience_advantage
+  [1398] = { feature = 124, threshold = -0.50635203719139099, left = 1399, right = 1406 }, -- numeric__state_minute
+  [1399] = { feature = 131, threshold = -0.16289117187261581, left = 1400, right = 1403 }, -- numeric__team_gold_advantage
+  [1400] = { feature = 132, threshold = -0.29860891401767731, left = 1401, right = 1402 }, -- numeric__team_experience_advantage
+  [1401] = { label = "farm" },
+  [1402] = { label = "farm" },
+  [1403] = { feature = 127, threshold = -0.19722898304462433, left = 1404, right = 1405 }, -- numeric__last_hits
+  [1404] = { label = "farm" },
+  [1405] = { label = "farm" },
+  [1406] = { feature = 127, threshold = -0.13292814791202545, left = 1407, right = 1410 }, -- numeric__last_hits
+  [1407] = { feature = 126, threshold = -0.50626406073570251, left = 1408, right = 1409 }, -- numeric__experience
+  [1408] = { label = "farm" },
+  [1409] = { label = "fight" },
+  [1410] = { feature = 131, threshold = -0.19736319780349731, left = 1411, right = 1412 }, -- numeric__team_gold_advantage
+  [1411] = { label = "farm" },
+  [1412] = { label = "farm" },
+  [1413] = { feature = 135, threshold = 2.9006259515881538, left = 1414, right = 1421 }, -- numeric__previous_push
+  [1414] = { feature = 124, threshold = -0.50635203719139099, left = 1415, right = 1418 }, -- numeric__state_minute
+  [1415] = { feature = 130, threshold = 0.16823269426822662, left = 1416, right = 1417 }, -- numeric__last_hit_change
+  [1416] = { label = "fight" },
+  [1417] = { label = "farm" },
+  [1418] = { feature = 34, threshold = 0.5, left = 1419, right = 1420 }, -- categorical__hero_id_36
+  [1419] = { label = "fight" },
+  [1420] = { label = "farm" },
+  [1421] = { feature = 124, threshold = -0.36953756213188171, left = 1422, right = 1423 }, -- numeric__state_minute
+  [1422] = { label = "farm" },
+  [1423] = { label = "farm" },
+  [1424] = { feature = 124, threshold = 0.31453481316566467, left = 1425, right = 1438 }, -- numeric__state_minute
+  [1425] = { feature = 131, threshold = -0.94924953579902649, left = 1426, right = 1433 }, -- numeric__team_gold_advantage
+  [1426] = { feature = 131, threshold = -1.322438657283783, left = 1427, right = 1430 }, -- numeric__team_gold_advantage
+  [1427] = { feature = 127, threshold = 0.35575824975967407, left = 1428, right = 1429 }, -- numeric__last_hits
+  [1428] = { label = "farm" },
+  [1429] = { label = "farm" },
+  [1430] = { feature = 132, threshold = -0.81656631827354431, left = 1431, right = 1432 }, -- numeric__team_experience_advantage
+  [1431] = { label = "fight" },
+  [1432] = { label = "farm" },
+  [1433] = { feature = 132, threshold = 0.72550901770591736, left = 1434, right = 1437 }, -- numeric__team_experience_advantage
+  [1434] = { feature = 125, threshold = -0.13239096850156784, left = 1435, right = 1436 }, -- numeric__gold
+  [1435] = { label = "farm" },
+  [1436] = { label = "farm" },
+  [1437] = { label = "farm" },
+  [1438] = { feature = 131, threshold = -1.1027954816818237, left = 1439, right = 1444 }, -- numeric__team_gold_advantage
+  [1439] = { feature = 124, threshold = 0.7249782383441925, left = 1440, right = 1443 }, -- numeric__state_minute
+  [1440] = { feature = 128, threshold = 1.5662711262702942, left = 1441, right = 1442 }, -- numeric__gold_change
+  [1441] = { label = "fight" },
+  [1442] = { label = "fight" },
+  [1443] = { label = "farm" },
+  [1444] = { feature = 128, threshold = 1.2666539549827576, left = 1445, right = 1448 }, -- numeric__gold_change
+  [1445] = { feature = 127, threshold = 0.6676173210144043, left = 1446, right = 1447 }, -- numeric__last_hits
+  [1446] = { label = "fight" },
+  [1447] = { label = "farm" },
+  [1448] = { feature = 127, threshold = -0.28403513133525848, left = 1449, right = 1450 }, -- numeric__last_hits
+  [1449] = { label = "fight" },
+  [1450] = { label = "farm" },
+  [1451] = { feature = 131, threshold = 0.088315237313508987, left = 1452, right = 1463 }, -- numeric__team_gold_advantage
+  [1452] = { feature = 125, threshold = 0.53463596105575562, left = 1453, right = 1462 }, -- numeric__gold
+  [1453] = { feature = 129, threshold = 0.59901636838912964, left = 1454, right = 1457 }, -- numeric__experience_change
+  [1454] = { feature = 125, threshold = -0.20394632965326309, left = 1455, right = 1456 }, -- numeric__gold
+  [1455] = { label = "fight" },
+  [1456] = { label = "farm" },
+  [1457] = { feature = 125, threshold = -0.14946118742227554, left = 1458, right = 1459 }, -- numeric__gold
+  [1458] = { label = "fight" },
+  [1459] = { feature = 132, threshold = -0.39873504638671875, left = 1460, right = 1461 }, -- numeric__team_experience_advantage
+  [1460] = { label = "fight" },
+  [1461] = { label = "fight" },
+  [1462] = { label = "farm" },
+  [1463] = { feature = 126, threshold = -0.47715245187282562, left = 1464, right = 1465 }, -- numeric__experience
+  [1464] = { label = "fight" },
+  [1465] = { feature = 127, threshold = 0.092124801129102707, left = 1466, right = 1469 }, -- numeric__last_hits
+  [1466] = { feature = 132, threshold = 0.41130611300468445, left = 1467, right = 1468 }, -- numeric__team_experience_advantage
+  [1467] = { label = "fight" },
+  [1468] = { label = "fight" },
+  [1469] = { feature = 131, threshold = 0.33308520913124084, left = 1470, right = 1473 }, -- numeric__team_gold_advantage
+  [1470] = { feature = 131, threshold = 0.18028190732002258, left = 1471, right = 1472 }, -- numeric__team_gold_advantage
+  [1471] = { label = "fight" },
+  [1472] = { label = "fight" },
+  [1473] = { feature = 132, threshold = 0.25610321760177612, left = 1474, right = 1475 }, -- numeric__team_experience_advantage
+  [1474] = { label = "fight" },
+  [1475] = { label = "fight" },
+  [1476] = { feature = 124, threshold = -0.095908598974347115, left = 1477, right = 1494 }, -- numeric__state_minute
+  [1477] = { feature = 132, threshold = 0.31670977175235748, left = 1478, right = 1479 }, -- numeric__team_experience_advantage
+  [1478] = { label = "fight" },
+  [1479] = { feature = 131, threshold = 1.4651541113853455, left = 1480, right = 1491 }, -- numeric__team_gold_advantage
+  [1480] = { feature = 128, threshold = 1.6303752660751343, left = 1481, right = 1486 }, -- numeric__gold_change
+  [1481] = { feature = 131, threshold = 0.75101989507675171, left = 1482, right = 1485 }, -- numeric__team_gold_advantage
+  [1482] = { feature = 130, threshold = 0.60994601249694824, left = 1483, right = 1484 }, -- numeric__last_hit_change
+  [1483] = { label = "fight" },
+  [1484] = { label = "fight" },
+  [1485] = { label = "fight" },
+  [1486] = { feature = 128, threshold = 1.8254748582839966, left = 1487, right = 1488 }, -- numeric__gold_change
+  [1487] = { label = "fight" },
+  [1488] = { feature = 125, threshold = 0.010182953905314207, left = 1489, right = 1490 }, -- numeric__gold
+  [1489] = { label = "fight" },
+  [1490] = { label = "fight" },
+  [1491] = { feature = 126, threshold = -0.064011095091700554, left = 1492, right = 1493 }, -- numeric__experience
+  [1492] = { label = "fight" },
+  [1493] = { label = "fight" },
+  [1494] = { feature = 127, threshold = 1.1659488677978516, left = 1495, right = 1514 }, -- numeric__last_hits
+  [1495] = { feature = 131, threshold = 0.78177860379219055, left = 1496, right = 1501 }, -- numeric__team_gold_advantage
+  [1496] = { feature = 126, threshold = 0.077939391136169434, left = 1497, right = 1498 }, -- numeric__experience
+  [1497] = { label = "farm" },
+  [1498] = { feature = 122, threshold = 0.5, left = 1499, right = 1500 }, -- categorical__team_Dire
+  [1499] = { label = "farm" },
+  [1500] = { label = "fight" },
+  [1501] = { feature = 133, threshold = 3.6071013212203979, left = 1502, right = 1509 }, -- numeric__kills_last_minute
+  [1502] = { feature = 128, threshold = 1.4687213897705078, left = 1503, right = 1506 }, -- numeric__gold_change
+  [1503] = { feature = 132, threshold = 0.32592608034610748, left = 1504, right = 1505 }, -- numeric__team_experience_advantage
+  [1504] = { label = "farm" },
+  [1505] = { label = "fight" },
+  [1506] = { feature = 126, threshold = 0.27698048949241638, left = 1507, right = 1508 }, -- numeric__experience
+  [1507] = { label = "fight" },
+  [1508] = { label = "fight" },
+  [1509] = { feature = 127, threshold = 0.69655272364616394, left = 1510, right = 1513 }, -- numeric__last_hits
+  [1510] = { feature = 126, threshold = 0.25017601251602173, left = 1511, right = 1512 }, -- numeric__experience
+  [1511] = { label = "fight" },
+  [1512] = { label = "fight" },
+  [1513] = { label = "fight" },
+  [1514] = { feature = 126, threshold = 0.5054267942905426, left = 1515, right = 1516 }, -- numeric__experience
+  [1515] = { label = "fight" },
+  [1516] = { label = "push" },
+  [1517] = { feature = 135, threshold = 2.9006259515881538, left = 1518, right = 1677 }, -- numeric__previous_push
+  [1518] = { feature = 128, threshold = 2.4442191123962402, left = 1519, right = 1600 }, -- numeric__gold_change
+  [1519] = { feature = 132, threshold = 1.5930232405662537, left = 1520, right = 1565 }, -- numeric__team_experience_advantage
+  [1520] = { feature = 130, threshold = 0.4627082496881485, left = 1521, right = 1538 }, -- numeric__last_hit_change
+  [1521] = { feature = 121, threshold = 0.5, left = 1522, right = 1537 }, -- categorical__hero_id_155
+  [1522] = { feature = 126, threshold = 1.0943283438682556, left = 1523, right = 1530 }, -- numeric__experience
+  [1523] = { feature = 132, threshold = 0.16456668078899384, left = 1524, right = 1527 }, -- numeric__team_experience_advantage
+  [1524] = { feature = 124, threshold = 0.38294205069541931, left = 1525, right = 1526 }, -- numeric__state_minute
+  [1525] = { label = "farm" },
+  [1526] = { label = "fight" },
+  [1527] = { feature = 127, threshold = 0.79300394654273987, left = 1528, right = 1529 }, -- numeric__last_hits
+  [1528] = { label = "fight" },
+  [1529] = { label = "fight" },
+  [1530] = { feature = 131, threshold = 0.87782993912696838, left = 1531, right = 1534 }, -- numeric__team_gold_advantage
+  [1531] = { feature = 127, threshold = -0.43192705512046814, left = 1532, right = 1533 }, -- numeric__last_hits
+  [1532] = { label = "fight" },
+  [1533] = { label = "fight" },
+  [1534] = { feature = 127, threshold = 1.3041957020759583, left = 1535, right = 1536 }, -- numeric__last_hits
+  [1535] = { label = "fight" },
+  [1536] = { label = "fight" },
+  [1537] = { label = "farm" },
+  [1538] = { feature = 127, threshold = 1.5453237891197205, left = 1539, right = 1552 }, -- numeric__last_hits
+  [1539] = { feature = 131, threshold = 0.64698493480682373, left = 1540, right = 1547 }, -- numeric__team_gold_advantage
+  [1540] = { feature = 126, threshold = 1.0294355750083923, left = 1541, right = 1544 }, -- numeric__experience
+  [1541] = { feature = 124, threshold = 0.7249782383441925, left = 1542, right = 1543 }, -- numeric__state_minute
+  [1542] = { label = "fight" },
+  [1543] = { label = "farm" },
+  [1544] = { feature = 126, threshold = 1.1588436961174011, left = 1545, right = 1546 }, -- numeric__experience
+  [1545] = { label = "fight" },
+  [1546] = { label = "fight" },
+  [1547] = { feature = 127, threshold = 1.3363460898399353, left = 1548, right = 1551 }, -- numeric__last_hits
+  [1548] = { feature = 125, threshold = 1.1060052514076233, left = 1549, right = 1550 }, -- numeric__gold
+  [1549] = { label = "fight" },
+  [1550] = { label = "fight" },
+  [1551] = { label = "fight" },
+  [1552] = { feature = 129, threshold = 0.80925795435905457, left = 1553, right = 1558 }, -- numeric__experience_change
+  [1553] = { feature = 127, threshold = 1.91505366563797, left = 1554, right = 1555 }, -- numeric__last_hits
+  [1554] = { label = "fight" },
+  [1555] = { feature = 128, threshold = 1.8254747986793518, left = 1556, right = 1557 }, -- numeric__gold_change
+  [1556] = { label = "fight" },
+  [1557] = { label = "fight" },
+  [1558] = { feature = 132, threshold = -0.079407850280404091, left = 1559, right = 1562 }, -- numeric__team_experience_advantage
+  [1559] = { feature = 132, threshold = -0.3598790317773819, left = 1560, right = 1561 }, -- numeric__team_experience_advantage
+  [1560] = { label = "fight" },
+  [1561] = { label = "fight" },
+  [1562] = { feature = 130, threshold = 1.0516593456268311, left = 1563, right = 1564 }, -- numeric__last_hit_change
+  [1563] = { label = "fight" },
+  [1564] = { label = "fight" },
+  [1565] = { feature = 127, threshold = 1.2688301801681519, left = 1566, right = 1579 }, -- numeric__last_hits
+  [1566] = { feature = 127, threshold = -0.43514209985733032, left = 1567, right = 1568 }, -- numeric__last_hits
+  [1567] = { label = "fight" },
+  [1568] = { feature = 127, threshold = -0.0396919259801507, left = 1569, right = 1572 }, -- numeric__last_hits
+  [1569] = { feature = 130, threshold = -0.7151939868927002, left = 1570, right = 1571 }, -- numeric__last_hit_change
+  [1570] = { label = "fight" },
+  [1571] = { label = "farm" },
+  [1572] = { feature = 124, threshold = 0.7249782383441925, left = 1573, right = 1576 }, -- numeric__state_minute
+  [1573] = { feature = 129, threshold = 1.4677228927612305, left = 1574, right = 1575 }, -- numeric__experience_change
+  [1574] = { label = "fight" },
+  [1575] = { label = "fight" },
+  [1576] = { feature = 125, threshold = 1.0053554177284241, left = 1577, right = 1578 }, -- numeric__gold
+  [1577] = { label = "farm" },
+  [1578] = { label = "fight" },
+  [1579] = { feature = 124, threshold = 1.0670144557952881, left = 1580, right = 1589 }, -- numeric__state_minute
+  [1580] = { feature = 125, threshold = 1.3991514444351196, left = 1581, right = 1584 }, -- numeric__gold
+  [1581] = { feature = 132, threshold = 2.0732674598693848, left = 1582, right = 1583 }, -- numeric__team_experience_advantage
+  [1582] = { label = "fight" },
+  [1583] = { label = "fight" },
+  [1584] = { feature = 123, threshold = 0.5, left = 1585, right = 1588 }, -- categorical__team_Radiant
+  [1585] = { feature = 126, threshold = 1.6127161383628845, left = 1586, right = 1587 }, -- numeric__experience
+  [1586] = { label = "push" },
+  [1587] = { label = "fight" },
+  [1588] = { label = "push" },
+  [1589] = { feature = 126, threshold = 2.6531411409378052, left = 1590, right = 1595 }, -- numeric__experience
+  [1590] = { feature = 129, threshold = 2.9810242652893066, left = 1591, right = 1594 }, -- numeric__experience_change
+  [1591] = { feature = 126, threshold = 1.8242995142936707, left = 1592, right = 1593 }, -- numeric__experience
+  [1592] = { label = "fight" },
+  [1593] = { label = "fight" },
+  [1594] = { label = "push" },
+  [1595] = { feature = 128, threshold = 1.9397474527359009, left = 1596, right = 1599 }, -- numeric__gold_change
+  [1596] = { feature = 132, threshold = 3.8094754219055176, left = 1597, right = 1598 }, -- numeric__team_experience_advantage
+  [1597] = { label = "fight" },
+  [1598] = { label = "fight" },
+  [1599] = { label = "fight" },
+  [1600] = { feature = 132, threshold = -0.058910742402076721, left = 1601, right = 1632 }, -- numeric__team_experience_advantage
+  [1601] = { feature = 130, threshold = 0.75718379020690918, left = 1602, right = 1615 }, -- numeric__last_hit_change
+  [1602] = { feature = 131, threshold = 0.20967905968427658, left = 1603, right = 1614 }, -- numeric__team_gold_advantage
+  [1603] = { feature = 126, threshold = 1.2929080724716187, left = 1604, right = 1607 }, -- numeric__experience
+  [1604] = { feature = 133, threshold = 3.6071013212203979, left = 1605, right = 1606 }, -- numeric__kills_last_minute
+  [1605] = { label = "fight" },
+  [1606] = { label = "fight" },
+  [1607] = { feature = 130, threshold = 0.16823269426822662, left = 1608, right = 1611 }, -- numeric__last_hit_change
+  [1608] = { feature = 129, threshold = 3.3730370998382568, left = 1609, right = 1610 }, -- numeric__experience_change
+  [1609] = { label = "fight" },
+  [1610] = { label = "fight" },
+  [1611] = { feature = 124, threshold = 1.8194940686225891, left = 1612, right = 1613 }, -- numeric__state_minute
+  [1612] = { label = "fight" },
+  [1613] = { label = "fight" },
+  [1614] = { label = "fight" },
+  [1615] = { feature = 128, threshold = 4.4565317630767822, left = 1616, right = 1627 }, -- numeric__gold_change
+  [1616] = { feature = 126, threshold = 1.2116556167602539, left = 1617, right = 1620 }, -- numeric__experience
+  [1617] = { feature = 129, threshold = 2.500680685043335, left = 1618, right = 1619 }, -- numeric__experience_change
+  [1618] = { label = "fight" },
+  [1619] = { label = "farm" },
+  [1620] = { feature = 127, threshold = 2.2429879903793335, left = 1621, right = 1624 }, -- numeric__last_hits
+  [1621] = { feature = 132, threshold = -0.57878518104553223, left = 1622, right = 1623 }, -- numeric__team_experience_advantage
+  [1622] = { label = "fight" },
+  [1623] = { label = "fight" },
+  [1624] = { feature = 130, threshold = 1.9350860118865967, left = 1625, right = 1626 }, -- numeric__last_hit_change
+  [1625] = { label = "fight" },
+  [1626] = { label = "fight" },
+  [1627] = { feature = 131, threshold = -1.5151602029800415, left = 1628, right = 1629 }, -- numeric__team_gold_advantage
+  [1628] = { label = "farm" },
+  [1629] = { feature = 131, threshold = -0.50705446302890778, left = 1630, right = 1631 }, -- numeric__team_gold_advantage
+  [1630] = { label = "farm" },
+  [1631] = { label = "fight" },
+  [1632] = { feature = 127, threshold = 1.2624000906944275, left = 1633, right = 1654 }, -- numeric__last_hits
+  [1633] = { feature = 133, threshold = 3.6071013212203979, left = 1634, right = 1645 }, -- numeric__kills_last_minute
+  [1634] = { feature = 126, threshold = 1.3853604197502136, left = 1635, right = 1642 }, -- numeric__experience
+  [1635] = { feature = 129, threshold = 3.3358068466186523, left = 1636, right = 1639 }, -- numeric__experience_change
+  [1636] = { feature = 127, threshold = 0.97947642207145691, left = 1637, right = 1638 }, -- numeric__last_hits
+  [1637] = { label = "fight" },
+  [1638] = { label = "fight" },
+  [1639] = { feature = 131, threshold = 1.297002375125885, left = 1640, right = 1641 }, -- numeric__team_gold_advantage
+  [1640] = { label = "farm" },
+  [1641] = { label = "fight" },
+  [1642] = { feature = 129, threshold = 3.8628708124160767, left = 1643, right = 1644 }, -- numeric__experience_change
+  [1643] = { label = "fight" },
+  [1644] = { label = "fight" },
+  [1645] = { feature = 131, threshold = 2.0448659658432007, left = 1646, right = 1653 }, -- numeric__team_gold_advantage
+  [1646] = { feature = 129, threshold = 3.7927902936935425, left = 1647, right = 1650 }, -- numeric__experience_change
+  [1647] = { feature = 131, threshold = 1.3959006071090698, left = 1648, right = 1649 }, -- numeric__team_gold_advantage
+  [1648] = { label = "fight" },
+  [1649] = { label = "fight" },
+  [1650] = { feature = 126, threshold = 1.1629126071929932, left = 1651, right = 1652 }, -- numeric__experience
+  [1651] = { label = "fight" },
+  [1652] = { label = "fight" },
+  [1653] = { label = "fight" },
+  [1654] = { feature = 124, threshold = 1.8879013061523438, left = 1655, right = 1670 }, -- numeric__state_minute
+  [1655] = { feature = 127, threshold = 2.1304614543914795, left = 1656, right = 1663 }, -- numeric__last_hits
+  [1656] = { feature = 124, threshold = 1.1354216933250427, left = 1657, right = 1660 }, -- numeric__state_minute
+  [1657] = { feature = 34, threshold = 0.5, left = 1658, right = 1659 }, -- categorical__hero_id_36
+  [1658] = { label = "push" },
+  [1659] = { label = "fight" },
+  [1660] = { feature = 128, threshold = 3.3486449718475342, left = 1661, right = 1662 }, -- numeric__gold_change
+  [1661] = { label = "fight" },
+  [1662] = { label = "fight" },
+  [1663] = { feature = 131, threshold = 0.11956905573606491, left = 1664, right = 1667 }, -- numeric__team_gold_advantage
+  [1664] = { feature = 128, threshold = 3.0601763725280762, left = 1665, right = 1666 }, -- numeric__gold_change
+  [1665] = { label = "fight" },
+  [1666] = { label = "push" },
+  [1667] = { feature = 130, threshold = 2.5240371227264404, left = 1668, right = 1669 }, -- numeric__last_hit_change
+  [1668] = { label = "push" },
+  [1669] = { label = "push" },
+  [1670] = { feature = 130, threshold = 2.0823237895965576, left = 1671, right = 1676 }, -- numeric__last_hit_change
+  [1671] = { feature = 130, threshold = -0.42071840167045593, left = 1672, right = 1673 }, -- numeric__last_hit_change
+  [1672] = { label = "fight" },
+  [1673] = { feature = 130, threshold = 1.6406104564666748, left = 1674, right = 1675 }, -- numeric__last_hit_change
+  [1674] = { label = "fight" },
+  [1675] = { label = "fight" },
+  [1676] = { label = "push" },
+  [1677] = { feature = 127, threshold = 1.0823577642440796, left = 1678, right = 1683 }, -- numeric__last_hits
+  [1678] = { feature = 132, threshold = 1.7557097673416138, left = 1679, right = 1682 }, -- numeric__team_experience_advantage
+  [1679] = { feature = 129, threshold = 1.4115124940872192, left = 1680, right = 1681 }, -- numeric__experience_change
+  [1680] = { label = "fight" },
+  [1681] = { label = "fight" },
+  [1682] = { label = "push" },
+  [1683] = { feature = 124, threshold = 1.8879013061523438, left = 1684, right = 1699 }, -- numeric__state_minute
+  [1684] = { feature = 132, threshold = 0.008737075375393033, left = 1685, right = 1686 }, -- numeric__team_experience_advantage
+  [1685] = { label = "fight" },
+  [1686] = { feature = 127, threshold = 1.320270836353302, left = 1687, right = 1690 }, -- numeric__last_hits
+  [1687] = { feature = 131, threshold = 1.852763295173645, left = 1688, right = 1689 }, -- numeric__team_gold_advantage
+  [1688] = { label = "fight" },
+  [1689] = { label = "push" },
+  [1690] = { feature = 132, threshold = 3.1897329092025757, left = 1691, right = 1698 }, -- numeric__team_experience_advantage
+  [1691] = { feature = 128, threshold = 3.2218302488327026, left = 1692, right = 1695 }, -- numeric__gold_change
+  [1692] = { feature = 126, threshold = 1.9413751363754272, left = 1693, right = 1694 }, -- numeric__experience
+  [1693] = { label = "push" },
+  [1694] = { label = "push" },
+  [1695] = { feature = 129, threshold = 3.6387591361999512, left = 1696, right = 1697 }, -- numeric__experience_change
+  [1696] = { label = "push" },
+  [1697] = { label = "push" },
+  [1698] = { label = "push" },
+  [1699] = { label = "fight" },
 }
 
 function M.predict_features(features)
