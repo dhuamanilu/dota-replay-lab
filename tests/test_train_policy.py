@@ -1,4 +1,4 @@
-from dota_replay_lab.train_policy import FEATURES, split_match_ids
+from dota_replay_lab.train_policy import FEATURES, XGB_TRIALS, split_match_ids
 
 
 def test_match_splits_are_disjoint_and_complete() -> None:
@@ -16,3 +16,9 @@ def test_policy_features_exclude_target_window_evidence() -> None:
     assert "label" not in FEATURES
     assert "signals" not in FEATURES
     assert "decision_minute" not in FEATURES
+
+
+def test_xgboost_search_has_distinct_bounded_trials() -> None:
+    assert len(XGB_TRIALS) >= 3
+    assert len(XGB_TRIALS) == len(set(XGB_TRIALS))
+    assert all(0 < trial["weight_power"] <= 1 for trial in XGB_TRIALS.values())
