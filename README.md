@@ -20,7 +20,7 @@ Los detalles de cada etapa están en [docs/learning-path.md](docs/learning-path.
 
 - Dota primero: el proyecto trabaja con partidas reales desde el comienzo.
 - Reproducible: código, configuraciones y resultados versionados.
-- Local primero: la RTX 4050 Laptop se usa para los experimentos iniciales.
+- Local primero: la GTX 1660 Ti se usa para los experimentos iniciales.
 - Medible: ninguna afirmación de nivel se hace sin una evaluación publicada.
 - Abierto: el repositorio, pesos de modelos entrenados y documentación se publicarán bajo licencia MIT.
 
@@ -93,6 +93,11 @@ La primera etapa hacia reinforcement learning construye recompensas causales, ze
 ponderación por ventaja sobre transiciones observadas. Ningún candidato superó aún el umbral
 estadístico para reemplazar la GRU vigente; protocolo, ablaciones y audit externo están en
 [docs/offline-rl.md](docs/offline-rl.md).
+
+La tubería de replay crudo descarga directamente desde Valve, detecta BZip2 o
+Zstandard por la firma del archivo y extrae estados y órdenes de los diez héroes
+una vez por segundo, sin abrir ni controlar el cliente. Consulta
+[docs/replay-trajectories.md](docs/replay-trajectories.md).
 
 `bots/bot_generic.lua` contiene el primer adaptador experimental para la API de bots. Sus acciones, degradaciones seguras y diferencias pendientes respecto del estado de OpenDota están documentadas en [docs/valve-integration.md](docs/valve-integration.md).
 
