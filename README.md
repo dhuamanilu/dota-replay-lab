@@ -57,7 +57,7 @@ Para congelar un corpus profesional reproducible y crear una fila CSV por héroe
 
 ```powershell
 $env:PYTHONPATH='src'
-python -m dota_replay_lab.collect_matches --count 25
+python -m dota_replay_lab.collect_matches --count 500
 python -m dota_replay_lab.build_dataset --manifest artifacts/corpora/pro-matches-v1.json
 ```
 
