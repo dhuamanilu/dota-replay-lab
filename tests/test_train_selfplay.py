@@ -1,7 +1,9 @@
 from pathlib import Path
 
 import numpy as np
-import torch
+import pytest
+
+torch = pytest.importorskip("torch")
 
 from dota_replay_lab.train_policy import LABELS, NUMERIC_FEATURES
 from dota_replay_lab.train_sequence_policy import make_recurrent_policy

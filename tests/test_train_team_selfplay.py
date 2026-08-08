@@ -1,5 +1,7 @@
 import numpy as np
-import torch
+import pytest
+
+torch = pytest.importorskip("torch")
 
 from dota_replay_lab.train_team_selfplay import (
     COMPOSITIONS,
