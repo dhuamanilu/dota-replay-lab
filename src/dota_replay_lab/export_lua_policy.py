@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from .train_policy import FEATURES, LABELS, _metrics
 
@@ -13,13 +13,18 @@ from .train_policy import FEATURES, LABELS, _metrics
 DEPTH_CANDIDATES = (6, 8, 10, 12)
 
 
-def _label_predictions(raw_predictions: Any) -> Any:
+def _teacher_predictions(bundle: Mapping[str, Any], transformed: Any) -> Any:
     import numpy as np
 
-    values = np.asarray(raw_predictions)
-    if values.dtype.kind in "iu":
-        return np.array([LABELS[int(value)] for value in values])
-    return values.astype(str)
+    from .train_policy import apply_probability_biases
+
+    raw_probabilities = bundle["model"].predict_proba(transformed)
+    aligned = np.zeros((raw_probabilities.shape[0], len(LABELS)), dtype=float)
+    for column, raw_class in enumerate(bundle["model"].classes_):
+        label_index = int(raw_class) if isinstance(raw_class, (int, np.integer)) else LABELS.index(str(raw_class))
+        aligned[:, label_index] = raw_probabilities[:, column]
+    indices = apply_probability_biases(aligned, bundle.get("class_biases", [1.0] * len(LABELS)))
+    return np.array([LABELS[index] for index in indices])
 
 
 def render_lua_tree(
@@ -140,8 +145,8 @@ def distill_policy(
 
     development_x = bundle["preprocessor"].transform(development[FEATURES])
     test_x = bundle["preprocessor"].transform(test[FEATURES])
-    teacher_development = _label_predictions(bundle["model"].predict(development_x))
-    teacher_test = _label_predictions(bundle["model"].predict(test_x))
+    teacher_development = _teacher_predictions(bundle, development_x)
+    teacher_test = _teacher_predictions(bundle, test_x)
     validation_results = {}
     for depth in DEPTH_CANDIDATES:
         student = DecisionTreeClassifier(max_depth=depth, min_samples_leaf=20, random_state=seed)

@@ -66,6 +66,10 @@ def main() -> int:
     classes = bundle["model"].classes_
     labels = tuple(bundle["labels"])
     mapped = probability_map(classes, probabilities, labels)
+    biases = bundle.get("class_biases", [1.0] * len(labels))
+    mapped = {label: mapped[label] * float(biases[index]) for index, label in enumerate(labels)}
+    total = sum(mapped.values()) or 1.0
+    mapped = {label: probability / total for label, probability in mapped.items()}
     predicted = max(mapped, key=mapped.get)
     payload = {
         "match_id": args.match_id,
